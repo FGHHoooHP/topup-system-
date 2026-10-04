@@ -1,209 +1,29 @@
-require("dotenv").config();
-
-const express = require("express");
-const cors = require("cors");
-const multer = require("multer");
-const path = require("path");
-const { Pool } = require("pg");
-
-const app = express();
-
-const PORT = process.env.PORT || 3000;
-
-const upload = multer({
-    storage: multer.memoryStorage(),
-    limits: {
-        fileSize: 5 * 1024 * 1024
-    }
-});
-
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === "production"
-        ? { rejectUnauthorized: false }
-        : false
-});
-
-app.use(cors());
-app.use(express.json());
-
-/* =========================
-   หน้าเว็บ
-========================= */
-
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "index.html"));
-});
-
-/* =========================
-   DATABASE
-========================= */
-
-async function initDatabase() {
-
-    await pool.query(`
-        CREATE TABLE IF NOT EXISTS wallet (
-            id INTEGER PRIMARY KEY,
-            balance NUMERIC(12,2) NOT NULL DEFAULT 0
-        );
-
-        CREATE TABLE IF NOT EXISTS payments (
-            id SERIAL PRIMARY KEY,
-            amount NUMERIC(12,2) NOT NULL,
-            transaction_id TEXT UNIQUE,
-            status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-
-        INSERT INTO wallet (id, balance)
-        VALUES (1, 0)
-        ON CONFLICT (id) DO NOTHING;
-    `);
-
-    console.log("Database ready");
-}
-
-/* =========================
-   ยอดเงิน
-========================= */
-
-app.get("/api/balance", async (req, res) => {
-
-    try {
-
-        const result = await pool.query(
-            "SELECT balance FROM wallet WHERE id = 1"
-        );
-
-        res.json({
-            balance: Number(result.rows[0].balance)
-        });
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-            error: "โหลดยอดเงินไม่สำเร็จ"
-        });
-    }
-});
-
-/* =========================
-   ข้อมูลบัญชีรับเงิน
-========================= */
-
-app.get("/api/receiver", (req, res) => {
-
-    res.json({
-        success: true,
-        bank: "KBank",
-        account: process.env.RECEIVER_ACCOUNT || "2202587596",
-        name: process.env.RECEIVER_NAME || ""
-    });
-
-});
-
-/* =========================
-   QR รับเงิน
-========================= */
-
-app.get("/api/qr", (req, res) => {
-
-    const qrUrl = process.env.RECEIVER_QR_URL;
-
-    if (!qrUrl) {
-
-        return res.status(503).json({
-            error: "ยังไม่ได้ตั้งค่า QR รับเงินจาก KBank"
-        });
-
-    }
-
-    res.json({
-        success: true,
-        bank: "KBank",
-        account: process.env.RECEIVER_ACCOUNT || "2202587596",
-        name: process.env.RECEIVER_NAME || "",
-        qr: qrUrl
-    });
-
-});
-
-/* =========================
-   สร้างรายการเติมเงิน
-========================= */
-
-app.post("/api/topup", async (req, res) => {
-
-    try {
-
-        const amount = Number(req.body.amount);
-
-        if (!Number.isFinite(amount) || amount <= 0) {
-
-            return res.status(400).json({
-                error: "จำนวนเงินไม่ถูกต้อง"
-            });
-
-        }
-
-        const result = await pool.query(
-            `
-            INSERT INTO payments (amount)
-            VALUES ($1)
-            RETURNING id, amount, status
-            `,
-            [amount]
-        );
-
-        res.json({
-            success: true,
-            payment: result.rows[0]
-        });
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-            error: "สร้างรายการไม่สำเร็จ"
-        });
-    }
-
-});
-
-/* =========================
-   ตรวจสลิป
-========================= */
-
 app.post(
     "/api/verify-slip",
     upload.single("slip"),
     async (req, res) => {
-
         try {
-
             if (!req.file) {
-
                 return res.status(400).json({
                     error: "กรุณาเลือกสลิป"
                 });
-
             }
 
-            const paymentId =
-                Number(req.body.paymentId);
+            if (req.file.size > 4 * 1024 * 1024) {
+                return res.status(400).json({
+                    error: "ไฟล์สลิปต้องไม่เกิน 4MB"
+                });
+            }
+
+            const paymentId = Number(req.body.paymentId);
 
             if (!paymentId) {
-
                 return res.status(400).json({
                     error: "ไม่พบ Payment ID"
                 });
-
             }
 
-            const result = await pool.query(
+            const paymentResult = await pool.query(
                 `
                 SELECT *
                 FROM payments
@@ -212,46 +32,182 @@ app.post(
                 [paymentId]
             );
 
-            if (!result.rows.length) {
-
+            if (!paymentResult.rows.length) {
                 return res.status(404).json({
                     error: "ไม่พบรายการเติมเงิน"
                 });
-
             }
 
-            const payment = result.rows[0];
+            const payment = paymentResult.rows[0];
 
             if (payment.status !== "PENDING") {
-
                 return res.status(400).json({
                     error: "รายการนี้ถูกตรวจสอบแล้ว"
                 });
-
             }
 
-            /*
-             * Thunder Solution
-             *
-             * ตอนนี้ยังไม่ได้ใส่ API จริง
-             * เพราะต้องใช้ URL และรูปแบบ Request
-             * จาก API ของ Thunder Solution จริง
-             */
-
-            if (
-                !process.env.THUNDER_API_URL ||
-                !process.env.THUNDER_API_KEY
-            ) {
-
+            if (!process.env.THUNDER_API_KEY) {
                 return res.status(503).json({
-                    error: "ยังไม่ได้เชื่อม Thunder Solution"
+                    error: "ยังไม่ได้ตั้งค่า Thunder API Key"
+                });
+            }
+
+            const formData = new FormData();
+
+            const blob = new Blob(
+                [req.file.buffer],
+                {
+                    type: req.file.mimetype
+                }
+            );
+
+            formData.append(
+                "image",
+                blob,
+                req.file.originalname
+            );
+
+            formData.append(
+                "matchAccount",
+                "true"
+            );
+
+            formData.append(
+                "matchAmount",
+                String(Number(payment.amount))
+            );
+
+            formData.append(
+                "checkDuplicate",
+                "true"
+            );
+
+            formData.append(
+                "remark",
+                `Payment #${payment.id}`
+            );
+
+            const thunderResponse = await fetch(
+                process.env.THUNDER_API_URL ||
+                "https://api.thunder.in.th/v2/verify/bank",
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization":
+                            `Bearer ${process.env.THUNDER_API_KEY}`
+                    },
+                    body: formData
+                }
+            );
+
+            const thunderData =
+                await thunderResponse.json();
+
+            console.log(
+                "THUNDER:",
+                JSON.stringify(thunderData)
+            );
+
+            if (!thunderResponse.ok) {
+                return res.status(400).json({
+                    error:
+                        thunderData?.error?.message ||
+                        "Thunder ตรวจสอบสลิปไม่สำเร็จ"
+                });
+            }
+
+            if (!thunderData.success) {
+                return res.status(400).json({
+                    error:
+                        thunderData?.error?.message ||
+                        "สลิปไม่ผ่านการตรวจสอบ"
+                });
+            }
+
+            const data = thunderData.data;
+
+            if (data.isDuplicate) {
+                return res.status(400).json({
+                    error: "สลิปนี้ถูกใช้ไปแล้ว"
+                });
+            }
+
+            if (data.isAmountMatched === false) {
+                return res.status(400).json({
+                    error: "จำนวนเงินในสลิปไม่ตรงกับรายการ"
+                });
+            }
+
+            if (!data.matchedAccount) {
+                return res.status(400).json({
+                    error: "บัญชีผู้รับไม่ตรงกับบัญชีที่ลงทะเบียน"
+                });
+            }
+
+            const transactionId =
+                data.rawSlip?.transactionId ||
+                data.rawSlip?.transaction?.id ||
+                null;
+
+            const client = await pool.connect();
+
+            try {
+                await client.query("BEGIN");
+
+                const updateResult = await client.query(
+                    `
+                    UPDATE payments
+                    SET
+                        status = 'SUCCESS',
+                        transaction_id = $1
+                    WHERE id = $2
+                      AND status = 'PENDING'
+                    RETURNING amount
+                    `,
+                    [
+                        transactionId,
+                        payment.id
+                    ]
+                );
+
+                if (!updateResult.rows.length) {
+                    await client.query("ROLLBACK");
+
+                    return res.status(400).json({
+                        error: "รายการนี้ถูกดำเนินการไปแล้ว"
+                    });
+                }
+
+                await client.query(
+                    `
+                    UPDATE wallet
+                    SET balance = balance + $1
+                    WHERE id = 1
+                    `,
+                    [
+                        updateResult.rows[0].amount
+                    ]
+                );
+
+                await client.query("COMMIT");
+
+                res.json({
+                    success: true,
+                    message: "ตรวจสอบสลิปสำเร็จ เติมเงินเรียบร้อย",
+                    amount:
+                        Number(updateResult.rows[0].amount),
+                    transactionId
                 });
 
-            }
+            } catch (error) {
 
-            return res.status(501).json({
-                error: "Thunder API ยังไม่ได้ติดตั้งในระบบ"
-            });
+                await client.query("ROLLBACK");
+                throw error;
+
+            } finally {
+
+                client.release();
+            }
 
         } catch (error) {
 
@@ -261,53 +217,8 @@ app.post(
             );
 
             res.status(500).json({
-                error: "เกิดข้อผิดพลาด"
+                error: "เกิดข้อผิดพลาดในการตรวจสอบสลิป"
             });
         }
-
     }
 );
-
-/* =========================
-   Health
-========================= */
-
-app.get("/api/health", (req, res) => {
-
-    res.json({
-        status: "online"
-    });
-
-});
-
-/* =========================
-   Start
-========================= */
-
-async function start() {
-
-    try {
-
-        await initDatabase();
-
-        app.listen(PORT, () => {
-
-            console.log(
-                `Server running on port ${PORT}`
-            );
-
-        });
-
-    } catch (error) {
-
-        console.error(
-            "START ERROR:",
-            error
-        );
-
-        process.exit(1);
-    }
-
-}
-
-start();
