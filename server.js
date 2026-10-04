@@ -5,9 +5,10 @@ const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
 const { Pool } = require("pg");
-const generatePayload = require("promptpay-qr");
 
 const app = express();
+
+const PORT = process.env.PORT || 3000;
 
 const upload = multer({
     storage: multer.memoryStorage(),
@@ -26,19 +27,13 @@ const pool = new Pool({
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
-
-
 /* =========================
-   เปิดหน้าเว็บ
+   หน้าเว็บ
 ========================= */
 
 app.get("/", (req, res) => {
-    res.sendFile(
-        path.join(__dirname, "index.html")
-    );
+    res.sendFile(path.join(__dirname, "index.html"));
 });
-
 
 /* =========================
    DATABASE
@@ -66,9 +61,7 @@ async function initDatabase() {
     `);
 
     console.log("Database ready");
-
 }
-
 
 /* =========================
    ยอดเงิน
@@ -83,9 +76,7 @@ app.get("/api/balance", async (req, res) => {
         );
 
         res.json({
-            balance: Number(
-                result.rows[0].balance
-            )
+            balance: Number(result.rows[0].balance)
         });
 
     } catch (error) {
@@ -95,96 +86,49 @@ app.get("/api/balance", async (req, res) => {
         res.status(500).json({
             error: "โหลดยอดเงินไม่สำเร็จ"
         });
-
     }
+});
+
+/* =========================
+   ข้อมูลบัญชีรับเงิน
+========================= */
+
+app.get("/api/receiver", (req, res) => {
+
+    res.json({
+        success: true,
+        bank: "KBank",
+        account: process.env.RECEIVER_ACCOUNT || "2202587596",
+        name: process.env.RECEIVER_NAME || ""
+    });
 
 });
 
-
 /* =========================
-   สร้าง PromptPay QR จริง
+   QR รับเงิน
 ========================= */
 
 app.get("/api/qr", (req, res) => {
 
-    try {
+    const qrUrl = process.env.RECEIVER_QR_URL;
 
-        const amount =
-            Number(req.query.amount);
+    if (!qrUrl) {
 
-        if (
-            !Number.isFinite(amount) ||
-            amount <= 0
-        ) {
-
-            return res.status(400).json({
-                error: "จำนวนเงินไม่ถูกต้อง"
-            });
-
-        }
-
-
-        const promptpay =
-            process.env.RECEIVER_PROMPTPAY;
-
-
-        if (!promptpay) {
-
-            return res.status(500).json({
-                error:
-                    "ยังไม่ได้ตั้งค่า RECEIVER_PROMPTPAY"
-            });
-
-        }
-
-
-        /*
-         * สร้าง PromptPay Payload
-         */
-
-        const payload =
-            generatePayload(
-                promptpay,
-                {
-                    amount: amount
-                }
-            );
-
-
-        res.json({
-
-            success: true,
-
-            receiverName:
-                process.env.RECEIVER_NAME || "",
-
-            promptpay:
-                promptpay,
-
-            amount:
-                amount,
-
-            payload:
-                payload
-
-        });
-
-    } catch (error) {
-
-        console.error(
-            "QR ERROR:",
-            error
-        );
-
-        res.status(500).json({
-            error:
-                "สร้าง QR ไม่สำเร็จ"
+        return res.status(503).json({
+            error: "ยังไม่ได้ตั้งค่า QR รับเงินจาก KBank"
         });
 
     }
 
-});
+    res.json({
+        success: true,
+        bank: "KBank",
+        account: process.env.RECEIVER_ACCOUNT || "2202587596",
+        name: process.env.RECEIVER_NAME || "",
+        qr: qrUrl
+    });
 
+});
 
 /* =========================
    สร้างรายการเติมเงิน
@@ -194,41 +138,28 @@ app.post("/api/topup", async (req, res) => {
 
     try {
 
-        const amount =
-            Number(req.body.amount);
+        const amount = Number(req.body.amount);
 
-
-        if (
-            !Number.isFinite(amount) ||
-            amount <= 0
-        ) {
+        if (!Number.isFinite(amount) || amount <= 0) {
 
             return res.status(400).json({
-                error:
-                    "จำนวนเงินไม่ถูกต้อง"
+                error: "จำนวนเงินไม่ถูกต้อง"
             });
 
         }
 
-
-        const result =
-            await pool.query(
-                `
-                INSERT INTO payments (amount)
-                VALUES ($1)
-                RETURNING id, amount, status
-                `,
-                [amount]
-            );
-
+        const result = await pool.query(
+            `
+            INSERT INTO payments (amount)
+            VALUES ($1)
+            RETURNING id, amount, status
+            `,
+            [amount]
+        );
 
         res.json({
-
             success: true,
-
-            payment:
-                result.rows[0]
-
+            payment: result.rows[0]
         });
 
     } catch (error) {
@@ -236,14 +167,11 @@ app.post("/api/topup", async (req, res) => {
         console.error(error);
 
         res.status(500).json({
-            error:
-                "สร้างรายการไม่สำเร็จ"
+            error: "สร้างรายการไม่สำเร็จ"
         });
-
     }
 
 });
-
 
 /* =========================
    ตรวจสลิป
@@ -259,68 +187,56 @@ app.post(
             if (!req.file) {
 
                 return res.status(400).json({
-                    error:
-                        "กรุณาเลือกสลิป"
+                    error: "กรุณาเลือกสลิป"
                 });
 
             }
-
 
             const paymentId =
                 Number(req.body.paymentId);
 
-
             if (!paymentId) {
 
                 return res.status(400).json({
-                    error:
-                        "ไม่พบ Payment ID"
+                    error: "ไม่พบ Payment ID"
                 });
 
             }
 
-
-            const result =
-                await pool.query(
-                    `
-                    SELECT *
-                    FROM payments
-                    WHERE id = $1
-                    `,
-                    [paymentId]
-                );
-
+            const result = await pool.query(
+                `
+                SELECT *
+                FROM payments
+                WHERE id = $1
+                `,
+                [paymentId]
+            );
 
             if (!result.rows.length) {
 
                 return res.status(404).json({
-                    error:
-                        "ไม่พบรายการเติมเงิน"
+                    error: "ไม่พบรายการเติมเงิน"
                 });
 
             }
 
+            const payment = result.rows[0];
 
-            const payment =
-                result.rows[0];
-
-
-            if (
-                payment.status !==
-                "PENDING"
-            ) {
+            if (payment.status !== "PENDING") {
 
                 return res.status(400).json({
-                    error:
-                        "รายการนี้ถูกตรวจสอบแล้ว"
+                    error: "รายการนี้ถูกตรวจสอบแล้ว"
                 });
 
             }
 
-
-            /* =========================
-               Thunder Solution
-            ========================= */
+            /*
+             * Thunder Solution
+             *
+             * ตอนนี้ยังไม่ได้ใส่ API จริง
+             * เพราะต้องใช้ URL และรูปแบบ Request
+             * จาก API ของ Thunder Solution จริง
+             */
 
             if (
                 !process.env.THUNDER_API_URL ||
@@ -328,203 +244,14 @@ app.post(
             ) {
 
                 return res.status(503).json({
-                    error:
-                        "ยังไม่ได้เชื่อม Thunder Solution"
+                    error: "ยังไม่ได้เชื่อม Thunder Solution"
                 });
 
             }
 
-
-            /*
-             * ตรงนี้จะเชื่อม API จริง
-             *
-             * ยังไม่ใส่ API ปลอม
-             * เพราะต้องใช้รูปแบบ API
-             * จาก Thunder Solution จริง
-             */
-
-
-            const verification = {
-
-                success: false,
-
-                transactionId: null
-
-            };
-
-
-            if (!verification.success) {
-
-                return res.status(400).json({
-                    error:
-                        "สลิปไม่ผ่านการตรวจสอบ"
-                });
-
-            }
-
-
-            /* =========================
-               Database Transaction
-            ========================= */
-
-            const client =
-                await pool.connect();
-
-
-            try {
-
-                await client.query(
-                    "BEGIN"
-                );
-
-
-                /*
-                 * กัน Transaction ซ้ำ
-                 */
-
-                const duplicate =
-                    await client.query(
-                        `
-                        SELECT id
-                        FROM payments
-                        WHERE transaction_id = $1
-                        FOR UPDATE
-                        `,
-                        [
-                            verification.transactionId
-                        ]
-                    );
-app.get("/api/qr", (req, res) => {
-    try {
-        const amount = Number(req.query.amount);
-
-        if (!Number.isFinite(amount) || amount <= 0) {
-            return res.status(400).json({
-                error: "จำนวนเงินไม่ถูกต้อง"
+            return res.status(501).json({
+                error: "Thunder API ยังไม่ได้ติดตั้งในระบบ"
             });
-        }
-
-        const receiverName = process.env.RECEIVER_NAME;
-        const promptpay = process.env.RECEIVER_PROMPTPAY;
-
-        console.log("RECEIVER_NAME =", receiverName);
-        console.log("RECEIVER_PROMPTPAY =", promptpay);
-
-        if (!receiverName) {
-            return res.status(500).json({
-                error: "ไม่พบ RECEIVER_NAME ใน Railway Variables"
-            });
-        }
-
-        if (!promptpay) {
-            return res.status(500).json({
-                error: "ไม่พบ RECEIVER_PROMPTPAY ใน Railway Variables"
-            });
-        }
-
-        const payload = generatePayload(promptpay, {
-            amount: amount
-        });
-
-        res.json({
-            success: true,
-            receiverName: receiverName,
-            promptpay: promptpay,
-            amount: amount,
-            payload: payload
-        });
-
-    } catch (error) {
-        console.error("QR ERROR:", error);
-
-        res.status(500).json({
-            error: "สร้าง QR ไม่สำเร็จ"
-        });
-    }
-});
-
-                if (
-                    duplicate.rows.length
-                ) {
-
-                    await client.query(
-                        "ROLLBACK"
-                    );
-
-                    return res.status(409).json({
-                        error:
-                            "สลิปนี้ถูกใช้แล้ว"
-                    });
-
-                }
-
-
-                /*
-                 * เปลี่ยนสถานะ
-                 */
-
-                await client.query(
-                    `
-                    UPDATE payments
-                    SET
-                        transaction_id = $1,
-                        status = 'SUCCESS'
-                    WHERE id = $2
-                    `,
-                    [
-                        verification.transactionId,
-                        paymentId
-                    ]
-                );
-
-
-                /*
-                 * เพิ่มยอดเงิน
-                 */
-
-                await client.query(
-                    `
-                    UPDATE wallet
-                    SET balance =
-                        balance + $1
-                    WHERE id = 1
-                    `,
-                    [
-                        payment.amount
-                    ]
-                );
-
-
-                await client.query(
-                    "COMMIT"
-                );
-
-
-                res.json({
-
-                    success: true,
-
-                    amount:
-                        Number(
-                            payment.amount
-                        )
-
-                });
-
-
-            } catch (error) {
-
-                await client.query(
-                    "ROLLBACK"
-                );
-
-                throw error;
-
-            } finally {
-
-                client.release();
-
-            }
 
         } catch (error) {
 
@@ -534,18 +261,15 @@ app.get("/api/qr", (req, res) => {
             );
 
             res.status(500).json({
-                error:
-                    "เกิดข้อผิดพลาด"
+                error: "เกิดข้อผิดพลาด"
             });
-
         }
 
     }
 );
 
-
 /* =========================
-   Health Check
+   Health
 ========================= */
 
 app.get("/api/health", (req, res) => {
@@ -556,9 +280,8 @@ app.get("/api/health", (req, res) => {
 
 });
 
-
 /* =========================
-   Start Server
+   Start
 ========================= */
 
 async function start() {
@@ -567,17 +290,13 @@ async function start() {
 
         await initDatabase();
 
+        app.listen(PORT, () => {
 
-        app.listen(
-            PORT,
-            () => {
+            console.log(
+                `Server running on port ${PORT}`
+            );
 
-                console.log(
-                    `Server running on port ${PORT}`
-                );
-
-            }
-        );
+        });
 
     } catch (error) {
 
@@ -587,7 +306,6 @@ async function start() {
         );
 
         process.exit(1);
-
     }
 
 }
