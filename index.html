@@ -1,632 +1,786 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>KBank Topup</title>
-
-<style>
-
-* {
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    margin: 0;
-    min-height: 100vh;
-    background: #080b12;
-    color: white;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.container {
-    width: 420px;
-    max-width: 94%;
-
-    background: #10141d;
-
-    border: 1px solid #242b3a;
-
-    border-radius: 18px;
-
-    padding: 25px;
-
-    box-shadow:
-        0 20px 60px rgba(0,0,0,.45);
-}
-
-h1 {
-    margin: 0 0 20px;
-    text-align: center;
-}
-
-.balance {
-    background: #171d29;
-
-    border-radius: 14px;
-
-    padding: 20px;
-
-    text-align: center;
-
-    margin-bottom: 20px;
-}
-
-.balance-title {
-    color: #9ca3af;
-    font-size: 14px;
-}
-
-.balance-value {
-    font-size: 32px;
-    font-weight: bold;
-    margin-top: 8px;
-}
-
-input[type="number"] {
-
-    width: 100%;
-
-    padding: 13px;
-
-    border-radius: 10px;
-
-    border: 1px solid #30394b;
-
-    background: #0b0f17;
-
-    color: white;
-
-    outline: none;
-
-    font-size: 16px;
-}
-
-button {
-
-    width: 100%;
-
-    margin-top: 12px;
-
-    padding: 13px;
-
-    border: 0;
-
-    border-radius: 10px;
-
-    background: #2563eb;
-
-    color: white;
-
-    font-size: 15px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-button:hover {
-    background: #1d4ed8;
-}
-
-.qr-box {
-
-    display: none;
-
-    margin-top: 20px;
-
-    text-align: center;
-
-    background: #171d29;
-
-    border-radius: 14px;
-
-    padding: 18px;
-}
-
-.qr-box img {
-
-    width: 260px;
-
-    max-width: 100%;
-
-    background: white;
-
-    padding: 10px;
-
-    border-radius: 10px;
-}
-
-.receiver {
-
-    margin-top: 15px;
-
-    font-size: 14px;
-
-    color: #cbd5e1;
-
-    line-height: 1.8;
-}
-
-.upload-box {
-
-    display: none;
-
-    margin-top: 20px;
-}
-
-input[type="file"] {
-
-    width: 100%;
-
-    margin-top: 10px;
-
-    color: #cbd5e1;
-}
-
-.status {
-
-    margin-top: 15px;
-
-    text-align: center;
-
-    font-size: 14px;
-
-    color: #94a3b8;
-
-    min-height: 20px;
-}
-
-.success {
-    color: #22c55e;
-}
-
-.error {
-    color: #ef4444;
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topup System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #0b0f17;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 400px;
+            padding: 30px;
+            background: #111827;
+            border: 1px solid #263244;
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.45);
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0 0 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #8b95a7;
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 12px;
+            border: 1px solid #303b4d;
+            border-radius: 10px;
+            background: #0b111c;
+            color: white;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #4f8cff;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: 0;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            background: #2563eb;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .switch {
+            margin-top: 18px;
+            text-align: center;
+            color: #8b95a7;
+            cursor: pointer;
+        }
+
+        .switch span {
+            color: #4f8cff;
+        }
+
+        .error {
+            margin-top: 12px;
+            color: #ff6b6b;
+            text-align: center;
+        }
+
+        .success {
+            margin-top: 12px;
+            color: #4ade80;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .dashboard {
+            width: 650px;
+        }
+
+        .balance {
+            padding: 25px;
+            border-radius: 15px;
+            background: #0b111c;
+            border: 1px solid #263244;
+            margin-bottom: 20px;
+        }
+
+        .balance-title {
+            color: #8b95a7;
+        }
+
+        .balance-value {
+            font-size: 34px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .card {
+            padding: 20px;
+            background: #0b111c;
+            border: 1px solid #263244;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .logout {
+            background: #dc2626;
+        }
+
+        .logout:hover {
+            background: #b91c1c;
+        }
+
+        .qr {
+            width: 220px;
+            display: block;
+            margin: 15px auto;
+            border-radius: 10px;
+        }
+
+        .transaction {
+            padding: 12px 0;
+            border-bottom: 1px solid #263244;
+        }
+
+        .transaction:last-child {
+            border-bottom: 0;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- LOGIN -->
+<div class="container" id="loginPage">
 
-<h1>KBank Top Up</h1>
+    <h1>Login</h1>
+    <div class="subtitle">เข้าสู่ระบบ</div>
 
-<div class="balance">
+    <input id="loginUsername" type="text" placeholder="Username">
+    <input id="loginPassword" type="password" placeholder="Password">
 
-<div class="balance-title">
-ยอดเงินคงเหลือ
-</div>
+    <button onclick="login()">Login</button>
 
-<div class="balance-value">
-฿<span id="balance">0.00</span>
-</div>
+    <div id="loginMessage"></div>
 
-</div>
-
-<input
-    id="amount"
-    type="number"
-    min="1"
-    step="0.01"
-    placeholder="จำนวนเงิน"
->
-
-<button onclick="createTopup()">
-สร้างรายการเติมเงิน
-</button>
-
-<div
-    class="qr-box"
-    id="qrBox"
->
-
-<div>
-สแกน QR เพื่อโอนเงิน
-</div>
-
-<br>
-
-<img
-    id="qrImage"
-    alt="KBank QR"
->
-
-<div class="receiver">
-
-ธนาคาร:
-<b>KBank</b>
-
-<br>
-
-ผู้รับ:
-<b id="receiverName">-</b>
-
-<br>
-
-เลขบัญชี:
-<b id="receiverAccount">
-2202587596
-</b>
+    <div class="switch" onclick="showRegister()">
+        ยังไม่มีบัญชี? <span>Register</span>
+    </div>
 
 </div>
 
-</div>
 
-<div
-    class="upload-box"
-    id="uploadBox"
->
+<!-- REGISTER -->
+<div class="container hidden" id="registerPage">
 
-<input
-    type="file"
-    id="slip"
-    accept="image/*"
->
+    <h1>Register</h1>
+    <div class="subtitle">สร้างบัญชีใหม่</div>
 
-<button onclick="verifySlip()">
-ตรวจสอบสลิป
-</button>
+    <input id="registerUsername" type="text" placeholder="Username">
+    <input id="registerPassword" type="password" placeholder="Password">
 
-</div>
+    <button onclick="register()">Register</button>
 
-<div
-    class="status"
-    id="status"
-></div>
+    <div id="registerMessage"></div>
+
+    <div class="switch" onclick="showLogin()">
+        มีบัญชีอยู่แล้ว? <span>Login</span>
+    </div>
 
 </div>
+
+
+<!-- DASHBOARD -->
+<div class="container dashboard hidden" id="dashboardPage">
+
+    <h1>Dashboard</h1>
+
+    <div class="subtitle">
+        Welcome, <span id="username"></span>
+    </div>
+
+    <div class="balance">
+        <div class="balance-title">ยอดเงิน</div>
+        <div class="balance-value">
+            ฿<span id="balance">0.00</span>
+        </div>
+    </div>
+
+    <div class="card">
+
+        <h3>เติมเงิน</h3>
+
+        <input
+            id="topupAmount"
+            type="number"
+            min="1"
+            placeholder="จำนวนเงิน"
+        >
+
+        <button onclick="createTopup()">
+            สร้างรายการเติมเงิน
+        </button>
+
+        <div id="topupMessage"></div>
+
+    </div>
+
+
+    <div class="card hidden" id="paymentBox">
+
+        <h3>ชำระเงิน</h3>
+
+        <img id="qrImage" class="qr">
+
+        <p>
+            จำนวนเงิน:
+            <b>฿<span id="paymentAmount">0</span></b>
+        </p>
+
+        <p>
+            เลขรายการ:
+            <span id="paymentId"></span>
+        </p>
+
+        <input
+            id="slip"
+            type="file"
+            accept="image/*"
+        >
+
+        <button onclick="verifySlip()">
+            ตรวจสอบสลิป
+        </button>
+
+        <div id="slipMessage"></div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>ประวัติรายการ</h3>
+
+        <div id="transactions">
+            กำลังโหลด...
+        </div>
+
+    </div>
+
+
+    <button class="logout" onclick="logout()">
+        Logout
+    </button>
+
+</div>
+
 
 <script>
 
 let currentPaymentId = null;
 
 
-/* =========================
-   Status
-========================= */
+// =========================
+// PAGE
+// =========================
 
-function setStatus(
-    message,
-    error = false,
-    success = false
-) {
+function showLogin() {
 
-    const element =
-        document.getElementById("status");
+    document.getElementById("loginPage")
+        .classList.remove("hidden");
 
-    element.textContent =
-        message;
+    document.getElementById("registerPage")
+        .classList.add("hidden");
 
-    element.className =
-        "status";
-
-    if (error) {
-        element.classList.add("error");
-    }
-
-    if (success) {
-        element.classList.add("success");
-    }
-
+    document.getElementById("dashboardPage")
+        .classList.add("hidden");
 }
 
 
-/* =========================
-   Balance
-========================= */
+function showRegister() {
+
+    document.getElementById("loginPage")
+        .classList.add("hidden");
+
+    document.getElementById("registerPage")
+        .classList.remove("hidden");
+
+    document.getElementById("dashboardPage")
+        .classList.add("hidden");
+}
+
+
+function showDashboard() {
+
+    document.getElementById("loginPage")
+        .classList.add("hidden");
+
+    document.getElementById("registerPage")
+        .classList.add("hidden");
+
+    document.getElementById("dashboardPage")
+        .classList.remove("hidden");
+
+    loadUser();
+    loadBalance();
+    loadTransactions();
+}
+
+
+// =========================
+// REGISTER
+// =========================
+
+async function register() {
+
+    const username =
+        document.getElementById("registerUsername").value.trim();
+
+    const password =
+        document.getElementById("registerPassword").value;
+
+    const message =
+        document.getElementById("registerMessage");
+
+    message.className = "";
+    message.textContent = "กำลังสมัคร...";
+
+    try {
+
+        const response = await fetch("/api/auth/register", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                username,
+                password
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+
+            message.className = "error";
+            message.textContent =
+                data.error || "สมัครสมาชิกไม่สำเร็จ";
+
+            return;
+        }
+
+        message.className = "success";
+        message.textContent =
+            "สมัครสมาชิกสำเร็จ กำลังเข้าสู่ระบบ...";
+
+        setTimeout(() => {
+
+            showLogin();
+
+            document.getElementById("loginUsername").value =
+                username;
+
+        }, 800);
+
+    } catch (error) {
+
+        message.className = "error";
+        message.textContent = "เชื่อมต่อ Server ไม่สำเร็จ";
+
+    }
+}
+
+
+// =========================
+// LOGIN
+// =========================
+
+async function login() {
+
+    const username =
+        document.getElementById("loginUsername").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value;
+
+    const message =
+        document.getElementById("loginMessage");
+
+    message.className = "";
+    message.textContent = "กำลังเข้าสู่ระบบ...";
+
+    try {
+
+        const response = await fetch("/api/auth/login", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                username,
+                password
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+
+            message.className = "error";
+            message.textContent =
+                data.error || "เข้าสู่ระบบไม่สำเร็จ";
+
+            return;
+        }
+
+        showDashboard();
+
+    } catch (error) {
+
+        message.className = "error";
+        message.textContent =
+            "เชื่อมต่อ Server ไม่สำเร็จ";
+
+    }
+}
+
+
+// =========================
+// USER
+// =========================
+
+async function loadUser() {
+
+    const response =
+        await fetch("/api/auth/me");
+
+    if (!response.ok) {
+
+        showLogin();
+        return;
+    }
+
+    const data =
+        await response.json();
+
+    document.getElementById("username")
+        .textContent = data.user.username;
+}
+
+
+// =========================
+// BALANCE
+// =========================
 
 async function loadBalance() {
+
+    const response =
+        await fetch("/api/balance");
+
+    if (!response.ok) return;
+
+    const data =
+        await response.json();
+
+    document.getElementById("balance")
+        .textContent =
+        Number(data.balance).toFixed(2);
+}
+
+
+// =========================
+// TOPUP
+// =========================
+
+async function createTopup() {
+
+    const amount =
+        Number(document.getElementById("topupAmount").value);
+
+    const message =
+        document.getElementById("topupMessage");
+
+    if (!amount || amount <= 0) {
+
+        message.className = "error";
+        message.textContent =
+            "กรุณาใส่จำนวนเงิน";
+
+        return;
+    }
 
     try {
 
         const response =
-            await fetch("/api/balance");
+            await fetch("/api/topup", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    amount
+                })
+
+            });
 
         const data =
             await response.json();
 
         if (!response.ok) {
-            throw new Error();
-        }
 
-        document.getElementById(
-            "balance"
-        ).textContent =
-            Number(data.balance).toFixed(2);
-
-    } catch {
-
-        setStatus(
-            "โหลดข้อมูลไม่สำเร็จ",
-            true
-        );
-
-    }
-
-}
-
-
-/* =========================
-   สร้างรายการ
-========================= */
-
-async function createTopup() {
-
-    const amount =
-        Number(
-            document.getElementById(
-                "amount"
-            ).value
-        );
-
-    if (!Number.isFinite(amount) || amount <= 0) {
-
-        setStatus(
-            "กรุณาใส่จำนวนเงิน",
-            true
-        );
-
-        return;
-    }
-
-    try {
-
-        setStatus(
-            "กำลังสร้างรายการ..."
-        );
-
-
-        /* สร้าง Payment */
-
-        const paymentResponse =
-            await fetch(
-                "/api/topup",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        amount: amount
-                    })
-                }
-            );
-
-
-        const paymentData =
-            await paymentResponse.json();
-
-
-        if (!paymentResponse.ok) {
-
-            setStatus(
-                paymentData.error ||
-                "สร้างรายการไม่สำเร็จ",
-                true
-            );
+            message.className = "error";
+            message.textContent =
+                data.error || "สร้างรายการไม่สำเร็จ";
 
             return;
         }
-
 
         currentPaymentId =
-            paymentData.payment.id;
+            data.payment.id;
 
+        document.getElementById("paymentId")
+            .textContent =
+            currentPaymentId;
 
-        /* โหลดข้อมูล QR */
+        document.getElementById("paymentAmount")
+            .textContent =
+            Number(data.payment.amount).toFixed(2);
 
-        const qrResponse =
-            await fetch(
-                "/api/qr"
-            );
+        document.getElementById("qrImage")
+            .src = data.qrUrl;
 
+        document.getElementById("paymentBox")
+            .classList.remove("hidden");
 
-        const qrData =
-            await qrResponse.json();
-
-
-        if (!qrResponse.ok) {
-
-            setStatus(
-                qrData.error ||
-                "ยังไม่มี QR รับเงิน",
-                true
-            );
-
-            return;
-        }
-
-
-        /* แสดงข้อมูล */
-
-        document.getElementById(
-            "receiverName"
-        ).textContent =
-            qrData.name || "-";
-
-
-        document.getElementById(
-            "receiverAccount"
-        ).textContent =
-            qrData.account ||
-            "2202587596";
-
-
-        /*
-         * แสดง QR ที่สร้างจาก KBank/K PLUS
-         */
-
-        document.getElementById(
-            "qrImage"
-        ).src =
-            qrData.qr;
-
-
-        document.getElementById(
-            "qrBox"
-        ).style.display =
-            "block";
-
-
-        document.getElementById(
-            "uploadBox"
-        ).style.display =
-            "block";
-
-
-        setStatus(
-            "กรุณาโอนเงินแล้วอัปโหลดสลิป"
-        );
+        message.className = "success";
+        message.textContent =
+            "สร้างรายการเติมเงินแล้ว";
 
     } catch (error) {
 
-        console.error(error);
-
-        setStatus(
-            "เชื่อมต่อเซิร์ฟเวอร์ไม่ได้",
-            true
-        );
+        message.className = "error";
+        message.textContent =
+            "เชื่อมต่อ Server ไม่สำเร็จ";
 
     }
-
 }
 
 
-/* =========================
-   ตรวจสลิป
-========================= */
+// =========================
+// VERIFY SLIP
+// =========================
 
 async function verifySlip() {
 
     const file =
-        document.getElementById(
-            "slip"
-        ).files[0];
+        document.getElementById("slip").files[0];
 
-
-    if (!currentPaymentId) {
-
-        setStatus(
-            "กรุณาสร้างรายการก่อน",
-            true
-        );
-
-        return;
-    }
-
+    const message =
+        document.getElementById("slipMessage");
 
     if (!file) {
 
-        setStatus(
-            "กรุณาเลือกสลิป",
-            true
-        );
+        message.className = "error";
+        message.textContent =
+            "กรุณาเลือกสลิป";
 
         return;
     }
 
+    if (!currentPaymentId) {
+
+        message.className = "error";
+        message.textContent =
+            "ไม่พบรายการเติมเงิน";
+
+        return;
+    }
 
     const formData =
         new FormData();
 
-
-    formData.append(
-        "slip",
-        file
-    );
-
+    formData.append("slip", file);
 
     formData.append(
         "paymentId",
         currentPaymentId
     );
 
+    message.className = "";
+    message.textContent =
+        "กำลังตรวจสอบสลิป...";
 
     try {
 
-        setStatus(
-            "กำลังตรวจสอบสลิป..."
-        );
-
-
         const response =
-            await fetch(
-                "/api/verify-slip",
-                {
-                    method: "POST",
-                    body: formData
-                }
-            );
+            await fetch("/api/verify-slip", {
 
+                method: "POST",
+
+                body: formData
+
+            });
 
         const data =
             await response.json();
 
-
         if (!response.ok) {
 
-            setStatus(
-                data.error ||
-                "ตรวจสอบไม่สำเร็จ",
-                true
-            );
+            message.className = "error";
+            message.textContent =
+                data.error || "ตรวจสอบไม่สำเร็จ";
 
             return;
         }
 
-
-        setStatus(
-            "เติมเงินสำเร็จ",
-            false,
-            true
-        );
-
+        message.className = "success";
+        message.textContent =
+            "เติมเงินสำเร็จ!";
 
         await loadBalance();
+        await loadTransactions();
 
+    } catch (error) {
 
-        document.getElementById(
-            "slip"
-        ).value = "";
-
-
-        currentPaymentId = null;
-
-
-    } catch {
-
-        setStatus(
-            "เชื่อมต่อเซิร์ฟเวอร์ไม่ได้",
-            true
-        );
+        message.className = "error";
+        message.textContent =
+            "เชื่อมต่อ Server ไม่สำเร็จ";
 
     }
-
 }
 
 
-loadBalance();
+// =========================
+// TRANSACTIONS
+// =========================
+
+async function loadTransactions() {
+
+    const box =
+        document.getElementById("transactions");
+
+    try {
+
+        const response =
+            await fetch("/api/transactions");
+
+        if (!response.ok) {
+
+            box.textContent =
+                "โหลดข้อมูลไม่สำเร็จ";
+
+            return;
+        }
+
+        const data =
+            await response.json();
+
+        if (!data.transactions ||
+            data.transactions.length === 0) {
+
+            box.textContent =
+                "ยังไม่มีรายการ";
+
+            return;
+        }
+
+        box.innerHTML =
+            data.transactions.map(item => `
+
+                <div class="transaction">
+
+                    <div>
+                        ฿${Number(item.amount).toFixed(2)}
+                    </div>
+
+                    <div>
+                        สถานะ: ${item.status}
+                    </div>
+
+                    <small>
+                        ${new Date(item.created_at)
+                            .toLocaleString("th-TH")}
+                    </small>
+
+                </div>
+
+            `).join("");
+
+    } catch (error) {
+
+        box.textContent =
+            "โหลดข้อมูลไม่สำเร็จ";
+
+    }
+}
+
+
+// =========================
+// LOGOUT
+// =========================
+
+async function logout() {
+
+    await fetch("/api/auth/logout", {
+        method: "POST"
+    });
+
+    currentPaymentId = null;
+
+    showLogin();
+}
+
+
+// =========================
+// AUTO LOGIN
+// =========================
+
+async function checkSession() {
+
+    try {
+
+        const response =
+            await fetch("/api/auth/me");
+
+        if (response.ok) {
+
+            showDashboard();
+
+        } else {
+
+            showLogin();
+
+        }
+
+    } catch {
+
+        showLogin();
+
+    }
+}
+
+
+checkSession();
 
 </script>
 
 </body>
-
 </html>
