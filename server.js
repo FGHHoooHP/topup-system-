@@ -776,7 +776,10 @@ app.post(
                 success: true,
 
                 payment:
-                    result.rows[0]
+                    result.rows[0],
+
+                qrUrl:
+                    process.env.RECEIVER_QR_URL
             });
 
         } catch (error) {
