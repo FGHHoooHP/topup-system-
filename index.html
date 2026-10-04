@@ -1,212 +1,213 @@
 <!DOCTYPE html>
+
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Topup System</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+```
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: #080b12;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: #080b12;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-        .container {
-            width: 420px;
-            max-width: 94%;
-            background: #10141d;
-            border: 1px solid #242b3a;
-            border-radius: 18px;
-            padding: 25px;
-            box-shadow: 0 20px 60px rgba(0,0,0,.45);
-        }
+    .container {
+        width: 420px;
+        max-width: 94%;
+        background: #10141d;
+        border: 1px solid #242b3a;
+        border-radius: 18px;
+        padding: 25px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
 
-        h1 {
-            margin: 0 0 20px;
-            text-align: center;
-        }
+    h1 {
+        margin: 0 0 20px;
+        text-align: center;
+    }
 
-        .balance {
-            background: #171d29;
-            border-radius: 14px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    .balance {
+        background: #171d29;
+        border-radius: 14px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-        .balance-title {
-            color: #9ca3af;
-            font-size: 14px;
-        }
+    .balance-title {
+        color: #9ca3af;
+        font-size: 14px;
+    }
 
-        .balance-value {
-            font-size: 32px;
-            font-weight: bold;
-            margin-top: 8px;
-        }
+    .balance-value {
+        font-size: 32px;
+        font-weight: bold;
+        margin-top: 8px;
+    }
 
-        input[type="number"] {
-            width: 100%;
-            padding: 13px;
-            border-radius: 10px;
-            border: 1px solid #30394b;
-            background: #0b0f17;
-            color: white;
-            outline: none;
-            font-size: 16px;
-        }
+    input[type="number"] {
+        width: 100%;
+        padding: 13px;
+        border-radius: 10px;
+        border: 1px solid #30394b;
+        background: #0b0f17;
+        color: white;
+        outline: none;
+        font-size: 16px;
+    }
 
-        button {
-            width: 100%;
-            margin-top: 12px;
-            padding: 13px;
-            border: 0;
-            border-radius: 10px;
-            background: #2563eb;
-            color: white;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    button {
+        width: 100%;
+        margin-top: 12px;
+        padding: 13px;
+        border: 0;
+        border-radius: 10px;
+        background: #2563eb;
+        color: white;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-        button:hover {
-            background: #1d4ed8;
-        }
+    button:hover {
+        background: #1d4ed8;
+    }
 
-        .qr-box {
-            display: none;
-            margin-top: 20px;
-            text-align: center;
-            background: #171d29;
-            border-radius: 14px;
-            padding: 18px;
-        }
+    .qr-box {
+        display: none;
+        margin-top: 20px;
+        text-align: center;
+        background: #171d29;
+        border-radius: 14px;
+        padding: 18px;
+    }
 
-        .qr-box img {
-            width: 230px;
-            max-width: 100%;
-            background: white;
-            padding: 10px;
-            border-radius: 10px;
-        }
+    .qr-box img {
+        width: 230px;
+        max-width: 100%;
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+    }
 
-        .receiver {
-            margin-top: 12px;
-            font-size: 14px;
-            color: #cbd5e1;
-            line-height: 1.7;
-        }
+    .receiver {
+        margin-top: 12px;
+        font-size: 14px;
+        color: #cbd5e1;
+        line-height: 1.7;
+    }
 
-        .upload-box {
-            display: none;
-            margin-top: 20px;
-        }
+    .upload-box {
+        display: none;
+        margin-top: 20px;
+    }
 
-        input[type="file"] {
-            width: 100%;
-            margin-top: 10px;
-            color: #cbd5e1;
-        }
+    input[type="file"] {
+        width: 100%;
+        margin-top: 10px;
+        color: #cbd5e1;
+    }
 
-        .status {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 14px;
-            color: #94a3b8;
-            min-height: 20px;
-        }
+    .status {
+        margin-top: 15px;
+        text-align: center;
+        font-size: 14px;
+        color: #94a3b8;
+        min-height: 20px;
+    }
 
-        .success {
-            color: #22c55e;
-        }
+    .success {
+        color: #22c55e;
+    }
 
-        .error {
-            color: #ef4444;
-        }
-    </style>
+    .error {
+        color: #ef4444;
+    }
+</style>
+```
+
 </head>
 
 <body>
 
 <div class="container">
 
-    <h1>Top Up</h1>
+```
+<h1>Top Up</h1>
 
-    <div class="balance">
-        <div class="balance-title">
-            ยอดเงินคงเหลือ
-        </div>
-
-        <div class="balance-value">
-            ฿<span id="balance">0.00</span>
-        </div>
+<div class="balance">
+    <div class="balance-title">
+        ยอดเงินคงเหลือ
     </div>
 
-    <input
-        id="amount"
-        type="number"
-        min="1"
-        step="0.01"
-        placeholder="จำนวนเงิน"
-    >
+    <div class="balance-value">
+        ฿<span id="balance">0.00</span>
+    </div>
+</div>
 
-    <button onclick="createTopup()">
-        สร้าง QR เติมเงิน
-    </button>
+<input
+    id="amount"
+    type="number"
+    min="1"
+    step="0.01"
+    placeholder="จำนวนเงิน"
+>
 
-    <div class="qr-box" id="qrBox">
+<button onclick="createTopup()">
+    สร้าง QR เติมเงิน
+</button>
 
-        <div>
-            สแกน QR เพื่อโอนเงิน
-        </div>
+<div class="qr-box" id="qrBox">
 
+    <div>
+        สแกน QR เพื่อโอนเงิน
+    </div>
+
+    <br>
+
+    <img id="qrImage" alt="PromptPay QR">
+
+    <div class="receiver">
+        ผู้รับ:
+        <b id="receiverName">-</b>
         <br>
 
-        <img id="qrImage">
-
-        <div class="receiver">
-            ผู้รับ:
-            <b id="receiverName">-</b>
-            <br>
-
-            PromptPay:
-            <b id="receiverPromptpay">-</b>
-        </div>
-
+        PromptPay:
+        <b id="receiverPromptpay">-</b>
     </div>
-
-    <div class="upload-box" id="uploadBox">
-
-        <input
-            type="file"
-            id="slip"
-            accept="image/*"
-        >
-
-        <button onclick="verifySlip()">
-            ตรวจสอบสลิป
-        </button>
-
-    </div>
-
-    <div
-        class="status"
-        id="status"
-    ></div>
 
 </div>
 
+<div class="upload-box" id="uploadBox">
+
+    <input
+        type="file"
+        id="slip"
+        accept="image/*"
+    >
+
+    <button onclick="verifySlip()">
+        ตรวจสอบสลิป
+    </button>
+
+</div>
+
+<div class="status" id="status"></div>
+```
+
+</div>
 
 <script>
 
@@ -225,11 +226,14 @@ async function loadBalance() {
         const data =
             await response.json();
 
+        if (!response.ok) {
+            throw new Error();
+        }
+
         document.getElementById(
             "balance"
         ).textContent =
-            Number(data.balance)
-            .toFixed(2);
+            Number(data.balance).toFixed(2);
 
     } catch {
 
@@ -243,32 +247,7 @@ async function loadBalance() {
 }
 
 
-/* โหลดข้อมูล QR */
-
-async function loadQR() {
-
-    const response =
-        await fetch("/api/qr");
-
-    const data =
-        await response.json();
-
-    document.getElementById(
-        "receiverName"
-    ).textContent =
-        data.receiverName || "-";
-
-    document.getElementById(
-        "receiverPromptpay"
-    ).textContent =
-        data.promptpay || "";
-
-    return data;
-
-}
-
-
-/* สร้างรายการ */
+/* สร้างรายการ + QR จริง */
 
 async function createTopup() {
 
@@ -279,7 +258,7 @@ async function createTopup() {
             ).value
         );
 
-    if (!amount || amount <= 0) {
+    if (!Number.isFinite(amount) || amount <= 0) {
 
         setStatus(
             "กรุณาใส่จำนวนเงิน",
@@ -289,15 +268,17 @@ async function createTopup() {
         return;
     }
 
-
     try {
 
         setStatus(
-            "กำลังสร้างรายการ..."
+            "กำลังสร้าง QR..."
         );
 
+        /*
+         * 1. สร้างรายการเติมเงิน
+         */
 
-        const response =
+        const topupResponse =
             await fetch(
                 "/api/topup",
                 {
@@ -314,15 +295,13 @@ async function createTopup() {
                 }
             );
 
+        const topupData =
+            await topupResponse.json();
 
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
+        if (!topupResponse.ok) {
 
             setStatus(
-                data.error ||
+                topupData.error ||
                 "สร้างรายการไม่สำเร็จ",
                 true
             );
@@ -330,37 +309,73 @@ async function createTopup() {
             return;
         }
 
-
         currentPaymentId =
-            data.payment.id;
-
-
-        const qr =
-            await loadQR();
+            topupData.payment.id;
 
 
         /*
-         * ตรงนี้เป็น QR ชั่วคราว
-         *
-         * ยังไม่ใช่ PromptPay QR จริง
+         * 2. ขอ PromptPay QR จริงจาก Backend
          */
 
-        const qrText =
-            `${qr.promptpay}?amount=${amount}`;
+        const qrResponse =
+            await fetch(
+                `/api/qr?amount=${encodeURIComponent(amount)}`
+            );
 
+        const qrData =
+            await qrResponse.json();
+
+        if (!qrResponse.ok) {
+
+            setStatus(
+                qrData.error ||
+                "สร้าง QR ไม่สำเร็จ",
+                true
+            );
+
+            return;
+        }
+
+
+        /*
+         * 3. แสดงข้อมูลผู้รับ
+         */
+
+        document.getElementById(
+            "receiverName"
+        ).textContent =
+            qrData.receiverName || "-";
+
+        document.getElementById(
+            "receiverPromptpay"
+        ).textContent =
+            qrData.promptpay || "-";
+
+
+        /*
+         * 4. แสดง QR จาก PromptPay Payload จริง
+         */
 
         document.getElementById(
             "qrImage"
         ).src =
             "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
-            encodeURIComponent(qrText);
+            encodeURIComponent(qrData.payload);
 
+
+        /*
+         * 5. แสดงกล่อง QR
+         */
 
         document.getElementById(
             "qrBox"
         ).style.display =
             "block";
 
+
+        /*
+         * 6. แสดงช่องอัปโหลดสลิป
+         */
 
         document.getElementById(
             "uploadBox"
@@ -369,10 +384,12 @@ async function createTopup() {
 
 
         setStatus(
-            "สร้างรายการแล้ว กรุณาโอนเงินและอัปโหลดสลิป"
+            "สร้าง QR แล้ว กรุณาโอนเงินและอัปโหลดสลิป"
         );
 
-    } catch {
+    } catch (error) {
+
+        console.error(error);
 
         setStatus(
             "เชื่อมต่อเซิร์ฟเวอร์ไม่ได้",
@@ -480,6 +497,8 @@ async function verifySlip() {
         ).value = "";
 
 
+        currentPaymentId = null;
+
     } catch {
 
         setStatus(
@@ -512,19 +531,11 @@ function setStatus(
         "status";
 
     if (error) {
-
-        element.classList.add(
-            "error"
-        );
-
+        element.classList.add("error");
     }
 
     if (success) {
-
-        element.classList.add(
-            "success"
-        );
-
+        element.classList.add("success");
     }
 
 }
