@@ -7,947 +7,187 @@
 <title>GAME STORE</title>
 
 <style>
-*{
-    box-sizing:border-box;
-}
-
-:root{
-    color-scheme:dark;
-    --bg:#05070b;
-    --panel:rgba(15,18,25,.72);
-    --panel2:rgba(10,13,19,.82);
-    --border:rgba(255,255,255,.09);
-    --text:#f4f7fb;
-    --muted:#8993a4;
-    --muted2:#5e6878;
-    --accent:#8ea9ff;
-    --accent2:#657fff;
-    --success:#68e0a1;
-    --danger:#ff7585;
-}
-
-html{
-    scroll-behavior:smooth;
-}
-
-body{
-    margin:0;
-    min-height:100vh;
-    color:var(--text);
-    font-family:Tahoma,Arial,sans-serif;
-    background:
-        radial-gradient(circle at 15% 15%,rgba(77,103,190,.18),transparent 32%),
-        radial-gradient(circle at 85% 75%,rgba(88,63,160,.14),transparent 30%),
-        radial-gradient(circle at 50% 100%,rgba(44,80,140,.10),transparent 35%),
-        var(--bg);
-    overflow-x:hidden;
-}
-
-/* =========================
-   BACKGROUND
-========================= */
-
-body::before{
-    content:"";
-    position:fixed;
-    inset:-30%;
-    pointer-events:none;
-    background:
-        radial-gradient(circle at 20% 30%,rgba(120,150,255,.07),transparent 25%),
-        radial-gradient(circle at 80% 60%,rgba(170,100,255,.06),transparent 25%);
-    filter:blur(50px);
-    animation:bgFloat 14s ease-in-out infinite alternate;
-}
-
-@keyframes bgFloat{
-    from{transform:translate3d(-2%,-2%,0) scale(1)}
-    to{transform:translate3d(2%,2%,0) scale(1.06)}
-}
-
-.grid-bg{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    opacity:.18;
-    background-image:
-        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
-    background-size:70px 70px;
-    mask-image:linear-gradient(to bottom,black,transparent 85%);
-}
-
-/* =========================
-   GENERAL
-========================= */
-
-.hidden{
-    display:none!important;
-}
-
-.page{
-    width:100%;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:40px 20px;
-    position:relative;
-    z-index:1;
-}
-
-.fade-in{
-    animation:fadeIn .5s cubic-bezier(.2,.8,.2,1);
-}
-
-@keyframes fadeIn{
-    from{
-        opacity:0;
-        transform:translateY(12px) scale(.985);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0) scale(1);
-    }
-}
-
-/* =========================
-   AUTH
-========================= */
-
-.auth-shell{
-    width:min(1050px,100%);
-    min-height:650px;
-    display:grid;
-    grid-template-columns:1.05fr .95fr;
-    background:rgba(9,12,17,.76);
-    border:1px solid var(--border);
-    border-radius:28px;
-    overflow:hidden;
-    box-shadow:
-        0 40px 120px rgba(0,0,0,.65),
-        inset 0 1px rgba(255,255,255,.04);
-    backdrop-filter:blur(24px);
-}
-
-.hero{
-    position:relative;
-    padding:65px 55px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    border-right:1px solid rgba(255,255,255,.06);
-    overflow:hidden;
-}
-
-.hero::before{
-    content:"";
-    position:absolute;
-    width:400px;
-    height:400px;
-    left:-180px;
-    top:-170px;
-    background:radial-gradient(circle,rgba(94,126,255,.22),transparent 70%);
-    filter:blur(10px);
-}
-
-.hero::after{
-    content:"";
-    position:absolute;
-    width:350px;
-    height:350px;
-    right:-180px;
-    bottom:-180px;
-    background:radial-gradient(circle,rgba(128,81,255,.14),transparent 70%);
-}
-
-.logo{
-    width:76px;
-    height:76px;
-    border-radius:22px;
-    display:grid;
-    place-items:center;
-    font-size:29px;
-    font-weight:900;
-    font-style:italic;
-    background:
-        linear-gradient(145deg,#252d3d,#080b11);
-    border:1px solid rgba(255,255,255,.13);
-    box-shadow:
-        0 18px 45px rgba(0,0,0,.45),
-        inset 0 1px rgba(255,255,255,.08);
-    text-shadow:0 0 25px rgba(150,180,255,.8);
-    margin-bottom:30px;
-    position:relative;
-    z-index:1;
-}
-
-.eyebrow{
-    font-size:10px;
-    letter-spacing:3px;
-    color:#8894a8;
-    font-weight:700;
-    position:relative;
-    z-index:1;
-}
-
-.hero h2{
-    font-size:42px;
-    line-height:1.2;
-    margin:20px 0 18px;
-    letter-spacing:-1px;
-    position:relative;
-    z-index:1;
-}
-
-.hero p{
-    color:#8d97a8;
-    line-height:1.9;
-    font-size:14px;
-    position:relative;
-    z-index:1;
-}
-
-.features{
-    margin-top:32px;
-    display:grid;
-    gap:11px;
-    position:relative;
-    z-index:1;
-}
-
-.feature{
-    padding:14px 15px;
-    border-radius:13px;
-    border:1px solid rgba(255,255,255,.055);
-    background:rgba(255,255,255,.018);
-    color:#b8c1d0;
-    font-size:12px;
-    transition:.25s ease;
-}
-
-.feature:hover{
-    transform:translateX(5px);
-    border-color:rgba(150,175,255,.2);
-    background:rgba(130,155,255,.045);
-}
-
-.feature span{
-    color:#a9bcff;
-    margin-right:9px;
-}
-
-/* =========================
-   FORM
-========================= */
-
-.auth-form{
-    padding:55px 48px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-}
-
-.auth-form h1{
-    font-size:28px;
-    margin:0 0 8px;
-}
-
-.subtitle{
-    color:#747f91;
-    font-size:13px;
-    line-height:1.7;
-}
-
-.tabs{
-    display:flex;
-    gap:5px;
-    padding:5px;
-    margin:30px 0 22px;
-    background:#0a0d12;
-    border:1px solid rgba(255,255,255,.07);
-    border-radius:15px;
-}
-
-.tabs button{
-    flex:1;
-    border:0;
-    background:transparent;
-    color:#697384;
-    padding:12px;
-    border-radius:10px;
-    margin:0;
-    font-size:11px;
-    letter-spacing:2px;
-}
-
-.tabs button.active{
-    color:#10151e;
-    background:linear-gradient(120deg,#f5f8ff,#9eafd0);
-    box-shadow:0 7px 25px rgba(130,155,220,.14);
-}
-
-label{
-    display:block;
-    color:#858fa0;
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:1.5px;
-    margin:17px 0 8px;
-}
-
-.input-wrap{
-    position:relative;
-}
-
-.input-wrap input{
-    padding-right:48px;
-}
-
-input{
-    width:100%;
-    padding:15px 16px;
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,.08);
-    outline:none;
-    background:#070a0f;
-    color:white;
-    font:inherit;
-    font-size:14px;
-    transition:.25s ease;
-}
-
-input:hover{
-    border-color:rgba(255,255,255,.14);
-}
-
-input:focus{
-    border-color:rgba(150,175,255,.55);
-    box-shadow:
-        0 0 0 3px rgba(120,150,255,.08),
-        0 0 30px rgba(90,120,255,.06);
-}
-
-input::placeholder{
-    color:#4e5867;
-}
-
-.password-toggle{
-    position:absolute;
-    right:7px;
-    top:50%;
-    transform:translateY(-50%);
-    width:38px;
-    height:38px;
-    padding:0;
-    margin:0;
-    border:0;
-    background:transparent;
-    color:#657084;
-    cursor:pointer;
-}
-
-.password-toggle:hover{
-    color:#b7c5df;
-    transform:translateY(-50%);
-    filter:none;
-}
-
-.primary-btn{
-    position:relative;
-    overflow:hidden;
-    width:100%;
-    padding:15px;
-    margin-top:22px;
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,.13);
-    background:linear-gradient(110deg,#f7faff,#a3b3cf);
-    color:#0d1118;
-    font-weight:900;
-    letter-spacing:1.5px;
-    cursor:pointer;
-    transition:
-        transform .2s ease,
-        filter .2s ease,
-        box-shadow .2s ease;
-}
-
-.primary-btn:hover{
-    transform:translateY(-2px);
-    filter:brightness(1.08);
-    box-shadow:0 12px 35px rgba(130,155,255,.14);
-}
-
-.primary-btn:active{
-    transform:translateY(0) scale(.985);
-}
-
-.primary-btn.loading{
-    pointer-events:none;
-    opacity:.7;
-}
-
-.spinner{
-    width:17px;
-    height:17px;
-    border:2px solid rgba(0,0,0,.2);
-    border-top-color:#111827;
-    border-radius:50%;
-    display:inline-block;
-    vertical-align:middle;
-    animation:spin .7s linear infinite;
-}
-
-@keyframes spin{
-    to{transform:rotate(360deg)}
-}
-
-.switch{
-    text-align:center;
-    margin-top:24px;
-    color:#697383;
-    font-size:12px;
-}
-
-.switch button{
-    width:auto;
-    padding:0;
-    margin:0;
-    border:0;
-    background:transparent;
-    color:#c5d0e3;
-    font-size:12px;
-    cursor:pointer;
-}
-
-.note{
-    text-align:center;
-    color:#4e5766;
-    font-size:10px;
-    line-height:1.8;
-    margin-top:20px;
-}
-
-/* =========================
-   DASHBOARD
-========================= */
-
-.dashboard-page{
-    width:100%;
-    min-height:100vh;
-    padding:30px;
-    position:relative;
-    z-index:1;
-}
-
-.dashboard{
-    width:min(1150px,100%);
-    margin:auto;
-}
-
-.dash-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:20px;
-    margin-bottom:25px;
-}
-
-.user-info h1{
-    margin:9px 0 5px;
-    font-size:29px;
-}
-
-.user-info .subtitle{
-    margin:0;
-}
-
-.user-badge{
-    padding:10px 15px;
-    border-radius:30px;
-    border:1px solid rgba(150,175,255,.16);
-    background:rgba(120,150,255,.045);
-    color:#aab9d6;
-    font-size:10px;
-    letter-spacing:2px;
-}
-
-/* =========================
-   WALLET
-========================= */
-
-.wallet{
-    position:relative;
-    overflow:hidden;
-    padding:30px;
-    min-height:190px;
-    border-radius:23px;
-    border:1px solid rgba(160,180,255,.16);
-    background:
-        radial-gradient(circle at 85% 20%,rgba(123,150,255,.19),transparent 35%),
-        linear-gradient(125deg,#1d2637,#0d121b 65%);
-    box-shadow:
-        0 25px 70px rgba(0,0,0,.3),
-        inset 0 1px rgba(255,255,255,.07);
-    margin-bottom:22px;
-}
-
-.wallet::before{
-    content:"";
-    position:absolute;
-    width:260px;
-    height:260px;
-    right:-100px;
-    top:-130px;
-    border-radius:50%;
-    border:1px solid rgba(255,255,255,.05);
-    box-shadow:
-        0 0 0 35px rgba(255,255,255,.015),
-        0 0 0 70px rgba(255,255,255,.01);
-}
-
-.wallet-title{
-    color:#9ca9be;
-    font-size:11px;
-    letter-spacing:1.5px;
-}
-
-.balance-value{
-    font-size:46px;
-    font-weight:900;
-    letter-spacing:-2px;
-    margin:13px 0 5px;
-}
-
-.wallet small{
-    color:#687589;
-}
-
-.wallet-chip{
-    position:absolute;
-    right:30px;
-    bottom:27px;
-    width:45px;
-    height:34px;
-    border-radius:8px;
-    border:1px solid rgba(255,255,255,.15);
-    background:linear-gradient(135deg,#7787a0,#252d3b);
-    opacity:.7;
-}
-
-/* =========================
-   GRID
-========================= */
-
-.dash-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:22px;
-}
-
-.card{
-    background:rgba(10,13,18,.76);
-    border:1px solid rgba(255,255,255,.075);
-    border-radius:20px;
-    padding:24px;
-    box-shadow:
-        0 20px 55px rgba(0,0,0,.22),
-        inset 0 1px rgba(255,255,255,.025);
-    backdrop-filter:blur(18px);
-    transition:.3s ease;
-}
-
-.card:hover{
-    border-color:rgba(150,175,255,.14);
-    transform:translateY(-2px);
-}
-
-.card h3{
-    margin:0 0 7px;
-    font-size:17px;
-}
-
-.card-desc{
-    color:#788496;
-    font-size:12px;
-    line-height:1.7;
-}
-
-.amount-row{
-    position:relative;
-}
-
-.currency{
-    position:absolute;
-    right:15px;
-    top:50%;
-    transform:translateY(-50%);
-    color:#68768b;
-    font-size:12px;
-    pointer-events:none;
-}
-
-.card button{
-    margin-top:17px;
-}
-
-.secondary-btn{
-    width:100%;
-    padding:13px;
-    border-radius:11px;
-    background:#151b26;
-    color:#b7c4da;
-    border:1px solid rgba(255,255,255,.08);
-    cursor:pointer;
-    font-weight:700;
-    transition:.2s;
-}
-
-.secondary-btn:hover{
-    background:#1a2230;
-    border-color:rgba(150,175,255,.18);
-}
-
-.payment{
-    margin-top:20px;
-    padding-top:20px;
-    border-top:1px solid rgba(255,255,255,.06);
-    animation:fadeIn .4s ease;
-}
-
-.qr{
-    width:220px;
-    max-width:100%;
-    display:block;
-    margin:20px auto;
-    padding:10px;
-    border-radius:15px;
-    background:white;
-    box-shadow:0 15px 40px rgba(0,0,0,.35);
-}
-
-.payment-info{
-    padding:13px;
-    border-radius:11px;
-    background:#080b10;
-    border:1px solid rgba(255,255,255,.06);
-    font-size:12px;
-    color:#8d98aa;
-    line-height:1.9;
-}
-
-.payment-id{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-}
-
-.copy-btn{
-    width:auto!important;
-    margin:0!important;
-    padding:7px 10px!important;
-    border-radius:8px!important;
-    background:#151d2b!important;
-    color:#aebddd!important;
-    border:1px solid rgba(255,255,255,.08)!important;
-    font-size:10px;
-}
-
-/* =========================
-   FILE
-========================= */
-
-.file-box{
-    margin-top:7px;
-    padding:12px;
-    border:1px dashed rgba(255,255,255,.11);
-    border-radius:12px;
-    background:#080b10;
-}
-
-input[type=file]{
-    padding:4px;
-    border:0;
-    background:transparent;
-    font-size:11px;
-}
-
-input[type=file]::file-selector-button{
-    padding:9px 12px;
-    border:0;
-    border-radius:8px;
-    background:#202838;
-    color:#dce5f4;
-    cursor:pointer;
-    margin-right:8px;
-}
-
-/* =========================
-   TRANSACTIONS
-========================= */
-
-.transaction-list{
-    margin-top:20px;
-    max-height:430px;
-    overflow:auto;
-    scrollbar-width:thin;
-}
-
-.transaction{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    padding:15px 0;
-    border-bottom:1px solid rgba(255,255,255,.055);
-}
-
-.transaction:last-child{
-    border-bottom:0;
-}
-
-.transaction-left{
-    min-width:0;
-}
-
-.transaction-amount{
-    font-size:16px;
-    font-weight:800;
-    margin-bottom:4px;
-}
-
-.transaction-date{
-    color:#596577;
-    font-size:10px;
-}
-
-.status{
-    padding:6px 9px;
-    border-radius:20px;
-    font-size:9px;
-    letter-spacing:.5px;
-    white-space:nowrap;
-}
-
-.status-success{
-    color:#72e5ab;
-    background:rgba(80,220,150,.08);
-    border:1px solid rgba(80,220,150,.13);
-}
-
-.status-pending{
-    color:#e6c77d;
-    background:rgba(230,190,90,.07);
-    border:1px solid rgba(230,190,90,.12);
-}
-
-.status-failed{
-    color:#ff7d8d;
-    background:rgba(255,80,100,.07);
-    border:1px solid rgba(255,80,100,.12);
-}
-
-/* =========================
-   LOGOUT
-========================= */
-
-.logout{
-    width:auto;
-    padding:11px 18px;
-    border-radius:10px;
-    border:1px solid rgba(255,90,110,.13);
-    background:rgba(255,60,80,.045);
-    color:#e28d99;
-    cursor:pointer;
-    font-size:11px;
-    transition:.2s;
-}
-
-.logout:hover{
-    background:rgba(255,60,80,.08);
-}
-
-/* =========================
-   TOAST
-========================= */
-
-.toast-container{
-    position:fixed;
-    top:22px;
-    right:22px;
-    z-index:9999;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-.toast{
-    min-width:260px;
-    max-width:350px;
-    padding:14px 16px;
-    border-radius:13px;
-    border:1px solid rgba(255,255,255,.09);
-    background:rgba(12,16,23,.9);
-    box-shadow:0 20px 50px rgba(0,0,0,.45);
-    backdrop-filter:blur(20px);
-    color:#dbe3f2;
-    font-size:12px;
-    animation:toastIn .35s cubic-bezier(.2,.8,.2,1);
-}
-
-.toast.success{
-    border-color:rgba(80,220,150,.18);
-}
-
-.toast.error{
-    border-color:rgba(255,80,100,.18);
-}
-
-@keyframes toastIn{
-    from{
-        opacity:0;
-        transform:translateX(25px) scale(.96);
-    }
-    to{
-        opacity:1;
-        transform:translateX(0) scale(1);
-    }
-}
-
-.toast.out{
-    animation:toastOut .3s ease forwards;
-}
-
-@keyframes toastOut{
-    to{
-        opacity:0;
-        transform:translateX(20px);
-    }
-}
-
-/* =========================
-   MOBILE
-========================= */
-
+*{box-sizing:border-box}
+:root{color-scheme:dark;--bg:#05070b;--panel:rgba(15,18,25,.72);--panel2:rgba(10,13,19,.82);--border:rgba(255,255,255,.09);--text:#f4f7fb;--muted:#8993a4;--muted2:#5e6878;--accent:#8ea9ff;--accent2:#657fff;--success:#68e0a1;--danger:#ff7585}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;color:var(--text);font-family:Tahoma,Arial,sans-serif;background:radial-gradient(circle at 15% 15%,rgba(77,103,190,.18),transparent 32%),radial-gradient(circle at 85% 75%,rgba(88,63,160,.14),transparent 30%),radial-gradient(circle at 50% 100%,rgba(44,80,140,.10),transparent 35%),var(--bg);overflow-x:hidden}
+
+/* BACKGROUND */
+body::before{content:"";position:fixed;inset:-30%;pointer-events:none;background:radial-gradient(circle at 20% 30%,rgba(120,150,255,.07),transparent 25%),radial-gradient(circle at 80% 60%,rgba(170,100,255,.06),transparent 25%);filter:blur(50px);animation:bgFloat 14s ease-in-out infinite alternate}
+@keyframes bgFloat{from{transform:translate3d(-2%,-2%,0) scale(1)}to{transform:translate3d(2%,2%,0) scale(1.06)}}
+.grid-bg{position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:70px 70px;mask-image:linear-gradient(to bottom,black,transparent 85%)}
+
+/* GENERAL */
+.hidden{display:none!important}
+.page{width:100%;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:40px 20px;position:relative;z-index:1}
+.fade-in{animation:fadeIn .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* AUTH */
+.auth-shell{width:min(1050px,100%);min-height:650px;display:grid;grid-template-columns:1.05fr .95fr;background:rgba(9,12,17,.76);border:1px solid var(--border);border-radius:28px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.65),inset 0 1px rgba(255,255,255,.04);backdrop-filter:blur(24px)}
+.hero{position:relative;padding:65px 55px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid rgba(255,255,255,.06);overflow:hidden}
+.hero::before{content:"";position:absolute;width:400px;height:400px;left:-180px;top:-170px;background:radial-gradient(circle,rgba(94,126,255,.22),transparent 70%);filter:blur(10px)}
+.hero::after{content:"";position:absolute;width:350px;height:350px;right:-180px;bottom:-180px;background:radial-gradient(circle,rgba(128,81,255,.14),transparent 70%)}
+.logo{width:76px;height:76px;border-radius:22px;display:grid;place-items:center;font-size:29px;font-weight:900;font-style:italic;background:linear-gradient(145deg,#252d3d,#080b11);border:1px solid rgba(255,255,255,.13);box-shadow:0 18px 45px rgba(0,0,0,.45),inset 0 1px rgba(255,255,255,.08);text-shadow:0 0 25px rgba(150,180,255,.8);margin-bottom:30px;position:relative;z-index:1}
+.eyebrow{font-size:10px;letter-spacing:3px;color:#8894a8;font-weight:700;position:relative;z-index:1}
+.hero h2{font-size:42px;line-height:1.2;margin:20px 0 18px;letter-spacing:-1px;position:relative;z-index:1}
+.hero p{color:#8d97a8;line-height:1.9;font-size:14px;position:relative;z-index:1}
+.features{margin-top:32px;display:grid;gap:11px;position:relative;z-index:1}
+.feature{padding:14px 15px;border-radius:13px;border:1px solid rgba(255,255,255,.055);background:rgba(255,255,255,.018);color:#b8c1d0;font-size:12px;transition:.25s ease}
+.feature:hover{transform:translateX(5px);border-color:rgba(150,175,255,.2);background:rgba(130,155,255,.045)}
+.feature span{color:#a9bcff;margin-right:9px}
+
+/* FORM */
+.auth-form{padding:55px 48px;display:flex;flex-direction:column;justify-content:center}
+.auth-form h1{font-size:28px;margin:0 0 8px}
+.subtitle{color:#747f91;font-size:13px;line-height:1.7}
+.tabs{display:flex;gap:5px;padding:5px;margin:30px 0 22px;background:#0a0d12;border:1px solid rgba(255,255,255,.07);border-radius:15px}
+.tabs button{flex:1;border:0;background:transparent;color:#697384;padding:12px;border-radius:10px;margin:0;font-size:11px;letter-spacing:2px}
+.tabs button.active{color:#10151e;background:linear-gradient(120deg,#f5f8ff,#9eafd0);box-shadow:0 7px 25px rgba(130,155,220,.14)}
+label{display:block;color:#858fa0;font-size:10px;font-weight:700;letter-spacing:1.5px;margin:17px 0 8px}
+.input-wrap{position:relative}
+.input-wrap input{padding-right:48px}
+input{width:100%;padding:15px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);outline:none;background:#070a0f;color:white;font:inherit;font-size:14px;transition:.25s ease}
+input:hover{border-color:rgba(255,255,255,.14)}
+input:focus{border-color:rgba(150,175,255,.55);box-shadow:0 0 0 3px rgba(120,150,255,.08),0 0 30px rgba(90,120,255,.06)}
+input::placeholder{color:#4e5867}
+.password-toggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:38px;height:38px;padding:0;margin:0;border:0;background:transparent;color:#657084;cursor:pointer}
+.password-toggle:hover{color:#b7c5df;transform:translateY(-50%);filter:none}
+.primary-btn{position:relative;overflow:hidden;width:100%;padding:15px;margin-top:22px;border-radius:12px;border:1px solid rgba(255,255,255,.13);background:linear-gradient(110deg,#f7faff,#a3b3cf);color:#0d1118;font-weight:900;letter-spacing:1.5px;cursor:pointer;transition:transform .2s ease,filter .2s ease,box-shadow .2s ease}
+.primary-btn:hover{transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 12px 35px rgba(130,155,255,.14)}
+.primary-btn:active{transform:translateY(0) scale(.985)}
+.primary-btn.loading{pointer-events:none;opacity:.7}
+.spinner{width:17px;height:17px;border:2px solid rgba(0,0,0,.2);border-top-color:#111827;border-radius:50%;display:inline-block;vertical-align:middle;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.switch{text-align:center;margin-top:24px;color:#697383;font-size:12px}
+.switch button{width:auto;padding:0;margin:0;border:0;background:transparent;color:#c5d0e3;font-size:12px;cursor:pointer}
+.note{text-align:center;color:#4e5766;font-size:10px;line-height:1.8;margin-top:20px}
+
+/* DASHBOARD */
+.dashboard-page{width:100%;min-height:100vh;padding:30px;position:relative;z-index:1}
+.dashboard{width:min(1150px,100%);margin:auto}
+.dash-head{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:25px}
+.user-info h1{margin:9px 0 5px;font-size:29px}
+.user-info .subtitle{margin:0}
+.user-badge{padding:10px 15px;border-radius:30px;border:1px solid rgba(150,175,255,.16);background:rgba(120,150,255,.045);color:#aab9d6;font-size:10px;letter-spacing:2px}
+
+/* WALLET */
+.wallet{position:relative;overflow:hidden;padding:30px;min-height:190px;border-radius:23px;border:1px solid rgba(160,180,255,.16);background:radial-gradient(circle at 85% 20%,rgba(123,150,255,.19),transparent 35%),linear-gradient(125deg,#1d2637,#0d121b 65%);box-shadow:0 25px 70px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.07);margin-bottom:22px}
+.wallet::before{content:"";position:absolute;width:260px;height:260px;right:-100px;top:-130px;border-radius:50%;border:1px solid rgba(255,255,255,.05);box-shadow:0 0 0 35px rgba(255,255,255,.015),0 0 0 70px rgba(255,255,255,.01)}
+.wallet-title{color:#9ca9be;font-size:11px;letter-spacing:1.5px}
+.balance-value{font-size:46px;font-weight:900;letter-spacing:-2px;margin:13px 0 5px}
+.wallet small{color:#687589}
+.wallet-chip{position:absolute;right:30px;bottom:27px;width:45px;height:34px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:linear-gradient(135deg,#7787a0,#252d3b);opacity:.7}
+
+/* GRID */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.card{background:rgba(10,13,18,.76);border:1px solid rgba(255,255,255,.075);border-radius:20px;padding:24px;box-shadow:0 20px 55px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.025);backdrop-filter:blur(18px);transition:.3s ease}
+.card:hover{border-color:rgba(150,175,255,.14);transform:translateY(-2px)}
+.card h3{margin:0 0 7px;font-size:17px}
+.card-desc{color:#788496;font-size:12px;line-height:1.7}
+.amount-row{position:relative}
+.currency{position:absolute;right:15px;top:50%;transform:translateY(-50%);color:#68768b;font-size:12px;pointer-events:none}
+.card button{margin-top:17px}
+.secondary-btn{width:100%;padding:13px;border-radius:11px;background:#151b26;color:#b7c4da;border:1px solid rgba(255,255,255,.08);cursor:pointer;font-weight:700;transition:.2s}
+.secondary-btn:hover{background:#1a2230;border-color:rgba(150,175,255,.18)}
+.payment{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.06);animation:fadeIn .4s ease}
+.qr{width:220px;max-width:100%;display:block;margin:20px auto;padding:10px;border-radius:15px;background:white;box-shadow:0 15px 40px rgba(0,0,0,.35)}
+.payment-info{padding:13px;border-radius:11px;background:#080b10;border:1px solid rgba(255,255,255,.06);font-size:12px;color:#8d98aa;line-height:1.9}
+.payment-id{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.copy-btn{width:auto!important;margin:0!important;padding:7px 10px!important;border-radius:8px!important;background:#151d2b!important;color:#aebddd!important;border:1px solid rgba(255,255,255,.08)!important;font-size:10px}
+
+/* FILE */
+.file-box{margin-top:7px;padding:12px;border:1px dashed rgba(255,255,255,.11);border-radius:12px;background:#080b10}
+input[type=file]{padding:4px;border:0;background:transparent;font-size:11px}
+input[type=file]::file-selector-button{padding:9px 12px;border:0;border-radius:8px;background:#202838;color:#dce5f4;cursor:pointer;margin-right:8px}
+
+/* TRANSACTIONS */
+.transaction-list{margin-top:20px;max-height:430px;overflow:auto;scrollbar-width:thin}
+.transaction{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:15px 0;border-bottom:1px solid rgba(255,255,255,.055)}
+.transaction:last-child{border-bottom:0}
+.transaction-left{min-width:0}
+.transaction-amount{font-size:16px;font-weight:800;margin-bottom:4px}
+.transaction-date{color:#596577;font-size:10px}
+.status{padding:6px 9px;border-radius:20px;font-size:9px;letter-spacing:.5px;white-space:nowrap}
+.status-success{color:#72e5ab;background:rgba(80,220,150,.08);border:1px solid rgba(80,220,150,.13)}
+.status-pending{color:#e6c77d;background:rgba(230,190,90,.07);border:1px solid rgba(230,190,90,.12)}
+.status-failed{color:#ff7d8d;background:rgba(255,80,100,.07);border:1px solid rgba(255,80,100,.12)}
+
+/* LOGOUT */
+.logout{width:auto;padding:11px 18px;border-radius:10px;border:1px solid rgba(255,90,110,.13);background:rgba(255,60,80,.045);color:#e28d99;cursor:pointer;font-size:11px;transition:.2s}
+.logout:hover{background:rgba(255,60,80,.08)}
+
+/* TOAST */
+.toast-container{position:fixed;top:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+.toast{min-width:260px;max-width:350px;padding:14px 16px;border-radius:13px;border:1px solid rgba(255,255,255,.09);background:rgba(12,16,23,.9);box-shadow:0 20px 50px rgba(0,0,0,.45);backdrop-filter:blur(20px);color:#dbe3f2;font-size:12px;animation:toastIn .35s cubic-bezier(.2,.8,.2,1)}
+.toast.success{border-color:rgba(80,220,150,.18)}
+.toast.error{border-color:rgba(255,80,100,.18)}
+@keyframes toastIn{from{opacity:0;transform:translateX(25px) scale(.96)}to{opacity:1;transform:translateX(0) scale(1)}}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+
+/* MOBILE */
 @media(max-width:800px){
-
-    .page{
-        padding:20px 12px;
-    }
-
-    .auth-shell{
-        grid-template-columns:1fr;
-        min-height:auto;
-    }
-
-    .hero{
-        padding:35px 28px;
-        border-right:0;
-        border-bottom:1px solid rgba(255,255,255,.06);
-    }
-
-    .hero h2{
-        font-size:31px;
-    }
-
-    .features{
-        display:none;
-    }
-
-    .auth-form{
-        padding:35px 28px;
-    }
-
-    .dash-grid{
-        grid-template-columns:1fr;
-    }
-
-    .dashboard-page{
-        padding:18px 12px;
-    }
-
-    .dash-head{
-        align-items:flex-start;
-    }
-
-    .user-badge{
-        font-size:8px;
-        padding:8px 10px;
-    }
-
-    .wallet{
-        padding:24px;
-    }
-
-    .balance-value{
-        font-size:38px;
-    }
-}
-
+.page{padding:20px 12px}
+.auth-shell{grid-template-columns:1fr;min-height:auto}
+.hero{padding:35px 28px;border-right:0;border-bottom:1px solid rgba(255,255,255,.06)}
+.hero h2{font-size:31px}
+.features{display:none}
+.auth-form{padding:35px 28px}
+.dash-grid{grid-template-columns:1fr}
+.dashboard-page{padding:18px 12px}
+.dash-head{align-items:flex-start}
+.user-badge{font-size:8px;padding:8px 10px}
+.wallet{padding:24px}
+.balance-value{font-size:38px}}
 @media(max-width:480px){
+.hero{padding:28px 22px}
+.auth-form{padding:28px 20px}
+.logo{width:58px;height:58px;font-size:24px;border-radius:17px}
+.hero h2{font-size:27px}
+.user-info h1{font-size:23px}
+.dash-head{flex-direction:column}
+.user-badge{align-self:flex-start}
+.card{padding:19px}
+.toast-container{left:12px;right:12px;top:12px}
+.toast{min-width:0;max-width:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
-    .hero{
-        padding:28px 22px;
-    }
+/* Store navigation and separate UI pages */
+body{background:radial-gradient(ellipse at 90% 0%,#12213955,transparent 45%),#070809}body:before{display:none}.grid-bg{opacity:.06}.dashboard-page{padding:0!important;min-height:100vh}.store-nav{max-width:1240px;margin:auto;padding:22px 30px;display:flex;align-items:center;gap:32px;border-bottom:1px solid #ffffff0b;position:relative;z-index:20}.store-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:white;font-size:17px;font-weight:900;white-space:nowrap}.brand-mark{font-size:23px;font-style:italic;color:#d7e6ff;text-shadow:3px 2px #296ca8}.store-nav nav{display:flex;gap:8px}.store-nav nav button{border:0;background:transparent;color:#9398a2;padding:11px 18px;border-radius:24px;font:inherit;font-size:13px;cursor:pointer}.store-nav nav button.active{color:#101217;background:#f4f6f9;font-weight:bold}.account-wrap{margin-left:auto;position:relative;padding-bottom:10px;margin-bottom:-10px}.account-trigger{display:flex;align-items:center;gap:10px;background:#0b0d11;border:1px solid #262a31;border-radius:25px;padding:6px 13px 6px 6px;color:#e6e9ef;cursor:pointer;font-size:12px}.avatar{width:29px;height:29px;display:grid;place-items:center;background:linear-gradient(135deg,#344668,#211526);border-radius:50%;font-weight:bold}.account-menu{position:absolute;right:0;top:100%;width:235px;border:1px solid #2d2e32;border-radius:20px;background:#101112;box-shadow:0 18px 50px #0009;overflow:hidden;visibility:hidden;opacity:0;transform:translateY(5px);transition:.18s}.account-wrap:hover .account-menu,.account-wrap:focus-within .account-menu,.account-wrap.is-open .account-menu{visibility:visible;opacity:1;transform:none}.menu-balance{padding:20px;border-bottom:1px solid #ffffff12}.menu-balance small{display:block;color:#868b93;font-size:11px;margin-bottom:9px}.menu-balance strong{font-size:19px}.account-menu button{width:100%;display:flex;gap:16px;text-align:left;background:none;border:0;color:#b9bec7;padding:16px 20px;cursor:pointer;font:inherit;font-size:13px}.account-menu button:hover{background:#ffffff06}.account-menu .menu-logout{color:#ff3468}.store-main{max-width:1140px;margin:auto;padding:64px 28px 24px;position:relative;z-index:1}.section-heading{padding-bottom:28px;border-bottom:1px solid #ffffff0b;margin-bottom:24px}.section-heading h1{font-size:30px;margin:12px 0}.section-heading p{font-size:13px;color:#8a919d;line-height:1.8}.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.method-card{position:relative;display:flex;align-items:center;gap:17px;padding:30px 22px;background:linear-gradient(120deg,#141516,#0d0e10);border:1px solid #2b2c30;border-radius:15px;color:white;text-align:left;cursor:pointer;min-height:145px;transition:.2s}.method-card:hover{border-color:#748299;transform:translateY(-3px);box-shadow:0 14px 40px #0005}.slip-icon{position:relative;flex-shrink:0;width:52px;height:56px;display:grid;place-items:center;background:#090b0d;border:1px solid #292c31;border-radius:12px;font-size:33px;color:#e2e7ef}.slip-icon i{position:absolute;bottom:4px;right:5px;background:#263d40;border-radius:50%;font-size:12px;font-style:normal;padding:2px}.method-copy strong{display:block;font-size:17px}.method-copy small{display:block;color:#92969e;font-size:11px;line-height:1.7;margin:6px 0}.method-copy em{font-size:10px;color:#44c89d;font-style:normal}.method-arrow{position:absolute;right:16px;top:18px;color:#818792}.method-note{font-size:11px;color:#777f8c;margin-top:23px;border-left:2px solid #344458;padding-left:12px}.back-link{background:none;border:0;color:#a5b3cb;padding:0;margin-bottom:26px;cursor:pointer}.home-hero{position:relative;padding:60px 38px;min-height:380px;border:1px solid #ffffff0c;border-radius:24px;background:linear-gradient(120deg,#161c27,#090b0f);overflow:hidden}.home-hero h1{font-size:clamp(32px,5vw,58px);line-height:1.25;margin:22px 0}.home-hero h1 span{color:#acbbd3}.home-hero p{color:#8d98a9;font-size:14px;line-height:1.9}.home-cta{background:#eef3fc;border:0;border-radius:12px;color:#111620;padding:14px 22px;font-weight:bold;cursor:pointer;margin-top:15px}.hero-orbit{position:absolute;right:40px;top:90px;font-size:145px;font-weight:900;font-style:italic;transform:rotate(-15deg);color:#ffffff08;text-shadow:8px 8px #6aa6ff09;pointer-events:none}.home-panels{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}.home-panels article{padding:24px;border:1px solid #ffffff0b;background:#0e1013;border-radius:16px}.home-panels article span{font-size:10px;color:#8494af;letter-spacing:1px}.home-panels article h3{font-size:17px}.home-panels article p{font-size:12px;color:#828c9c;line-height:1.8}.store-footer{margin-top:80px;padding:24px 0;border-top:1px solid #ffffff0b;color:#737c8a;font-size:11px;letter-spacing:1px;display:flex;justify-content:space-between}.page,.toast-container{position:relative;z-index:2}.toast-container{position:fixed;z-index:9999}button:focus-visible,a:focus-visible{outline:2px solid #9bb9e4;outline-offset:4px}@media(max-width:850px){.method-grid{grid-template-columns:repeat(2,1fr)}.store-nav{gap:18px;padding:18px}.home-panels{grid-template-columns:1fr}}@media(max-width:550px){.store-nav{flex-wrap:wrap;gap:12px}.store-brand{font-size:14px}.store-nav nav{order:3;width:100%;padding-top:8px}.store-nav nav button{flex:1}.store-main{padding:36px 18px 20px}.method-grid{grid-template-columns:1fr}.home-hero{padding:34px 23px}.hero-orbit{right:-10px;top:120px;font-size:100px}.account-menu{width:220px}.store-footer{gap:15px;flex-direction:column}.section-heading h1{font-size:26px}}
 
-    .auth-form{
-        padding:28px 20px;
-    }
+/* =====================================================
+   UI ENHANCE: glossy hover / smooth reveal / snow
+===================================================== */
+.card,.home-panels article,.feature{position:relative}
+.card,.method-card,.home-panels article,.home-hero,.feature{transition:transform .55s cubic-bezier(.2,.8,.2,1),border-color .45s ease,box-shadow .55s ease,background-color .45s ease}
+.card::after,.method-card::after,.home-panels article::after,.home-hero::after,.feature::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .6s ease;background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(170,196,255,.16),transparent 55%),linear-gradient(135deg,rgba(255,255,255,.05),transparent 40%)}
+.card::before,.method-card::before,.home-panels article::before,.home-hero::before,.feature::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;opacity:0;transition:opacity .6s ease;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(205,222,255,.9),rgba(140,160,255,.25) 40%,transparent 70%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+.card:hover::after,.method-card:hover::after,.home-panels article:hover::after,.home-hero:hover::after,.feature:hover::after,.card:hover::before,.method-card:hover::before,.home-panels article:hover::before,.home-hero:hover::before,.feature:hover::before{opacity:1}
+.card:hover,.method-card:hover,.home-panels article:hover{box-shadow:0 24px 60px rgba(0,0,0,.4),0 0 40px rgba(110,140,255,.07),inset 0 1px rgba(255,255,255,.12);background-color:rgba(255,255,255,.012)}
+.primary-btn,.home-cta{position:relative;overflow:hidden}
+.primary-btn::after,.home-cta::after{content:"";position:absolute;top:0;left:-130%;width:60%;height:100%;pointer-events:none;background:linear-gradient(105deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-20deg);transition:left .9s cubic-bezier(.2,.8,.2,1)}
+.primary-btn:hover::after,.home-cta:hover::after{left:150%}
+.home-cta,.secondary-btn,.store-nav nav button,.account-trigger{transition:transform .35s ease,background .35s ease,border-color .35s ease,color .35s ease,box-shadow .35s ease}
+.home-cta:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(150,180,255,.22)}
+.store-nav nav button:not(.active):hover{background:rgba(255,255,255,.07);color:#fff}
+.account-trigger:hover{border-color:rgba(160,185,255,.4);box-shadow:0 0 24px rgba(110,140,255,.12)}
+.transaction{transition:background .3s ease}
+.transaction:hover{background:linear-gradient(90deg,rgba(130,155,255,.06),transparent)}
+.reveal{opacity:0;transform:translateY(24px) scale(.98);filter:blur(10px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1),filter .9s cubic-bezier(.2,.8,.2,1);transition-delay:var(--rd,0ms);will-change:opacity,transform,filter}
+.reveal.in{opacity:1;transform:none;filter:blur(0)}
+.snow-canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.cursor-glow{position:fixed;left:0;top:0;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;pointer-events:none;z-index:0;opacity:0;transition:opacity .8s ease;background:radial-gradient(circle,rgba(120,150,255,.13),rgba(150,100,255,.05) 45%,transparent 70%);will-change:transform}
+.cursor-glow.on{opacity:1}
+@media(hover:none){.cursor-glow{display:none}}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;filter:none;transition:none}.cursor-glow{display:none}}
 
-    .logo{
-        width:58px;
-        height:58px;
-        font-size:24px;
-        border-radius:17px;
-    }
-
-    .hero h2{
-        font-size:27px;
-    }
-
-    .user-info h1{
-        font-size:23px;
-    }
-
-    .dash-head{
-        flex-direction:column;
-    }
-
-    .user-badge{
-        align-self:flex-start;
-    }
-
-    .card{
-        padding:19px;
-    }
-
-    .toast-container{
-        left:12px;
-        right:12px;
-        top:12px;
-    }
-
-    .toast{
-        min-width:0;
-        max-width:none;
-    }
-}
-
-@media(prefers-reduced-motion:reduce){
-
-    *,
-    *::before,
-    *::after{
-        animation-duration:.01ms!important;
-        animation-iteration-count:1!important;
-        transition-duration:.01ms!important;
-        scroll-behavior:auto!important;
-    }
-}
-
-/* Store navigation and separate UI pages. Existing API code is unchanged. */
-body{background:radial-gradient(ellipse at 90% 0%,#12213955,transparent 45%),#070809}body:before{display:none}.grid-bg{opacity:.06}.dashboard-page{padding:0!important;min-height:100vh}.store-nav{max-width:1240px;margin:auto;padding:22px 30px;display:flex;align-items:center;gap:32px;border-bottom:1px solid #ffffff0b;position:relative;z-index:20}.store-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:white;font-size:17px;font-weight:900;white-space:nowrap}.brand-mark{font-size:23px;font-style:italic;color:#d7e6ff;text-shadow:3px 2px #296ca8}.store-nav nav{display:flex;gap:8px}.store-nav nav button{border:0;background:transparent;color:#9398a2;padding:11px 18px;border-radius:24px;font:inherit;font-size:13px;cursor:pointer}.store-nav nav button.active{color:#101217;background:#f4f6f9;font-weight:bold}.account-wrap{margin-left:auto;position:relative;padding-bottom:10px;margin-bottom:-10px}.account-trigger{display:flex;align-items:center;gap:10px;background:#0b0d11;border:1px solid #262a31;border-radius:25px;padding:6px 13px 6px 6px;color:#e6e9ef;cursor:pointer;font-size:12px}.avatar{width:29px;height:29px;display:grid;place-items:center;background:linear-gradient(135deg,#344668,#211526);border-radius:50%;font-weight:bold}.account-menu{position:absolute;right:0;top:100%;width:235px;border:1px solid #2d2e32;border-radius:20px;background:#101112;box-shadow:0 18px 50px #0009;overflow:hidden;visibility:hidden;opacity:0;transform:translateY(5px);transition:.18s}.account-wrap:hover .account-menu,.account-wrap:focus-within .account-menu,.account-wrap.is-open .account-menu{visibility:visible;opacity:1;transform:none}.menu-balance{padding:20px;border-bottom:1px solid #ffffff12}.menu-balance small{display:block;color:#868b93;font-size:11px;margin-bottom:9px}.menu-balance strong{font-size:19px}.account-menu button{width:100%;display:flex;gap:16px;text-align:left;background:none;border:0;color:#b9bec7;padding:16px 20px;cursor:pointer;font:inherit;font-size:13px}.account-menu button:hover{background:#ffffff06}.account-menu .menu-logout{color:#ff3468}.store-main{max-width:1140px;margin:auto;padding:64px 28px 24px;position:relative;z-index:1}.section-heading{padding-bottom:28px;border-bottom:1px solid #ffffff0b;margin-bottom:24px}.section-heading h1{font-size:30px;margin:12px 0}.section-heading p{font-size:13px;color:#8a919d;line-height:1.8}.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.method-card{position:relative;display:flex;align-items:center;gap:17px;padding:30px 22px;background:linear-gradient(120deg,#141516,#0d0e10);border:1px solid #2b2c30;border-radius:15px;color:white;text-align:left;cursor:pointer;min-height:145px;transition:.2s}.method-card:hover{border-color:#748299;transform:translateY(-3px);box-shadow:0 14px 40px #0005}.slip-icon{position:relative;flex-shrink:0;width:52px;height:56px;display:grid;place-items:center;background:#090b0d;border:1px solid #292c31;border-radius:12px;font-size:33px;color:#e2e7ef}.slip-icon i{position:absolute;bottom:4px;right:5px;background:#263d40;border-radius:50%;font-size:12px;font-style:normal;padding:2px}.method-copy strong{display:block;font-size:17px}.method-copy small{display:block;color:#92969e;font-size:11px;line-height:1.7;margin:6px 0}.method-copy em{font-size:10px;color:#44c89d;font-style:normal}.method-arrow{position:absolute;right:16px;top:18px;color:#818792}.method-note{font-size:11px;color:#777f8c;margin-top:23px;border-left:2px solid #344458;padding-left:12px}.back-link{background:none;border:0;color:#a5b3cb;padding:0;margin-bottom:26px;cursor:pointer}.home-hero{position:relative;padding:60px 38px;min-height:380px;border:1px solid #ffffff0c;border-radius:24px;background:linear-gradient(120deg,#161c27,#090b0f);overflow:hidden}.home-hero h1{font-size:clamp(32px,5vw,58px);line-height:1.25;margin:22px 0}.home-hero h1 span{color:#acbbd3}.home-hero p{color:#8d98a9;font-size:14px;line-height:1.9}.home-cta{background:#eef3fc;border:0;border-radius:12px;color:#111620;padding:14px 22px;font-weight:bold;cursor:pointer;margin-top:15px}.hero-orbit{position:absolute;right:40px;top:90px;font-size:145px;font-weight:900;font-style:italic;transform:rotate(-15deg);color:#ffffff08;text-shadow:8px 8px #6aa6ff09;pointer-events:none}.home-panels{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}.home-panels article{padding:24px;border:1px solid #ffffff0b;background:#0e1013;border-radius:16px}.home-panels article span{font-size:10px;color:#8494af;letter-spacing:1px}.home-panels article h3{font-size:17px}.home-panels article p{font-size:12px;color:#828c9c;line-height:1.8}.store-footer{margin-top:80px;padding:24px 0;border-top:1px solid #ffffff0b;color:#737c8a;font-size:11px;letter-spacing:1px;display:flex;justify-content:space-between}.snow-layer{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}.snow-dot{position:absolute;top:-12px;border-radius:50%;background:white;box-shadow:0 0 4px #ffffff40;animation:snowFall linear infinite}.page,.toast-container{position:relative;z-index:2}.toast-container{position:fixed;z-index:9999}@keyframes snowFall{0%{transform:translate3d(0,-12px,0);opacity:0}10%{opacity:var(--opacity)}90%{opacity:var(--opacity)}100%{transform:translate3d(var(--drift),105vh,0);opacity:0}}button:focus-visible,a:focus-visible{outline:2px solid #9bb9e4;outline-offset:4px}@media(max-width:850px){.method-grid{grid-template-columns:repeat(2,1fr)}.store-nav{gap:18px;padding:18px}.home-panels{grid-template-columns:1fr}}@media(max-width:550px){.store-nav{flex-wrap:wrap;gap:12px}.store-brand{font-size:14px}.store-nav nav{order:3;width:100%;padding-top:8px}.store-nav nav button{flex:1}.store-main{padding:36px 18px 20px}.method-grid{grid-template-columns:1fr}.home-hero{padding:34px 23px}.hero-orbit{right:-10px;top:120px;font-size:100px}.account-menu{width:220px}.store-footer{gap:15px;flex-direction:column}.section-heading h1{font-size:26px}}@media(prefers-reduced-motion:reduce){.snow-dot{animation:none!important;top:var(--static-top)}}
-
+/* ===== PAGE TRANSITIONS: zoom + fade + slide ===== */
+@keyframes viewIn{from{opacity:0;transform:translate3d(calc(var(--dir,1)*70px),0,0) scale(.93);filter:blur(10px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes viewOut{from{opacity:1;transform:none;filter:blur(0)}to{opacity:0;transform:translate3d(calc(var(--dir,1)*-70px),0,0) scale(1.06);filter:blur(10px)}}
+.view-enter{animation:viewIn .75s cubic-bezier(.16,.84,.24,1) both}
+.view-leave{animation:viewOut .24s cubic-bezier(.4,0,1,1) both;pointer-events:none}
+@media(prefers-reduced-motion:reduce){.view-enter,.view-leave{animation:none!important}}
 </style>
 </head>
 
@@ -957,1342 +197,486 @@ body{background:radial-gradient(ellipse at 90% 0%,#12213955,transparent 45%),#07
 
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- =========================
-     LOGIN
-========================= -->
-
+<!-- LOGIN -->
 <section class="page" id="loginPage">
-
 <div class="auth-shell fade-in">
-
     <aside class="hero">
-
         <div class="logo">GX</div>
-
-        <div class="eyebrow">
-            GAME STORE / MEMBER
-        </div>
-
-        <h2>
-            Welcome<br>
-            Back.
-        </h2>
-
-        <p>
-            ร้านไอเทมเกมและสินค้าดิจิทัล<br>
-            จัดการบัญชี กระเป๋าเงิน และรายการเติมเงิน
-            ได้ในที่เดียว
-        </p>
-
+        <div class="eyebrow">GAME STORE / MEMBER</div>
+        <h2>Welcome<br>Back.</h2>
+        <p>ร้านไอเทมเกมและสินค้าดิจิทัล<br>จัดการบัญชี กระเป๋าเงิน และรายการเติมเงิน ได้ในที่เดียว</p>
         <div class="features">
-
-            <div class="feature">
-                <span>✦</span>
-                ระบบสมาชิกส่วนตัว
-            </div>
-
-            <div class="feature">
-                <span>◈</span>
-                Wallet แยกตามบัญชี
-            </div>
-
-            <div class="feature">
-                <span>✓</span>
-                ตรวจสอบสลิปอัตโนมัติ
-            </div>
-
+            <div class="feature"><span>✦</span> ระบบสมาชิกส่วนตัว</div>
+            <div class="feature"><span>◈</span> Wallet แยกตามบัญชี</div>
+            <div class="feature"><span>✓</span> ตรวจสอบสลิปอัตโนมัติ</div>
         </div>
-
     </aside>
-
     <div class="auth-form">
-
         <h1>เข้าสู่ระบบ</h1>
-
-        <div class="subtitle">
-            Login to your GAME STORE account
-        </div>
-
+        <div class="subtitle">Login to your GAME STORE account</div>
         <div class="tabs">
-
-            <button
-                type="button"
-                onclick="showRegister()">
-                REGISTER
-            </button>
-
-            <button
-                type="button"
-                class="active"
-                onclick="showLogin()">
-                LOGIN
-            </button>
-
+            <button type="button" onclick="showRegister()">REGISTER</button>
+            <button type="button" class="active" onclick="showLogin()">LOGIN</button>
         </div>
-
         <form onsubmit="event.preventDefault();login();">
-
-            <label>
-                USERNAME
-            </label>
-
-            <input
-                id="loginUsername"
-                type="text"
-                placeholder="ชื่อผู้ใช้"
-                autocomplete="username"
-                required
-            >
-
-            <label>
-                PASSWORD
-            </label>
-
+            <label>USERNAME</label>
+            <input id="loginUsername" type="text" placeholder="ชื่อผู้ใช้" autocomplete="username" required>
+            <label>PASSWORD</label>
             <div class="input-wrap">
-
-                <input
-                    id="loginPassword"
-                    type="password"
-                    placeholder="รหัสผ่าน"
-                    autocomplete="current-password"
-                    required
-                >
-
-                <button
-                    type="button"
-                    class="password-toggle"
-                    onclick="togglePassword('loginPassword',this)">
-                    ◉
-                </button>
-
+                <input id="loginPassword" type="password" placeholder="รหัสผ่าน" autocomplete="current-password" required>
+                <button type="button" class="password-toggle" onclick="togglePassword('loginPassword',this)">◉</button>
             </div>
-
-            <button
-                id="loginButton"
-                class="primary-btn"
-                type="submit">
-                LOGIN
-            </button>
-
+            <button id="loginButton" class="primary-btn" type="submit">LOGIN</button>
         </form>
-
-        <div class="switch">
-            ยังไม่มีบัญชี?
-            <button
-                type="button"
-                onclick="showRegister()">
-                สมัครสมาชิก
-            </button>
-        </div>
-
-        <div class="note">
-            GAME STORE · SECURE MEMBER ACCESS
-        </div>
-
+        <div class="switch">ยังไม่มีบัญชี? <button type="button" onclick="showRegister()">สมัครสมาชิก</button></div>
+        <div class="note">GAME STORE · SECURE MEMBER ACCESS</div>
         <div id="loginMessage"></div>
-
     </div>
-
 </div>
-
 </section>
 
-
-<!-- =========================
-     REGISTER
-========================= -->
-
+<!-- REGISTER -->
 <section class="page hidden" id="registerPage">
-
 <div class="auth-shell fade-in">
-
     <aside class="hero">
-
         <div class="logo">GX</div>
-
-        <div class="eyebrow">
-            GAME STORE / MEMBER
-        </div>
-
-        <h2>
-            Create<br>
-            Account.
-        </h2>
-
-        <p>
-            สร้างบัญชีสมาชิกเพื่อใช้งาน
-            Wallet และระบบเติมเงิน
-            ของ GAME STORE
-        </p>
-
+        <div class="eyebrow">GAME STORE / MEMBER</div>
+        <h2>Create<br>Account.</h2>
+        <p>สร้างบัญชีสมาชิกเพื่อใช้งาน Wallet และระบบเติมเงิน ของ GAME STORE</p>
         <div class="features">
-
-            <div class="feature">
-                <span>✦</span>
-                สมัครสมาชิกง่าย
-            </div>
-
-            <div class="feature">
-                <span>◈</span>
-                Wallet ส่วนตัว
-            </div>
-
-            <div class="feature">
-                <span>✓</span>
-                ประวัติรายการส่วนตัว
-            </div>
-
+            <div class="feature"><span>✦</span> สมัครสมาชิกง่าย</div>
+            <div class="feature"><span>◈</span> Wallet ส่วนตัว</div>
+            <div class="feature"><span>✓</span> ประวัติรายการส่วนตัว</div>
         </div>
-
     </aside>
-
     <div class="auth-form">
-
         <h1>สร้างบัญชี</h1>
-
-        <div class="subtitle">
-            Create your GAME STORE account
-        </div>
-
+        <div class="subtitle">Create your GAME STORE account</div>
         <div class="tabs">
-
-            <button
-                type="button"
-                class="active"
-                onclick="showRegister()">
-                REGISTER
-            </button>
-
-            <button
-                type="button"
-                onclick="showLogin()">
-                LOGIN
-            </button>
-
+            <button type="button" class="active" onclick="showRegister()">REGISTER</button>
+            <button type="button" onclick="showLogin()">LOGIN</button>
         </div>
-
         <form onsubmit="event.preventDefault();register();">
-
-            <label>
-                USERNAME
-            </label>
-
-            <input
-                id="registerUsername"
-                type="text"
-                placeholder="ชื่อผู้ใช้"
-                autocomplete="username"
-                required
-            >
-
-            <label>
-                PASSWORD
-            </label>
-
+            <label>USERNAME</label>
+            <input id="registerUsername" type="text" placeholder="ชื่อผู้ใช้" autocomplete="username" required>
+            <label>PASSWORD</label>
             <div class="input-wrap">
-
-                <input
-                    id="registerPassword"
-                    type="password"
-                    placeholder="รหัสผ่านอย่างน้อย 6 ตัว"
-                    autocomplete="new-password"
-                    required
-                >
-
-                <button
-                    type="button"
-                    class="password-toggle"
-                    onclick="togglePassword('registerPassword',this)">
-                    ◉
-                </button>
-
+                <input id="registerPassword" type="password" placeholder="รหัสผ่านอย่างน้อย 6 ตัว" autocomplete="new-password" required>
+                <button type="button" class="password-toggle" onclick="togglePassword('registerPassword',this)">◉</button>
             </div>
-
-            <button
-                id="registerButton"
-                class="primary-btn"
-                type="submit">
-                CREATE ACCOUNT
-            </button>
-
+            <button id="registerButton" class="primary-btn" type="submit">CREATE ACCOUNT</button>
         </form>
-
-        <div class="switch">
-            มีบัญชีอยู่แล้ว?
-            <button
-                type="button"
-                onclick="showLogin()">
-                เข้าสู่ระบบ
-            </button>
-        </div>
-
-        <div class="note">
-            GAME STORE · MEMBER ACCESS
-        </div>
-
+        <div class="switch">มีบัญชีอยู่แล้ว? <button type="button" onclick="showLogin()">เข้าสู่ระบบ</button></div>
+        <div class="note">GAME STORE · MEMBER ACCESS</div>
         <div id="registerMessage"></div>
-
     </div>
-
 </div>
-
 </section>
 
-
-<!-- =========================
-     DASHBOARD
-========================= -->
-
-<section class="dashboard-page hidden" id="dashboardPage"><header class="store-nav"><a href="#home" class="store-brand" onclick="storeNavigate('home');return false"><span class="brand-mark">GX</span> GAME STORE</a><nav aria-label="เมนูหลัก"><button data-nav="home" onclick="storeNavigate('home')">หน้าหลัก</button><button data-nav="topup" onclick="storeNavigate('topup')">เติมเงิน</button></nav><div class="account-wrap"><button class="account-trigger" id="accountTrigger" aria-expanded="false" aria-controls="accountMenu"><span class="avatar">G</span><strong id="username">สมาชิก</strong><span>⌄</span></button><div class="account-menu" id="accountMenu"><div class="menu-balance"><small>ยอดเงินคงเหลือ</small><strong>฿<span id="balance">0.00</span></strong></div><button onclick="storeNavigate('topup')"><span>▣</span> เติมเงิน</button><button class="menu-logout" onclick="storeCloseMenu();logout()"><span>↪</span> ออกจากระบบ</button></div></div></header><div class="store-main"><section data-store-page="home"><div class="home-hero"><span class="eyebrow">WELCOME TO GAME STORE</span><h1>ยกระดับทุกเกม<br><span>ในสไตล์ของคุณ.</span></h1><p>ร้านไอเทมเกมและสินค้าดิจิทัล<br>บัญชีสมาชิก กระเป๋าเงิน และระบบเติมเงินในที่เดียว</p><button class="home-cta" onclick="storeNavigate('topup')">เติมเงินเข้ากระเป๋า ↗</button><div class="hero-orbit" aria-hidden="true">GX</div></div><div class="home-panels"><article><span>01 / MEMBER</span><h3>บัญชีสมาชิก</h3><p>จัดการกระเป๋าเงินส่วนตัวของคุณ</p></article><article><span>02 / CHECK SLIP</span><h3>เติมเงินด้วยสลิป</h3><p>สร้าง QR และอัปโหลดหลักฐานการชำระเงิน</p></article><article><span>03 / ACTIVITY</span><h3>ประวัติเติมเงิน</h3><p>ดูรายการและสถานะในหน้าเติมเงิน</p></article></div></section><section data-store-page="topup" class="hidden"><div class="section-heading"><span class="eyebrow">WALLET</span><h1>ช่องทางเติมเงิน</h1><p>เลือกช่องทางที่สะดวก เพื่อเติมเงินเข้ากระเป๋าของคุณ</p></div><div class="method-grid"><button class="method-card" onclick="storeNavigate('check-slip')"><span class="slip-icon">▤<i>✓</i></span><span class="method-copy"><strong>Check Slip</strong><small>สแกน QR Code และแนบสลิป</small><em>● ตรวจสอบหลักฐานการชำระเงิน</em></span><span class="method-arrow">↗</span></button></div><p class="method-note">กรุณาตรวจสอบชื่อผู้รับและยอดเงินให้ถูกต้องก่อนยืนยันรายการ</p></section><section data-store-page="check-slip" class="hidden"><button class="back-link" onclick="storeNavigate('topup')">← กลับไปช่องทางเติมเงิน</button><div class="section-heading"><span class="eyebrow">WALLET / CHECK SLIP</span><h1>เติมเงินเข้ากระเป๋า</h1><p>สร้างรายการชำระเงิน สแกน QR และแนบสลิปเพื่อตรวจสอบ</p></div>    <!-- CONTENT -->
+<!-- DASHBOARD -->
+<section class="dashboard-page hidden" id="dashboardPage"><header class="store-nav"><a href="#home" class="store-brand" onclick="storeNavigate('home');return false"><span class="brand-mark">GX</span> GAME STORE</a><nav aria-label="เมนูหลัก"><button data-nav="home" onclick="storeNavigate('home')">หน้าหลัก</button><button data-nav="topup" onclick="storeNavigate('topup')">เติมเงิน</button></nav><div class="account-wrap"><button class="account-trigger" id="accountTrigger" aria-expanded="false" aria-controls="accountMenu"><span class="avatar">G</span><strong id="username">สมาชิก</strong><span>⌄</span></button><div class="account-menu" id="accountMenu"><div class="menu-balance"><small>ยอดเงินคงเหลือ</small><strong>฿<span id="balance">0.00</span></strong></div><button onclick="storeNavigate('topup')"><span>▣</span> เติมเงิน</button><button class="menu-logout" onclick="storeCloseMenu();logout()"><span>↪</span> ออกจากระบบ</button></div></div></header><div class="store-main"><section data-store-page="home"><div class="home-hero"><span class="eyebrow">WELCOME TO GAME STORE</span><h1>ยกระดับทุกเกม<br><span>ในสไตล์ของคุณ.</span></h1><p>ร้านไอเทมเกมและสินค้าดิจิทัล<br>บัญชีสมาชิก กระเป๋าเงิน และระบบเติมเงินในที่เดียว</p><button class="home-cta" onclick="storeNavigate('topup')">เติมเงินเข้ากระเป๋า ↗</button><div class="hero-orbit" aria-hidden="true">GX</div></div><div class="home-panels"><article><span>01 / MEMBER</span><h3>บัญชีสมาชิก</h3><p>จัดการกระเป๋าเงินส่วนตัวของคุณ</p></article><article><span>02 / CHECK SLIP</span><h3>เติมเงินด้วยสลิป</h3><p>สร้าง QR และอัปโหลดหลักฐานการชำระเงิน</p></article><article><span>03 / ACTIVITY</span><h3>ประวัติเติมเงิน</h3><p>ดูรายการและสถานะในหน้าเติมเงิน</p></article></div></section><section data-store-page="topup" class="hidden"><div class="section-heading"><span class="eyebrow">WALLET</span><h1>ช่องทางเติมเงิน</h1><p>เลือกช่องทางที่สะดวก เพื่อเติมเงินเข้ากระเป๋าของคุณ</p></div><div class="method-grid"><button class="method-card" onclick="storeNavigate('check-slip')"><span class="slip-icon">▤<i>✓</i></span><span class="method-copy"><strong>Check Slip</strong><small>สแกน QR Code และแนบสลิป</small><em>● ตรวจสอบหลักฐานการชำระเงิน</em></span><span class="method-arrow">↗</span></button></div><p class="method-note">กรุณาตรวจสอบชื่อผู้รับและยอดเงินให้ถูกต้องก่อนยืนยันรายการ</p></section><section data-store-page="check-slip" class="hidden"><button class="back-link" onclick="storeNavigate('topup')">← กลับไปช่องทางเติมเงิน</button><div class="section-heading"><span class="eyebrow">WALLET / CHECK SLIP</span><h1>เติมเงินเข้ากระเป๋า</h1><p>สร้างรายการชำระเงิน สแกน QR และแนบสลิปเพื่อตรวจสอบ</p></div>
 
     <div class="dash-grid">
-
         <div>
-
             <!-- TOPUP -->
-
             <section class="card">
-
-                <div class="eyebrow">
-                    WALLET
-                </div>
-
-                <h3>
-                    เติมเงินเข้ากระเป๋า
-                </h3>
-
-                <div class="card-desc">
-                    ระบุจำนวนเงินเพื่อสร้าง QR
-                    สำหรับชำระเงิน
-                </div>
-
-                <label>
-                    AMOUNT
-                </label>
-
+                <div class="eyebrow">WALLET</div>
+                <h3>เติมเงินเข้ากระเป๋า</h3>
+                <div class="card-desc">ระบุจำนวนเงินเพื่อสร้าง QR สำหรับชำระเงิน</div>
+                <label>AMOUNT</label>
                 <div class="amount-row">
-
-                    <input
-                        id="topupAmount"
-                        type="number"
-                        min="1"
-                        step="0.01"
-                        placeholder="เช่น 100"
-                        inputmode="decimal"
-                    >
-
-                    <span class="currency">
-                        THB
-                    </span>
-
+                    <input id="topupAmount" type="number" min="1" step="0.01" placeholder="เช่น 100" inputmode="decimal">
+                    <span class="currency">THB</span>
                 </div>
-
-                <button
-                    id="topupButton"
-                    class="primary-btn"
-                    onclick="createTopup()">
-                    CREATE PAYMENT
-                </button>
-
+                <button id="topupButton" class="primary-btn" onclick="createTopup()">CREATE PAYMENT</button>
                 <div id="topupMessage"></div>
 
-
                 <!-- PAYMENT -->
-
-                <div
-                    class="payment hidden"
-                    id="paymentBox">
-
-                    <div class="eyebrow">
-                        PAYMENT REQUEST
-                    </div>
-
-                    <h3>
-                        สแกน QR เพื่อชำระเงิน
-                    </h3>
-
-                    <img
-                        id="qrImage"
-                        class="qr"
-                        alt="Payment QR">
-
+                <div class="payment hidden" id="paymentBox">
+                    <div class="eyebrow">PAYMENT REQUEST</div>
+                    <h3>สแกน QR เพื่อชำระเงิน</h3>
+                    <img id="qrImage" class="qr" alt="Payment QR">
                     <div class="payment-info">
-
-                        <div>
-                            จำนวนเงิน:
-                            <strong>
-                                ฿<span id="paymentAmount">0.00</span>
-                            </strong>
-                        </div>
-
+                        <div>จำนวนเงิน: <strong>฿<span id="paymentAmount">0.00</span></strong></div>
                         <div class="payment-id">
-
-                            <span>
-                                Payment ID:
-                                <strong id="paymentId"></strong>
-                            </span>
-
-                            <button
-                                type="button"
-                                class="copy-btn"
-                                onclick="copyPaymentId()">
-                                COPY
-                            </button>
-
+                            <span>Payment ID: <strong id="paymentId"></strong></span>
+                            <button type="button" class="copy-btn" onclick="copyPaymentId()">COPY</button>
                         </div>
-
                     </div>
-
-                    <label>
-                        PAYMENT SLIP
-                    </label>
-
+                    <label>PAYMENT SLIP</label>
                     <div class="file-box">
-
-                        <input
-                            id="slip"
-                            type="file"
-                            accept="image/*">
-
+                        <input id="slip" type="file" accept="image/*">
                     </div>
-
-                    <button
-                        id="verifyButton"
-                        class="primary-btn"
-                        onclick="verifySlip()">
-                        VERIFY PAYMENT
-                    </button>
-
+                    <button id="verifyButton" class="primary-btn" onclick="verifySlip()">VERIFY PAYMENT</button>
                     <div id="slipMessage"></div>
-
                 </div>
-
             </section>
-
         </div>
 
-
         <!-- TRANSACTIONS -->
-
         <section class="card">
-
-            <div class="eyebrow">
-                WALLET ACTIVITY
-            </div>
-
-            <h3>
-                ประวัติรายการ
-            </h3>
-
-            <div class="card-desc">
-                รายการเติมเงินของบัญชีนี้
-            </div>
-
-            <div
-                id="transactions"
-                class="transaction-list">
-                กำลังโหลด...
-            </div>
-
+            <div class="eyebrow">WALLET ACTIVITY</div>
+            <h3>ประวัติรายการ</h3>
+            <div class="card-desc">รายการเติมเงินของบัญชีนี้</div>
+            <div id="transactions" class="transaction-list">กำลังโหลด...</div>
         </section>
-
     </div>
 
+</section><footer class="store-footer">GAME STORE <span>MEMBER · WALLET · CHECK SLIP</span></footer></div></section>
 
-</section><footer class="store-footer">GAME STORE <span>MEMBER · WALLET · CHECK SLIP</span></footer></div></section><script>
-
+<!-- ===== ORIGINAL APP JS (logic and API calls unchanged) ===== -->
+<script>
 let currentPaymentId = null;
 
-
-/* =========================
-   UI
-========================= */
-
+/* UI */
 function showLogin(){
-
-    document.getElementById("loginPage")
-        .classList.remove("hidden");
-
-    document.getElementById("registerPage")
-        .classList.add("hidden");
-
-    document.getElementById("dashboardPage")
-        .classList.add("hidden");
-
+    document.getElementById("loginPage").classList.remove("hidden");
+    document.getElementById("registerPage").classList.add("hidden");
+    document.getElementById("dashboardPage").classList.add("hidden");
 }
-
-
 function showRegister(){
-
-    document.getElementById("loginPage")
-        .classList.add("hidden");
-
-    document.getElementById("registerPage")
-        .classList.remove("hidden");
-
-    document.getElementById("dashboardPage")
-        .classList.add("hidden");
-
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("registerPage").classList.remove("hidden");
+    document.getElementById("dashboardPage").classList.add("hidden");
 }
-
-
 function showDashboard(){
-
-    document.getElementById("loginPage")
-        .classList.add("hidden");
-
-    document.getElementById("registerPage")
-        .classList.add("hidden");
-
-    document.getElementById("dashboardPage")
-        .classList.remove("hidden");
-
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("registerPage").classList.add("hidden");
+    document.getElementById("dashboardPage").classList.remove("hidden");
     loadUser();
     loadBalance();
     loadTransactions();
-
 }
 
-
-/* =========================
-   TOAST
-========================= */
-
+/* TOAST */
 function toast(message,type="success"){
-
-    const container =
-        document.getElementById("toastContainer");
-
-    const el =
-        document.createElement("div");
-
-    el.className =
-        `toast ${type}`;
-
+    const container = document.getElementById("toastContainer");
+    const el = document.createElement("div");
+    el.className = `toast ${type}`;
     el.textContent = message;
-
     container.appendChild(el);
-
     setTimeout(()=>{
-
         el.classList.add("out");
-
-        setTimeout(()=>{
-            el.remove();
-        },300);
-
+        setTimeout(()=>{ el.remove(); },300);
     },3000);
-
 }
 
-
-/* =========================
-   PASSWORD
-========================= */
-
+/* PASSWORD */
 function togglePassword(id,button){
-
-    const input =
-        document.getElementById(id);
-
+    const input = document.getElementById(id);
     if(input.type === "password"){
-
         input.type = "text";
         button.textContent = "◎";
-
     }else{
-
         input.type = "password";
         button.textContent = "◉";
-
     }
-
 }
 
-
-/* =========================
-   LOADING
-========================= */
-
+/* LOADING */
 function setLoading(button,loading,text){
-
     if(loading){
-
-        button.dataset.original =
-            button.innerHTML;
-
-        button.innerHTML =
-            `<span class="spinner"></span>`;
-
+        button.dataset.original = button.innerHTML;
+        button.innerHTML = `<span class="spinner"></span>`;
         button.classList.add("loading");
-
     }else{
-
-        button.innerHTML =
-            button.dataset.original || text;
-
+        button.innerHTML = button.dataset.original || text;
         button.classList.remove("loading");
-
     }
-
 }
 
-
-/* =========================
-   REGISTER
-========================= */
-
+/* REGISTER */
 async function register(){
-
-    const username =
-        document
-        .getElementById("registerUsername")
-        .value
-        .trim();
-
-    const password =
-        document
-        .getElementById("registerPassword")
-        .value;
-
-    const button =
-        document.getElementById("registerButton");
-
-    const message =
-        document.getElementById("registerMessage");
+    const username = document.getElementById("registerUsername").value.trim();
+    const password = document.getElementById("registerPassword").value;
+    const button = document.getElementById("registerButton");
+    const message = document.getElementById("registerMessage");
 
     if(!username || !password){
-
-        toast(
-            "กรุณากรอกข้อมูลให้ครบ",
-            "error"
-        );
-
+        toast("กรุณากรอกข้อมูลให้ครบ","error");
         return;
     }
 
     setLoading(button,true);
 
     try{
-
-        const response =
-            await fetch(
-                "/api/auth/register",
-                {
-                    method:"POST",
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:JSON.stringify({
-                        username,
-                        password
-                    })
-                }
-            );
-
-        const data =
-            await response.json();
+        const response = await fetch("/api/auth/register",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({username,password})
+        });
+        const data = await response.json();
 
         if(!response.ok){
-
-            toast(
-                data.error ||
-                "สมัครสมาชิกไม่สำเร็จ",
-                "error"
-            );
-
+            toast(data.error || "สมัครสมาชิกไม่สำเร็จ","error");
             setLoading(button,false);
             return;
         }
 
-        toast(
-            "สมัครสมาชิกสำเร็จ",
-            "success"
-        );
-
+        toast("สมัครสมาชิกสำเร็จ","success");
         setLoading(button,false);
 
         setTimeout(()=>{
-
             showLogin();
-
-            document
-                .getElementById("loginUsername")
-                .value = username;
-
+            document.getElementById("loginUsername").value = username;
         },500);
-
     }catch(error){
-
         setLoading(button,false);
-
-        toast(
-            "ไม่สามารถเชื่อมต่อ Server ได้",
-            "error"
-        );
-
+        toast("ไม่สามารถเชื่อมต่อ Server ได้","error");
     }
-
 }
 
-
-/* =========================
-   LOGIN
-========================= */
-
+/* LOGIN */
 async function login(){
-
-    const username =
-        document
-        .getElementById("loginUsername")
-        .value
-        .trim();
-
-    const password =
-        document
-        .getElementById("loginPassword")
-        .value;
-
-    const button =
-        document.getElementById("loginButton");
+    const username = document.getElementById("loginUsername").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    const button = document.getElementById("loginButton");
 
     if(!username || !password){
-
-        toast(
-            "กรุณากรอก Username และ Password",
-            "error"
-        );
-
+        toast("กรุณากรอก Username และ Password","error");
         return;
     }
 
     setLoading(button,true);
 
     try{
-
-        const response =
-            await fetch(
-                "/api/auth/login",
-                {
-                    method:"POST",
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:JSON.stringify({
-                        username,
-                        password
-                    })
-                }
-            );
-
-        const data =
-            await response.json();
+        const response = await fetch("/api/auth/login",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({username,password})
+        });
+        const data = await response.json();
 
         if(!response.ok){
-
-            toast(
-                data.error ||
-                "เข้าสู่ระบบไม่สำเร็จ",
-                "error"
-            );
-
+            toast(data.error || "เข้าสู่ระบบไม่สำเร็จ","error");
             setLoading(button,false);
             return;
         }
 
-        toast(
-            "เข้าสู่ระบบสำเร็จ",
-            "success"
-        );
-
+        toast("เข้าสู่ระบบสำเร็จ","success");
         setLoading(button,false);
 
-        setTimeout(()=>{
-            showDashboard();
-        },250);
-
+        setTimeout(()=>{ showDashboard(); },250);
     }catch(error){
-
         setLoading(button,false);
-
-        toast(
-            "ไม่สามารถเชื่อมต่อ Server ได้",
-            "error"
-        );
-
+        toast("ไม่สามารถเชื่อมต่อ Server ได้","error");
     }
-
 }
 
-
-/* =========================
-   USER
-========================= */
-
+/* USER */
 async function loadUser(){
-
     try{
-
-        const response =
-            await fetch(
-                "/api/auth/me"
-            );
-
+        const response = await fetch("/api/auth/me");
         if(!response.ok){
-
             showLogin();
             return;
-
         }
-
-        const data =
-            await response.json();
-
-        document
-            .getElementById("username")
-            .textContent =
-            data.user.username;
-
+        const data = await response.json();
+        document.getElementById("username").textContent = data.user.username;
     }catch{
-
         showLogin();
-
     }
-
 }
 
-
-/* =========================
-   BALANCE
-========================= */
-
+/* BALANCE */
 async function loadBalance(){
-
     try{
-
-        const response =
-            await fetch(
-                "/api/balance"
-            );
-
-        if(!response.ok)
-            return;
-
-        const data =
-            await response.json();
-
-        const target =
-            Number(data.balance);
-
+        const response = await fetch("/api/balance");
+        if(!response.ok) return;
+        const data = await response.json();
+        const target = Number(data.balance);
         animateBalance(target);
-
     }catch{}
-
 }
-
 
 function animateBalance(target){
-
-    const element =
-        document.getElementById("balance");
-
-    const start =
-        Number(
-            element.textContent
-        ) || 0;
-
+    const element = document.getElementById("balance");
+    const start = Number(element.textContent) || 0;
     const duration = 500;
-
-    const startTime =
-        performance.now();
+    const startTime = performance.now();
 
     function frame(now){
-
-        const progress =
-            Math.min(
-                (now-startTime)/duration,
-                1
-            );
-
-        const eased =
-            1-Math.pow(1-progress,3);
-
-        const value =
-            start+(target-start)*eased;
-
-        element.textContent =
-            value.toFixed(2);
-
-        if(progress < 1)
-            requestAnimationFrame(frame);
-
+        const progress = Math.min((now-startTime)/duration,1);
+        const eased = 1-Math.pow(1-progress,3);
+        const value = start+(target-start)*eased;
+        element.textContent = value.toFixed(2);
+        if(progress < 1) requestAnimationFrame(frame);
     }
-
     requestAnimationFrame(frame);
-
 }
 
-
-/* =========================
-   TOPUP
-========================= */
-
+/* TOPUP */
 async function createTopup(){
-
-    const amount =
-        Number(
-            document
-            .getElementById("topupAmount")
-            .value
-        );
-
-    const button =
-        document.getElementById("topupButton");
+    const amount = Number(document.getElementById("topupAmount").value);
+    const button = document.getElementById("topupButton");
 
     if(!amount || amount <= 0){
-
-        toast(
-            "กรุณาใส่จำนวนเงิน",
-            "error"
-        );
-
+        toast("กรุณาใส่จำนวนเงิน","error");
         return;
     }
 
     setLoading(button,true);
 
     try{
-
-        const response =
-            await fetch(
-                "/api/topup",
-                {
-                    method:"POST",
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:JSON.stringify({
-                        amount
-                    })
-                }
-            );
-
-        const data =
-            await response.json();
+        const response = await fetch("/api/topup",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({amount})
+        });
+        const data = await response.json();
 
         if(!response.ok){
-
-            toast(
-                data.error ||
-                "สร้างรายการไม่สำเร็จ",
-                "error"
-            );
-
+            toast(data.error || "สร้างรายการไม่สำเร็จ","error");
             setLoading(button,false);
             return;
         }
 
-        currentPaymentId =
-            data.payment.id;
+        currentPaymentId = data.payment.id;
+        document.getElementById("paymentId").textContent = currentPaymentId;
+        document.getElementById("paymentAmount").textContent = Number(data.payment.amount).toFixed(2);
+        document.getElementById("qrImage").src = data.qrUrl;
+        document.getElementById("paymentBox").classList.remove("hidden");
 
-        document
-            .getElementById("paymentId")
-            .textContent =
-            currentPaymentId;
-
-        document
-            .getElementById("paymentAmount")
-            .textContent =
-            Number(
-                data.payment.amount
-            ).toFixed(2);
-
-        document
-            .getElementById("qrImage")
-            .src =
-            data.qrUrl;
-
-        document
-            .getElementById("paymentBox")
-            .classList.remove("hidden");
-
-        toast(
-            "สร้างรายการเติมเงินแล้ว",
-            "success"
-        );
-
+        toast("สร้างรายการเติมเงินแล้ว","success");
         setLoading(button,false);
 
         setTimeout(()=>{
-
-            document
-                .getElementById("paymentBox")
-                .scrollIntoView({
-                    behavior:"smooth",
-                    block:"center"
-                });
-
+            document.getElementById("paymentBox").scrollIntoView({behavior:"smooth",block:"center"});
         },100);
-
     }catch{
-
         setLoading(button,false);
-
-        toast(
-            "ไม่สามารถเชื่อมต่อ Server ได้",
-            "error"
-        );
-
+        toast("ไม่สามารถเชื่อมต่อ Server ได้","error");
     }
-
 }
 
-
-/* =========================
-   COPY PAYMENT ID
-========================= */
-
+/* COPY PAYMENT ID */
 async function copyPaymentId(){
-
-    if(!currentPaymentId)
-        return;
-
+    if(!currentPaymentId) return;
     try{
-
-        await navigator.clipboard.writeText(
-            String(currentPaymentId)
-        );
-
-        toast(
-            "คัดลอก Payment ID แล้ว",
-            "success"
-        );
-
+        await navigator.clipboard.writeText(String(currentPaymentId));
+        toast("คัดลอก Payment ID แล้ว","success");
     }catch{
-
-        toast(
-            "คัดลอกไม่สำเร็จ",
-            "error"
-        );
-
+        toast("คัดลอกไม่สำเร็จ","error");
     }
-
 }
 
-
-/* =========================
-   VERIFY SLIP
-========================= */
-
+/* VERIFY SLIP */
 async function verifySlip(){
-
-    const file =
-        document
-        .getElementById("slip")
-        .files[0];
-
-    const button =
-        document.getElementById("verifyButton");
+    const file = document.getElementById("slip").files[0];
+    const button = document.getElementById("verifyButton");
 
     if(!file){
-
-        toast(
-            "กรุณาเลือกสลิป",
-            "error"
-        );
-
+        toast("กรุณาเลือกสลิป","error");
         return;
     }
-
     if(!currentPaymentId){
-
-        toast(
-            "ไม่พบรายการเติมเงิน",
-            "error"
-        );
-
+        toast("ไม่พบรายการเติมเงิน","error");
         return;
     }
 
-    const formData =
-        new FormData();
-
-    formData.append(
-        "slip",
-        file
-    );
-
-    formData.append(
-        "paymentId",
-        currentPaymentId
-    );
+    const formData = new FormData();
+    formData.append("slip",file);
+    formData.append("paymentId",currentPaymentId);
 
     setLoading(button,true);
 
     try{
-
-        const response =
-            await fetch(
-                "/api/verify-slip",
-                {
-                    method:"POST",
-                    body:formData
-                }
-            );
-
-        const data =
-            await response.json();
+        const response = await fetch("/api/verify-slip",{
+            method:"POST",
+            body:formData
+        });
+        const data = await response.json();
 
         if(!response.ok){
-
-            toast(
-                data.error ||
-                "ตรวจสอบสลิปไม่สำเร็จ",
-                "error"
-            );
-
+            toast(data.error || "ตรวจสอบสลิปไม่สำเร็จ","error");
             setLoading(button,false);
             return;
         }
 
-        toast(
-            "เติมเงินสำเร็จ! ยอดเงินอัปเดตแล้ว",
-            "success"
-        );
-
+        toast("เติมเงินสำเร็จ! ยอดเงินอัปเดตแล้ว","success");
         setLoading(button,false);
 
         await loadBalance();
         await loadTransactions();
-
     }catch{
-
         setLoading(button,false);
-
-        toast(
-            "ไม่สามารถเชื่อมต่อ Server ได้",
-            "error"
-        );
-
+        toast("ไม่สามารถเชื่อมต่อ Server ได้","error");
     }
-
 }
 
-
-/* =========================
-   TRANSACTIONS
-========================= */
-
+/* TRANSACTIONS */
 async function loadTransactions(){
-
-    const box =
-        document.getElementById(
-            "transactions"
-        );
+    const box = document.getElementById("transactions");
 
     try{
-
-        const response =
-            await fetch(
-                "/api/transactions"
-            );
+        const response = await fetch("/api/transactions");
 
         if(!response.ok){
-
-            box.textContent =
-                "โหลดข้อมูลไม่สำเร็จ";
-
+            box.textContent = "โหลดข้อมูลไม่สำเร็จ";
             return;
-
         }
 
-        const data =
-            await response.json();
+        const data = await response.json();
 
-        if(
-            !data.transactions ||
-            data.transactions.length === 0
-        ){
-
+        if(!data.transactions || data.transactions.length === 0){
             box.innerHTML = `
-                <div style="
-                    text-align:center;
-                    padding:35px 10px;
-                    color:#566174;
-                ">
+                <div style="text-align:center;padding:35px 10px;color:#566174;">
                     ยังไม่มีรายการเติมเงิน
                 </div>
             `;
-
             return;
         }
 
-        box.innerHTML =
-            data.transactions
-            .map(item=>{
+        box.innerHTML = data.transactions.map(item=>{
+            let statusClass = "status-pending";
+            if(String(item.status).toUpperCase() === "SUCCESS"){ statusClass = "status-success"; }
+            if(String(item.status).toUpperCase() === "FAILED"){ statusClass = "status-failed"; }
 
-                let statusClass =
-                    "status-pending";
-
-                if(
-                    String(item.status)
-                    .toUpperCase()
-                    === "SUCCESS"
-                ){
-                    statusClass =
-                        "status-success";
-                }
-
-                if(
-                    String(item.status)
-                    .toUpperCase()
-                    === "FAILED"
-                ){
-                    statusClass =
-                        "status-failed";
-                }
-
-                return `
-
-                    <div class="transaction">
-
-                        <div class="transaction-left">
-
-                            <div class="transaction-amount">
-                                ฿${Number(
-                                    item.amount
-                                ).toFixed(2)}
-                            </div>
-
-                            <div class="transaction-date">
-                                ${
-                                    item.created_at
-                                    ? new Date(
-                                        item.created_at
-                                    ).toLocaleString(
-                                        "th-TH"
-                                    )
-                                    : "-"
-                                }
-                            </div>
-
-                        </div>
-
-                        <span class="status ${statusClass}">
-                            ${item.status}
-                        </span>
-
+            return `
+                <div class="transaction">
+                    <div class="transaction-left">
+                        <div class="transaction-amount">฿${Number(item.amount).toFixed(2)}</div>
+                        <div class="transaction-date">${item.created_at ? new Date(item.created_at).toLocaleString("th-TH") : "-"}</div>
                     </div>
-
-                `;
-
-            })
-            .join("");
-
+                    <span class="status ${statusClass}">${item.status}</span>
+                </div>
+            `;
+        }).join("");
     }catch{
-
-        box.textContent =
-            "โหลดข้อมูลไม่สำเร็จ";
-
+        box.textContent = "โหลดข้อมูลไม่สำเร็จ";
     }
-
 }
 
-
-/* =========================
-   LOGOUT
-========================= */
-
+/* LOGOUT */
 async function logout(){
-
     try{
-
-        await fetch(
-            "/api/auth/logout",
-            {
-                method:"POST"
-            }
-        );
-
+        await fetch("/api/auth/logout",{method:"POST"});
     }catch{}
 
     currentPaymentId = null;
-
-    toast(
-        "ออกจากระบบแล้ว",
-        "success"
-    );
-
-    setTimeout(()=>{
-        showLogin();
-    },300);
-
+    toast("ออกจากระบบแล้ว","success");
+    setTimeout(()=>{ showLogin(); },300);
 }
 
-
-/* =========================
-   AUTO LOGIN
-========================= */
-
+/* AUTO LOGIN */
 async function checkSession(){
-
     try{
-
-        const response =
-            await fetch(
-                "/api/auth/me"
-            );
-
-        if(response.ok){
-
-            showDashboard();
-
-        }else{
-
-            showLogin();
-
-        }
-
+        const response = await fetch("/api/auth/me");
+        if(response.ok){ showDashboard(); }else{ showLogin(); }
     }catch{
-
         showLogin();
-
     }
-
 }
 
-
-/* =========================
-   ENTER KEY
-========================= */
-
-document.addEventListener(
-    "keydown",
-    event=>{
-
-        if(
-            event.key === "Enter" &&
-            document.activeElement?.id ===
-            "topupAmount"
-        ){
-
-            createTopup();
-
-        }
-
+/* ENTER KEY */
+document.addEventListener("keydown",event=>{
+    if(event.key === "Enter" && document.activeElement?.id === "topupAmount"){
+        createTopup();
     }
-);
+});
 
-
-/* =========================
-   START
-========================= */
-
+/* START */
 checkSession();
-
 </script>
 
 <script>
@@ -2312,8 +696,244 @@ document.addEventListener('click',event=>{if(!event.target.closest('.account-wra
 document.addEventListener('keydown',event=>{if(event.key==='Escape'){storeCloseMenu();document.activeElement?.blur();}});
 window.addEventListener('hashchange',()=>storeNavigate(location.hash.slice(1),false));
 storeNavigate(location.hash.slice(1)||'home',false);
-const snow=document.createElement('div');snow.className='snow-layer';snow.setAttribute('aria-hidden','true');
-for(let i=0;i<46;i++){const dot=document.createElement('span');dot.className='snow-dot';const size=1+Math.random()*2.3;dot.style.cssText=`left:${Math.random()*100}%;width:${size}px;height:${size}px;--opacity:${.18+Math.random()*.48};--drift:${Math.random()*140-70}px;--static-top:${Math.random()*100}%;animation-duration:${20+Math.random()*30}s;animation-delay:-${Math.random()*50}s`;snow.appendChild(dot);}document.body.prepend(snow);
+</script>
+
+<!-- ===== UI ENHANCE SCRIPT (visual only) ===== -->
+<script>
+(function(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* A) spotlight follows mouse on cards */
+  const SHINE = '.card,.method-card,.home-panels article,.home-hero,.feature';
+  document.addEventListener('pointermove', e=>{
+    const el = e.target.closest && e.target.closest(SHINE);
+    if(!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }, {passive:true});
+
+  /* B) page-wide cursor glow */
+  if(!reduce){
+    const glow = document.createElement('div');
+    glow.className = 'cursor-glow';
+    document.body.prepend(glow);
+    let tx = innerWidth/2, ty = innerHeight/2, gx = tx, gy = ty;
+    addEventListener('pointermove', e=>{ tx = e.clientX; ty = e.clientY; glow.classList.add('on'); }, {passive:true});
+    document.addEventListener('mouseleave', ()=>glow.classList.remove('on'));
+    (function loop(){
+      gx += (tx-gx)*.08; gy += (ty-gy)*.08;
+      glow.style.transform = `translate3d(${gx}px,${gy}px,0)`;
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  /* C) transparent -> smooth reveal, replays on every page switch */
+  const REVEAL = '.hero > *,.auth-form > *,.home-hero,.home-panels article,.section-heading,.method-card,.method-note,.dash-grid > *,.store-footer';
+  const targets = [...document.querySelectorAll(REVEAL)];
+  targets.forEach(el=>{
+    const idx = [...el.parentElement.children].indexOf(el);
+    el.style.setProperty('--rd', Math.min(idx,8)*90 + 'ms');
+    if(!reduce) el.classList.add('reveal');
+  });
+
+  if(!reduce && 'IntersectionObserver' in window){
+    const timers = new WeakMap();
+    const io = new IntersectionObserver(entries=>{
+      entries.forEach(en=>{
+        const el = en.target;
+        if(en.isIntersecting){
+          if(!el.classList.contains('reveal') || el.classList.contains('in')) return;
+          requestAnimationFrame(()=>{
+            el.classList.add('in');
+            const delay = parseInt(el.style.getPropertyValue('--rd')) || 0;
+            timers.set(el, setTimeout(()=>el.classList.remove('reveal','in'), 1000 + delay));
+          });
+        }else if(en.boundingClientRect.width === 0){
+          clearTimeout(timers.get(el));
+          el.classList.remove('in');
+          el.classList.add('reveal');
+        }
+      });
+    }, {threshold:.08});
+    targets.forEach(el=>io.observe(el));
+  }
+
+  /* D) snow: real-time, delta-time based, wind gusts + mouse swirl */
+  const canvas = document.createElement('canvas');
+  canvas.className = 'snow-canvas';
+  canvas.setAttribute('aria-hidden','true');
+  document.body.prepend(canvas);
+  const ctx = canvas.getContext('2d');
+
+  let W, H, flakes = [];
+  const mouse = {x:-9999, y:-9999, vx:0, vy:0, nx:0};
+
+  function make(initial){
+    const z = Math.random();                       // 0 far, 1 near
+    return {
+      x: Math.random()*W,
+      y: initial ? Math.random()*H : -16,
+      z, r: .9 + z*2.8,
+      vy: .55 + z*1.7,                             // px per frame @60fps
+      phase: Math.random()*Math.PI*2,
+      freq: .0008 + Math.random()*.0016,
+      amp: 14 + z*30,
+      ox: 0, oy: 0,
+      a: .3 + z*.6,
+      rot: Math.random()*Math.PI*2,
+      spin: (Math.random()-.5)*.03
+    };
+  }
+
+  function resize(){
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    canvas.width = W*dpr; canvas.height = H*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const n = Math.round(Math.min(220, W*H/9000));
+    flakes = Array.from({length:n}, ()=>make(true));
+  }
+  resize();
+  addEventListener('resize', resize);
+
+  addEventListener('pointermove', e=>{
+    mouse.vx = e.clientX - mouse.x; mouse.vy = e.clientY - mouse.y;
+    mouse.x = e.clientX; mouse.y = e.clientY;
+    mouse.nx = e.clientX/W - .5;
+  }, {passive:true});
+  document.addEventListener('mouseleave', ()=>{ mouse.x = mouse.y = -9999; });
+
+  let last = performance.now();
+  function draw(t){
+    const dt = Math.min((t - last)/16.667, 3);     // real-time step
+    last = t;
+    ctx.clearRect(0,0,W,H);
+
+    const gust = Math.sin(t*.00045)*.7 + Math.sin(t*.0013)*.35 + Math.sin(t*.0031)*.15;
+    const wind = gust + mouse.nx*1.2;              // mouse position steers the wind
+    const decay = Math.pow(.9, dt);
+    mouse.vx *= decay; mouse.vy *= decay;
+
+    for(const f of flakes){
+      f.y += f.vy*dt*(1 + Math.sin(t*.002 + f.phase)*.12);
+      f.x += wind*(.4 + f.z*1.3)*dt;
+      f.rot += f.spin*dt;
+
+      const sway = Math.sin(f.phase + t*f.freq)*f.amp + Math.sin(f.phase*2 + t*f.freq*2.3)*f.amp*.25;
+      const px = f.x + sway + f.ox;
+      const py = f.y + f.oy;
+
+      const dx = px - mouse.x, dy = py - mouse.y, d = Math.hypot(dx,dy);
+      if(d < 170 && d > .1){
+        const force = Math.pow(1 - d/170, 2);
+        f.ox += ((dx/d)*3.4 + mouse.vx*.08)*force*dt;
+        f.oy += ((dy/d)*3.4 + mouse.vy*.08)*force*dt;
+      }
+      const back = Math.pow(.95, dt);
+      f.ox *= back; f.oy *= back;
+
+      if(f.y > H + 16){ Object.assign(f, make(false)); }
+      if(f.x < -120) f.x = W + 120;
+      if(f.x > W + 120) f.x = -120;
+
+      const g = ctx.createRadialGradient(px,py,0,px,py,f.r*3);
+      g.addColorStop(0, `rgba(240,246,255,${f.a})`);
+      g.addColorStop(.35, `rgba(200,220,255,${f.a*.35})`);
+      g.addColorStop(1, 'rgba(200,220,255,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(px,py,f.r*3,0,Math.PI*2); ctx.fill();
+
+      if(f.z > .72){                                // near flakes: tiny rotating crystal
+        ctx.save();
+        ctx.translate(px,py); ctx.rotate(f.rot);
+        ctx.strokeStyle = `rgba(235,244,255,${f.a*.8})`;
+        ctx.lineWidth = .7;
+        ctx.beginPath();
+        for(let k=0;k<3;k++){
+          const a = k*Math.PI/3;
+          ctx.moveTo(Math.cos(a)*f.r*2.2, Math.sin(a)*f.r*2.2);
+          ctx.lineTo(-Math.cos(a)*f.r*2.2, -Math.sin(a)*f.r*2.2);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }
+
+  if(reduce){
+    draw(performance.now());
+  }else{
+    function loop(t){
+      draw(t);
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  }
+})();
+</script>
+<script>
+/* ===== UI: smooth zoom / fade / slide when changing any page (visual only) ===== */
+(function(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let dir = 1, token = 0;
+  const views = {loginPage:0, registerPage:1, dashboardPage:2};
+  const viewOf = {showLogin:'loginPage', showRegister:'registerPage', showDashboard:'dashboardPage'};
+  const sOrder = {home:0, topup:1, 'check-slip':2};
+  const visibleView = ()=>[...document.querySelectorAll('#loginPage,#registerPage,#dashboardPage')].find(e=>!e.classList.contains('hidden'));
+  const leave = (el,d)=>{ el.style.setProperty('--dir', d); el.classList.add('view-leave'); };
+
+  // login / register / dashboard
+  Object.keys(viewOf).forEach(name=>{
+    const orig = window[name];
+    if(typeof orig !== 'function') return;
+    window[name] = function(){
+      const cur = visibleView(), to = viewOf[name], args = arguments, self = this;
+      if(!cur || cur.id === to) return orig.apply(self, args);
+      dir = views[to] >= views[cur.id] ? 1 : -1;
+      const my = ++token;
+      leave(cur, dir);
+      setTimeout(()=>{
+        cur.classList.remove('view-leave');
+        if(my === token) orig.apply(self, args);
+      }, 240);
+    };
+  });
+
+  // home / topup / check-slip
+  const origNav = window.storeNavigate;
+  if(typeof origNav === 'function'){
+    window.storeNavigate = function(page, updateHash){
+      const dash = document.getElementById('dashboardPage');
+      const cur = document.querySelector('[data-store-page]:not(.hidden)');
+      if(!(page in sOrder)) page = 'home';
+      if(!cur || cur.dataset.storePage === page || dash.classList.contains('hidden')) return origNav(page, updateHash);
+      dir = sOrder[page] >= sOrder[cur.dataset.storePage] ? 1 : -1;
+      const my = ++token;
+      if(typeof storeCloseMenu === 'function') storeCloseMenu();
+      leave(cur, dir);
+      setTimeout(()=>{
+        cur.classList.remove('view-leave');
+        if(my === token) origNav(page, updateHash === undefined ? true : updateHash);
+      }, 230);
+    };
+  }
+
+  // play the enter animation whenever a view becomes visible
+  const enter = el=>{
+    el.style.setProperty('--dir', dir);
+    el.classList.remove('view-enter'); void el.offsetWidth;
+    el.classList.add('view-enter');
+    setTimeout(()=>el.classList.remove('view-enter'), 850);
+  };
+  const mo = new MutationObserver(ms=>ms.forEach(m=>{
+    const el = m.target;
+    if(m.oldValue && /\bhidden\b/.test(m.oldValue) && !el.classList.contains('hidden')) enter(el);
+  }));
+  document.querySelectorAll('#loginPage,#registerPage,#dashboardPage,[data-store-page]').forEach(el=>{
+    mo.observe(el, {attributes:true, attributeFilter:['class'], attributeOldValue:true});
+  });
+})();
 </script>
 </body>
 </html>
