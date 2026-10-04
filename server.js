@@ -71,26 +71,19 @@ async function initDatabase() {
 
 app.get("/api/balance", async (req, res) => {
     try {
-        const result = await pool.query(
-            `
+        const result = await pool.query(`
             SELECT balance
             FROM wallet
             WHERE id = 1
-            `
-        );
+        `);
 
         res.json({
             balance: Number(
                 result.rows[0]?.balance || 0
             )
         });
-
     } catch (error) {
-
-        console.error(
-            "BALANCE ERROR:",
-            error
-        );
+        console.error("BALANCE ERROR:", error);
 
         res.status(500).json({
             error: "โหลดยอดเงินไม่สำเร็จ"
@@ -103,7 +96,6 @@ app.get("/api/balance", async (req, res) => {
 ========================= */
 
 app.get("/api/receiver", (req, res) => {
-
     res.json({
         success: true,
         bank: "KBank",
@@ -112,7 +104,6 @@ app.get("/api/receiver", (req, res) => {
         name:
             process.env.RECEIVER_NAME || ""
     });
-
 });
 
 /* =========================
@@ -120,17 +111,14 @@ app.get("/api/receiver", (req, res) => {
 ========================= */
 
 app.get("/api/qr", (req, res) => {
-
     const qrUrl =
         process.env.RECEIVER_QR_URL;
 
     if (!qrUrl) {
-
         return res.status(503).json({
             error:
                 "ยังไม่ได้ตั้งค่า QR รับเงิน"
         });
-
     }
 
     res.json({
@@ -142,7 +130,6 @@ app.get("/api/qr", (req, res) => {
             process.env.RECEIVER_NAME || "",
         qr: qrUrl
     });
-
 });
 
 /* =========================
@@ -150,9 +137,7 @@ app.get("/api/qr", (req, res) => {
 ========================= */
 
 app.post("/api/topup", async (req, res) => {
-
     try {
-
         const amount =
             Number(req.body.amount);
 
@@ -160,21 +145,17 @@ app.post("/api/topup", async (req, res) => {
             !Number.isFinite(amount) ||
             amount <= 0
         ) {
-
             return res.status(400).json({
                 error:
                     "จำนวนเงินไม่ถูกต้อง"
             });
-
         }
 
         if (amount > 1000000) {
-
             return res.status(400).json({
                 error:
                     "จำนวนเงินเกินกำหนด"
             });
-
         }
 
         const result =
@@ -201,7 +182,6 @@ app.post("/api/topup", async (req, res) => {
         });
 
     } catch (error) {
-
         console.error(
             "TOPUP ERROR:",
             error
@@ -211,13 +191,12 @@ app.post("/api/topup", async (req, res) => {
             error:
                 "สร้างรายการไม่สำเร็จ"
         });
-
     }
-
 });
 
 /* =========================
    VERIFY SLIP
+   THUNDER V2 BASE64
 ========================= */
 
 app.post(
@@ -227,32 +206,24 @@ app.post(
 
         try {
 
-            /* CHECK FILE */
-
             if (!req.file) {
-
                 return res.status(400).json({
                     error:
                         "กรุณาเลือกสลิป"
                 });
-
             }
-
-            /* CHECK PAYMENT */
 
             const paymentId =
                 Number(req.body.paymentId);
 
             if (!paymentId) {
-
                 return res.status(400).json({
                     error:
                         "ไม่พบ Payment ID"
                 });
-
             }
 
-            /* FIND PAYMENT */
+            /* ตรวจสอบ Payment */
 
             const paymentResult =
                 await pool.query(
@@ -267,97 +238,58 @@ app.post(
             if (
                 !paymentResult.rows.length
             ) {
-
                 return res.status(404).json({
                     error:
                         "ไม่พบรายการเติมเงิน"
                 });
-
             }
 
             const payment =
                 paymentResult.rows[0];
 
-            /* PREVENT DOUBLE CHECK */
-
             if (
                 payment.status !==
                 "PENDING"
             ) {
-
                 return res.status(400).json({
                     error:
                         "รายการนี้ถูกตรวจสอบแล้ว"
                 });
-
             }
 
-            /* CHECK THUNDER */
+            /* ตรวจ API KEY */
 
             if (
                 !process.env.THUNDER_API_KEY
             ) {
-
                 return res.status(503).json({
                     error:
                         "ยังไม่ได้ตั้งค่า Thunder API Key"
                 });
-
             }
+
+            /* Thunder URL */
 
             const thunderUrl =
                 process.env.THUNDER_API_URL ||
                 "https://api.thunder.in.th/v2/verify/bank";
 
-            /* FORM DATA */
+            console.log(
+                "THUNDER URL:",
+                thunderUrl
+            );
 
-            const formData =
-                new FormData();
+            /* แปลงรูปเป็น Base64 */
 
-            const blob =
-                new Blob(
-                    [req.file.buffer],
-                    {
-                        type:
-                            req.file.mimetype
-                    }
+            const base64 =
+                req.file.buffer.toString(
+                    "base64"
                 );
 
-            formData.append(
-                "image",
-                req.file.buffer,
-                {
-                    filename: req.file.originalname,
-                    contentType: req.file.mimetype
-                }
-            );
-            formData.append(
-                "matchAccount",
-                "true"
-            );
+            const imageData =
+                `data:${req.file.mimetype};base64,${base64}`;
 
-            formData.append(
-                "matchAmount",
-                String(
-                    Number(payment.amount)
-                )
-            );
-
-            formData.append(
-                "checkDuplicate",
-                "true"
-            );
-
-            formData.append(
-                "remark",
-                `Payment #${payment.id}`
-            );
-
-            /* SEND TO THUNDER */
-
-            console.log(
-                "Sending slip to Thunder..."
-            );
+            /* ส่งไป Thunder */
 
             const thunderResponse =
                 await fetch(
@@ -367,10 +299,30 @@ app.post(
 
                         headers: {
                             Authorization:
-                                `Bearer ${process.env.THUNDER_API_KEY}`
+                                `Bearer ${process.env.THUNDER_API_KEY}`,
+
+                            "Content-Type":
+                                "application/json"
                         },
 
-                        body: formData
+                        body: JSON.stringify({
+                            base64:
+                                imageData,
+
+                            matchAccount:
+                                true,
+
+                            matchAmount:
+                                Number(
+                                    payment.amount
+                                ),
+
+                            checkDuplicate:
+                                true,
+
+                            remark:
+                                `Payment #${payment.id}`
+                        })
                     }
                 );
 
@@ -380,19 +332,15 @@ app.post(
             let thunderData;
 
             try {
-
                 thunderData =
                     JSON.parse(
                         thunderText
                     );
-
             } catch {
-
                 thunderData = {
                     raw:
                         thunderText
                 };
-
             }
 
             console.log(
@@ -407,94 +355,67 @@ app.post(
                 )
             );
 
-            /* THUNDER ERROR */
+            /* Thunder Error */
 
             if (
-                !thunderResponse.ok
+                !thunderResponse.ok ||
+                thunderData.success === false
             ) {
-
                 return res.status(400).json({
                     error:
                         thunderData?.error?.message ||
                         thunderData?.message ||
                         "Thunder ตรวจสอบสลิปไม่สำเร็จ"
                 });
-
-            }
-
-            /* CHECK SUCCESS */
-
-            if (
-                thunderData.success === false
-            ) {
-
-                return res.status(400).json({
-                    error:
-                        thunderData?.error?.message ||
-                        thunderData?.message ||
-                        "สลิปไม่ผ่านการตรวจสอบ"
-                });
-
             }
 
             const data =
                 thunderData.data ||
                 thunderData;
 
-            /* DUPLICATE */
+            /* สลิปซ้ำ */
 
             if (
                 data.isDuplicate === true
             ) {
-
                 return res.status(400).json({
                     error:
                         "สลิปนี้ถูกใช้ไปแล้ว"
                 });
-
             }
 
-            /* AMOUNT */
+            /* จำนวนเงิน */
 
             if (
                 data.isAmountMatched ===
                 false
             ) {
-
                 return res.status(400).json({
                     error:
                         "จำนวนเงินในสลิปไม่ตรงกับรายการ"
                 });
-
             }
 
-            /* ACCOUNT */
+            /* บัญชีผู้รับ */
 
             if (
-                data.matchedAccount ===
-                false
+                !data.matchedAccount
             ) {
-
                 return res.status(400).json({
                     error:
-                        "บัญชีผู้รับไม่ตรง"
+                        "บัญชีผู้รับไม่ตรงกับบัญชีที่ลงทะเบียนใน Thunder"
                 });
-
             }
 
-            /* TRANSACTION ID */
+            /* Transaction ID */
 
             const transactionId =
-                data.rawSlip?.transactionId ||
-                data.rawSlip?.transaction?.id ||
-                data.transactionId ||
+                data.rawSlip?.transRef ||
                 data.transRef ||
+                data.transactionId ||
                 null;
 
-            /*
-                ถ้า Thunder ส่ง Transaction ID มา
-                ให้ตรวจซ้ำใน Database ด้วย
-            */
+            /* ป้องกัน Transaction ซ้ำ */
 
             if (transactionId) {
 
@@ -511,18 +432,15 @@ app.post(
                 if (
                     duplicateResult.rows.length
                 ) {
-
                     return res.status(400).json({
                         error:
                             "Transaction นี้ถูกใช้แล้ว"
                     });
-
                 }
-
             }
 
             /* =========================
-               ADD MONEY SAFELY
+               UPDATE DATABASE
             ========================= */
 
             const client =
@@ -534,15 +452,20 @@ app.post(
                     "BEGIN"
                 );
 
+                /* เปลี่ยน Payment เป็น SUCCESS */
+
                 const updatePayment =
                     await client.query(
                         `
                         UPDATE payments
+
                         SET
                             status = 'SUCCESS',
                             transaction_id = $1
+
                         WHERE id = $2
-                          AND status = 'PENDING'
+                        AND status = 'PENDING'
+
                         RETURNING amount
                         `,
                         [
@@ -563,8 +486,9 @@ app.post(
                         error:
                             "รายการนี้ถูกดำเนินการไปแล้ว"
                     });
-
                 }
+
+                /* จำนวนเงิน */
 
                 const amount =
                     Number(
@@ -573,11 +497,15 @@ app.post(
                             .amount
                     );
 
+                /* เพิ่ม Balance */
+
                 await client.query(
                     `
                     UPDATE wallet
+
                     SET balance =
                         balance + $1
+
                     WHERE id = 1
                     `,
                     [amount]
@@ -591,13 +519,14 @@ app.post(
                     `Payment #${payment.id} SUCCESS +${amount}`
                 );
 
-                res.json({
+                return res.json({
                     success: true,
 
                     message:
                         "ตรวจสอบสลิปสำเร็จ เติมเงินเรียบร้อย",
 
-                    amount: amount,
+                    amount:
+                        amount,
 
                     transactionId:
                         transactionId
@@ -614,7 +543,6 @@ app.post(
             } finally {
 
                 client.release();
-
             }
 
         } catch (error) {
@@ -628,9 +556,7 @@ app.post(
                 error:
                     "เกิดข้อผิดพลาดในการตรวจสอบสลิป"
             });
-
         }
-
     }
 );
 
@@ -641,16 +567,14 @@ app.post(
 app.get(
     "/api/health",
     (req, res) => {
-
         res.json({
             status: "online"
         });
-
     }
 );
 
 /* =========================
-   START
+   START SERVER
 ========================= */
 
 async function start() {
@@ -679,9 +603,7 @@ async function start() {
         );
 
         process.exit(1);
-
     }
-
 }
 
 start();
