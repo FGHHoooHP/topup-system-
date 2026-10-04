@@ -325,10 +325,12 @@ app.post(
 
             formData.append(
                 "image",
-                blob,
-                req.file.originalname
+                req.file.buffer,
+                {
+                    filename: req.file.originalname,
+                    contentType: req.file.mimetype
+                }
             );
-
             formData.append(
                 "matchAccount",
                 "true"
