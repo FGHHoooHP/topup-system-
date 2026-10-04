@@ -394,7 +394,54 @@ app.post(
                             verification.transactionId
                         ]
                     );
+app.get("/api/qr", (req, res) => {
+    try {
+        const amount = Number(req.query.amount);
 
+        if (!Number.isFinite(amount) || amount <= 0) {
+            return res.status(400).json({
+                error: "จำนวนเงินไม่ถูกต้อง"
+            });
+        }
+
+        const receiverName = process.env.RECEIVER_NAME;
+        const promptpay = process.env.RECEIVER_PROMPTPAY;
+
+        console.log("RECEIVER_NAME =", receiverName);
+        console.log("RECEIVER_PROMPTPAY =", promptpay);
+
+        if (!receiverName) {
+            return res.status(500).json({
+                error: "ไม่พบ RECEIVER_NAME ใน Railway Variables"
+            });
+        }
+
+        if (!promptpay) {
+            return res.status(500).json({
+                error: "ไม่พบ RECEIVER_PROMPTPAY ใน Railway Variables"
+            });
+        }
+
+        const payload = generatePayload(promptpay, {
+            amount: amount
+        });
+
+        res.json({
+            success: true,
+            receiverName: receiverName,
+            promptpay: promptpay,
+            amount: amount,
+            payload: payload
+        });
+
+    } catch (error) {
+        console.error("QR ERROR:", error);
+
+        res.status(500).json({
+            error: "สร้าง QR ไม่สำเร็จ"
+        });
+    }
+});
 
                 if (
                     duplicate.rows.length
