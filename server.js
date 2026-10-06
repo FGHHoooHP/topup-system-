@@ -4,14 +4,16 @@ const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const { Pool } = require("pg");
 
+const { parseSlip } = require("./services/slipParser");
+
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-
 const SESSION_DAYS = 30;
 
 /* =========================
@@ -19,24 +21,23 @@ const SESSION_DAYS = 30;
 ========================= */
 
 const upload = multer({
-    storage: multer.memoryStorage(),
+    dest: path.join(__dirname, "uploads"),
 
     limits: {
-        fileSize: 4 * 1024 * 1024
+        fileSize: 10 * 1024 * 1024
     },
 
     fileFilter: (req, file, cb) => {
         const allowed = [
             "image/jpeg",
             "image/png",
-            "image/webp",
-            "image/gif"
+            "image/webp"
         ];
 
         if (!allowed.includes(file.mimetype)) {
             return cb(
                 new Error(
-                    "รองรับเฉพาะ JPG, PNG, WEBP, GIF"
+                    "รองรับเฉพาะ JPG, PNG, WEBP"
                 )
             );
         }
@@ -90,6 +91,7 @@ async function initDatabase() {
 
         CREATE TABLE IF NOT EXISTS sessions (
             id SERIAL PRIMARY KEY,
+
             user_id INTEGER NOT NULL
                 REFERENCES users(id)
                 ON DELETE CASCADE,
@@ -112,9 +114,12 @@ async function initDatabase() {
 
             transaction_id TEXT UNIQUE,
 
-            status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+            status VARCHAR(20)
+                NOT NULL
+                DEFAULT 'PENDING',
 
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            created_at TIMESTAMP
+                DEFAULT CURRENT_TIMESTAMP
         );
 
         CREATE INDEX IF NOT EXISTS
@@ -145,11 +150,14 @@ function hashToken(token) {
 }
 
 function createToken() {
-    return crypto.randomBytes(48).toString("hex");
+    return crypto
+        .randomBytes(48)
+        .toString("hex");
 }
 
 function getCookie(req, name) {
-    const header = req.headers.cookie;
+    const header =
+        req.headers.cookie;
 
     if (!header) {
         return null;
@@ -157,23 +165,34 @@ function getCookie(req, name) {
 
     const cookies = header
         .split(";")
-        .map((item) => item.trim());
+        .map(
+            item =>
+                item.trim()
+        );
 
-    const cookie = cookies.find(
-        (item) =>
-            item.startsWith(`${name}=`)
-    );
+    const cookie =
+        cookies.find(
+            item =>
+                item.startsWith(
+                    `${name}=`
+                )
+        );
 
     if (!cookie) {
         return null;
     }
 
     return decodeURIComponent(
-        cookie.substring(name.length + 1)
+        cookie.substring(
+            name.length + 1
+        )
     );
 }
 
-function setSessionCookie(res, token) {
+function setSessionCookie(
+    res,
+    token
+) {
     const maxAge =
         SESSION_DAYS *
         24 *
@@ -192,7 +211,9 @@ function setSessionCookie(res, token) {
             `Max-Age=${maxAge}`,
             "HttpOnly",
             "SameSite=Lax",
-            secure ? "Secure" : ""
+            secure
+                ? "Secure"
+                : ""
         ]
             .filter(Boolean)
             .join("; ")
@@ -206,11 +227,34 @@ function clearSessionCookie(res) {
     );
 }
 
+async function removeUploadedFile(
+    filePath
+) {
+    if (!filePath) {
+        return;
+    }
+
+    try {
+        await fs.promises.unlink(
+            filePath
+        );
+    } catch (error) {
+        console.error(
+            "DELETE UPLOAD ERROR:",
+            error.message
+        );
+    }
+}
+
 /* =========================
    AUTH MIDDLEWARE
 ========================= */
 
-async function auth(req, res, next) {
+async function auth(
+    req,
+    res,
+    next
+) {
     try {
         const token =
             getCookie(
@@ -219,10 +263,12 @@ async function auth(req, res, next) {
             );
 
         if (!token) {
-            return res.status(401).json({
-                error:
-                    "กรุณาเข้าสู่ระบบ"
-            });
+            return res
+                .status(401)
+                .json({
+                    error:
+                        "กรุณาเข้าสู่ระบบ"
+                });
         }
 
         const tokenHash =
@@ -232,8 +278,11 @@ async function auth(req, res, next) {
             await pool.query(
                 `
                 SELECT
-                    sessions.id AS session_id,
+                    sessions.id
+                        AS session_id,
+
                     sessions.expires_at,
+
                     users.id,
                     users.username,
                     users.balance
@@ -244,19 +293,29 @@ async function auth(req, res, next) {
                     ON users.id =
                        sessions.user_id
 
-                WHERE sessions.token_hash = $1
-                AND sessions.expires_at > NOW()
+                WHERE
+                    sessions.token_hash = $1
+
+                AND
+                    sessions.expires_at
+                    > NOW()
                 `,
                 [tokenHash]
             );
 
-        if (!result.rows.length) {
-            clearSessionCookie(res);
+        if (
+            !result.rows.length
+        ) {
+            clearSessionCookie(
+                res
+            );
 
-            return res.status(401).json({
-                error:
-                    "Session หมดอายุ"
-            });
+            return res
+                .status(401)
+                .json({
+                    error:
+                        "Session หมดอายุ"
+                });
         }
 
         req.user =
@@ -274,10 +333,12 @@ async function auth(req, res, next) {
             error
         );
 
-        res.status(500).json({
-            error:
-                "ตรวจสอบ Session ไม่สำเร็จ"
-        });
+        res
+            .status(500)
+            .json({
+                error:
+                    "ตรวจสอบ Session ไม่สำเร็จ"
+            });
     }
 }
 
@@ -300,6 +361,7 @@ app.get(
 
 app.post(
     "/api/auth/register",
+
     async (req, res) => {
         try {
             let {
@@ -324,17 +386,23 @@ app.post(
                     username
                 )
             ) {
-                return res.status(400).json({
-                    error:
-                        "Username ต้องมี 3-32 ตัว และใช้ A-Z, a-z, 0-9, _ เท่านั้น"
-                });
+                return res
+                    .status(400)
+                    .json({
+                        error:
+                            "Username ต้องมี 3-32 ตัว และใช้ A-Z, a-z, 0-9, _ เท่านั้น"
+                    });
             }
 
-            if (password.length < 6) {
-                return res.status(400).json({
-                    error:
-                        "รหัสผ่านต้องมีอย่างน้อย 6 ตัว"
-                });
+            if (
+                password.length < 6
+            ) {
+                return res
+                    .status(400)
+                    .json({
+                        error:
+                            "รหัสผ่านต้องมีอย่างน้อย 6 ตัว"
+                    });
             }
 
             const exists =
@@ -347,11 +415,15 @@ app.post(
                     [username]
                 );
 
-            if (exists.rows.length) {
-                return res.status(409).json({
-                    error:
-                        "Username นี้ถูกใช้แล้ว"
-                });
+            if (
+                exists.rows.length
+            ) {
+                return res
+                    .status(409)
+                    .json({
+                        error:
+                            "Username นี้ถูกใช้แล้ว"
+                    });
             }
 
             const passwordHash =
@@ -368,7 +440,10 @@ app.post(
                         password_hash
                     )
 
-                    VALUES ($1, $2)
+                    VALUES (
+                        $1,
+                        $2
+                    )
 
                     RETURNING
                         id,
@@ -412,6 +487,7 @@ app.post(
 
 app.post(
     "/api/auth/login",
+
     async (req, res) => {
         try {
             let {
@@ -441,11 +517,15 @@ app.post(
                     [username]
                 );
 
-            if (!result.rows.length) {
-                return res.status(401).json({
-                    error:
-                        "Username หรือ Password ไม่ถูกต้อง"
-                });
+            if (
+                !result.rows.length
+            ) {
+                return res
+                    .status(401)
+                    .json({
+                        error:
+                            "Username หรือ Password ไม่ถูกต้อง"
+                    });
             }
 
             const user =
@@ -458,10 +538,12 @@ app.post(
                 );
 
             if (!valid) {
-                return res.status(401).json({
-                    error:
-                        "Username หรือ Password ไม่ถูกต้อง"
-                });
+                return res
+                    .status(401)
+                    .json({
+                        error:
+                            "Username หรือ Password ไม่ถูกต้อง"
+                    });
             }
 
             const token =
@@ -536,7 +618,9 @@ app.post(
 
 app.get(
     "/api/auth/me",
+
     auth,
+
     (req, res) => {
         res.json({
             success: true,
@@ -563,6 +647,7 @@ app.get(
 
 app.post(
     "/api/auth/logout",
+
     async (req, res) => {
         try {
             const token =
@@ -577,11 +662,15 @@ app.post(
                     DELETE FROM sessions
                     WHERE token_hash = $1
                     `,
-                    [hashToken(token)]
+                    [
+                        hashToken(token)
+                    ]
                 );
             }
 
-            clearSessionCookie(res);
+            clearSessionCookie(
+                res
+            );
 
             res.json({
                 success: true,
@@ -609,7 +698,9 @@ app.post(
 
 app.get(
     "/api/balance",
+
     auth,
+
     async (req, res) => {
         try {
             const result =
@@ -619,7 +710,9 @@ app.get(
                     FROM users
                     WHERE id = $1
                     `,
-                    [req.user.id]
+                    [
+                        req.user.id
+                    ]
                 );
 
             res.json({
@@ -652,11 +745,13 @@ app.get(
 
 app.get(
     "/api/receiver",
+
     (req, res) => {
         res.json({
             success: true,
 
-            bank: "KBank",
+            bank:
+                "KBank",
 
             account:
                 process.env
@@ -677,22 +772,26 @@ app.get(
 
 app.get(
     "/api/qr",
+
     (req, res) => {
         const qr =
             process.env
                 .RECEIVER_QR_URL;
 
         if (!qr) {
-            return res.status(503).json({
-                error:
-                    "ยังไม่ได้ตั้งค่า QR รับเงิน"
-            });
+            return res
+                .status(503)
+                .json({
+                    error:
+                        "ยังไม่ได้ตั้งค่า QR รับเงิน"
+                });
         }
 
         res.json({
             success: true,
 
-            bank: "KBank",
+            bank:
+                "KBank",
 
             account:
                 process.env
@@ -715,6 +814,7 @@ app.get(
 
 app.post(
     "/api/topup",
+
     auth,
 
     async (req, res) => {
@@ -730,19 +830,23 @@ app.post(
                 ) ||
                 amount <= 0
             ) {
-                return res.status(400).json({
-                    error:
-                        "จำนวนเงินไม่ถูกต้อง"
-                });
+                return res
+                    .status(400)
+                    .json({
+                        error:
+                            "จำนวนเงินไม่ถูกต้อง"
+                    });
             }
 
             if (
                 amount > 1000000
             ) {
-                return res.status(400).json({
-                    error:
-                        "จำนวนเงินเกินกำหนด"
-                });
+                return res
+                    .status(400)
+                    .json({
+                        error:
+                            "จำนวนเงินเกินกำหนด"
+                    });
             }
 
             const result =
@@ -779,7 +883,8 @@ app.post(
                     result.rows[0],
 
                 qrUrl:
-                    process.env.RECEIVER_QR_URL
+                    process.env
+                        .RECEIVER_QR_URL
             });
 
         } catch (error) {
@@ -797,28 +902,37 @@ app.post(
 );
 
 /* =========================
-   VERIFY SLIP
+   VERIFY SLIP - LOCAL OCR
 ========================= */
 
 app.post(
     "/api/verify-slip",
+
     auth,
 
     upload.single("slip"),
 
     async (req, res) => {
-        try {
+        const uploadedPath =
+            req.file?.path;
 
-            /* FILE */
+        try {
+            /* =====================
+               FILE
+            ===================== */
 
             if (!req.file) {
-                return res.status(400).json({
-                    error:
-                        "กรุณาเลือกสลิป"
-                });
+                return res
+                    .status(400)
+                    .json({
+                        error:
+                            "กรุณาเลือกสลิป"
+                    });
             }
 
-            /* PAYMENT */
+            /* =====================
+               PAYMENT ID
+            ===================== */
 
             const paymentId =
                 Number(
@@ -826,13 +940,17 @@ app.post(
                 );
 
             if (!paymentId) {
-                return res.status(400).json({
-                    error:
-                        "ไม่พบ Payment ID"
-                });
+                return res
+                    .status(400)
+                    .json({
+                        error:
+                            "ไม่พบ Payment ID"
+                    });
             }
 
-            /* GET PAYMENT */
+            /* =====================
+               GET PAYMENT
+            ===================== */
 
             const paymentResult =
                 await pool.query(
@@ -850,230 +968,272 @@ app.post(
                 );
 
             if (
-                !paymentResult.rows.length
+                !paymentResult
+                    .rows.length
             ) {
-                return res.status(404).json({
-                    error:
-                        "ไม่พบรายการเติมเงิน"
-                });
+                return res
+                    .status(404)
+                    .json({
+                        error:
+                            "ไม่พบรายการเติมเงิน"
+                    });
             }
 
             const payment =
                 paymentResult.rows[0];
 
-            /* STATUS */
+            /* =====================
+               STATUS
+            ===================== */
 
             if (
                 payment.status !==
                 "PENDING"
             ) {
-                return res.status(400).json({
-                    error:
-                        "รายการนี้ถูกตรวจสอบแล้ว"
-                });
+                return res
+                    .status(400)
+                    .json({
+                        error:
+                            "รายการนี้ถูกตรวจสอบแล้ว"
+                    });
             }
 
-            /* THUNDER KEY */
+            /* =====================
+               OCR
+            ===================== */
 
-            if (
-                !process.env
-                    .THUNDER_API_KEY
-            ) {
-                return res.status(503).json({
-                    error:
-                        "ยังไม่ได้ตั้งค่า Thunder API Key"
-                });
-            }
-
-            /* THUNDER URL */
-
-            const thunderUrl =
-                process.env
-                    .THUNDER_API_URL ||
-                "https://api.thunder.in.th/v2/verify/bank";
-
+            console.log("");
             console.log(
-                "THUNDER URL:",
-                thunderUrl
+                "================================"
             );
-
-            /* BASE64 */
-
-            const base64 =
-                req.file.buffer.toString(
-                    "base64"
-                );
-
             console.log(
-                "SLIP MIME:",
-                req.file.mimetype
+                "กำลังอ่านสลิป..."
             );
-
             console.log(
-                "SLIP SIZE:",
+                "ไฟล์:",
+                req.file.originalname
+            );
+            console.log(
+                "SIZE:",
                 req.file.size
             );
+            console.log(
+                "================================"
+            );
 
-            /* THUNDER */
-
-            const thunderResponse =
-                await fetch(
-                    thunderUrl,
-                    {
-                        method:
-                            "POST",
-
-                        headers: {
-                            Authorization:
-                                `Bearer ${process.env.THUNDER_API_KEY}`,
-
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify({
-                                base64:
-
-                                    base64,
-
-                                matchAccount:
-                                    true,
-
-                                matchAmount:
-                                    Number(
-                                        payment.amount
-                                    ),
-
-                                checkDuplicate:
-                                    true,
-
-                                remark:
-                                    `Payment #${payment.id}`
-                            })
-                    }
+            const slip =
+                await parseSlip(
+                    req.file.path
                 );
 
-            const thunderText =
-                await thunderResponse.text();
-
-            let thunderData;
-
-            try {
-                thunderData =
-                    JSON.parse(
-                        thunderText
-                    );
-            } catch {
-                thunderData = {
-                    raw:
-                        thunderText
-                };
-            }
-
             console.log(
-                "THUNDER STATUS:",
-                thunderResponse.status
+                "OCR RESULT:",
+                slip
             );
 
-            console.log(
-                "THUNDER RESPONSE:",
-                JSON.stringify(
-                    thunderData
-                )
-            );
-
-            /* THUNDER ERROR */
-
-            if (
-                !thunderResponse.ok
-            ) {
-                return res.status(400).json({
-                    error:
-                        thunderData
-                            ?.error
-                            ?.message ||
-                        thunderData
-                            ?.message ||
-                        "Thunder ตรวจสอบสลิปไม่สำเร็จ"
-                });
-            }
-
-            if (
-                thunderData.success ===
-                false
-            ) {
-                return res.status(400).json({
-                    error:
-                        thunderData
-                            ?.error
-                            ?.message ||
-                        thunderData
-                            ?.message ||
-                        "สลิปไม่ผ่านการตรวจสอบ"
-                });
-            }
-
-            const data =
-                thunderData.data ||
-                thunderData;
-
-            /* DUPLICATE */
-
-            if (
-                data.isDuplicate ===
-                true
-            ) {
-                return res.status(400).json({
-                    error:
-                        "สลิปนี้ถูกใช้ไปแล้ว"
-                });
-            }
-
-            /* AMOUNT */
-
-            if (
-                data.isAmountMatched ===
-                false
-            ) {
-                return res.status(400).json({
-                    error:
-                        "จำนวนเงินในสลิปไม่ตรงกับรายการ"
-                });
-            }
-
-            /* ACCOUNT */
-
-            if (
-                data.matchedAccount ===
-                false ||
-                data.matchedAccount ==
-                    null
-            ) {
-                return res.status(400).json({
-                    error:
-                        "บัญชีผู้รับไม่ตรงกับบัญชีที่ลงทะเบียนใน Thunder"
-                });
-            }
-
-            /* TRANSACTION */
+            /* =====================
+               TRANSACTION ID
+            ===================== */
 
             const transactionId =
-                data.rawSlip?.transRef ||
-                data.transRef ||
-                data.transactionId ||
-                null;
+                String(
+                    slip.transaction_id ||
+                    ""
+                )
+                    .trim();
 
-            /* DUPLICATE TRANSACTION */
+            if (!transactionId) {
+                return res
+                    .status(400)
+                    .json({
+                        error:
+                            "ไม่พบเลขที่รายการในสลิป",
 
-            if (transactionId) {
+                        rawText:
+                            slip.raw_text ||
+                            ""
+                    });
+            }
 
-                const duplicate =
-                    await pool.query(
+            /* =====================
+               AMOUNT
+            ===================== */
+
+            const slipAmount =
+                Number(
+                    String(
+                        slip.amount || ""
+                    )
+                        .replace(
+                            /,/g,
+                            ""
+                        )
+                        .trim()
+                );
+
+            if (
+                !Number.isFinite(
+                    slipAmount
+                )
+            ) {
+                return res
+                    .status(400)
+                    .json({
+                        error:
+                            "ไม่สามารถอ่านจำนวนเงินจากสลิปได้",
+
+                        rawText:
+                            slip.raw_text ||
+                            ""
+                    });
+            }
+
+            const requiredAmount =
+                Number(
+                    payment.amount
+                );
+
+            if (
+                Math.abs(
+                    slipAmount -
+                    requiredAmount
+                ) > 0.001
+            ) {
+                return res
+                    .status(400)
+                    .json({
+                        error:
+                            `จำนวนเงินไม่ตรง ต้องเป็น ${requiredAmount.toFixed(2)} บาท แต่ OCR อ่านได้ ${slipAmount.toFixed(2)} บาท`,
+
+                        amount:
+                            slipAmount,
+
+                        rawText:
+                            slip.raw_text ||
+                            ""
+                    });
+            }
+
+            /* =====================
+               DUPLICATE TRANSACTION
+            ===================== */
+
+            const duplicate =
+                await pool.query(
+                    `
+                    SELECT
+                        id,
+                        user_id,
+                        status
+
+                    FROM payments
+
+                    WHERE transaction_id = $1
+
+                    LIMIT 1
+                    `,
+                    [
+                        transactionId
+                    ]
+                );
+
+            if (
+                duplicate.rows.length
+            ) {
+                return res
+                    .status(409)
+                    .json({
+                        error:
+                            "สลิปนี้ถูกใช้ไปแล้ว"
+                    });
+            }
+
+            /* =====================
+               DATABASE TRANSACTION
+            ===================== */
+
+            const client =
+                await pool.connect();
+
+            try {
+                await client.query(
+                    "BEGIN"
+                );
+
+                /*
+                 * Lock payment
+                 */
+
+                const lockedPayment =
+                    await client.query(
+                        `
+                        SELECT
+                            id,
+                            amount,
+                            status
+
+                        FROM payments
+
+                        WHERE id = $1
+                        AND user_id = $2
+
+                        FOR UPDATE
+                        `,
+                        [
+                            paymentId,
+                            req.user.id
+                        ]
+                    );
+
+                if (
+                    !lockedPayment
+                        .rows.length
+                ) {
+                    await client.query(
+                        "ROLLBACK"
+                    );
+
+                    return res
+                        .status(404)
+                        .json({
+                            error:
+                                "ไม่พบรายการเติมเงิน"
+                        });
+                }
+
+                if (
+                    lockedPayment
+                        .rows[0]
+                        .status !==
+                    "PENDING"
+                ) {
+                    await client.query(
+                        "ROLLBACK"
+                    );
+
+                    return res
+                        .status(400)
+                        .json({
+                            error:
+                                "รายการนี้ถูกดำเนินการไปแล้ว"
+                        });
+                }
+
+                /*
+                 * Check duplicate again
+                 * inside transaction
+                 */
+
+                const duplicateAgain =
+                    await client.query(
                         `
                         SELECT id
                         FROM payments
-                        WHERE transaction_id = $1
+
+                        WHERE
+                            transaction_id = $1
+
+                        LIMIT 1
                         `,
                         [
                             transactionId
@@ -1081,28 +1241,24 @@ app.post(
                     );
 
                 if (
-                    duplicate.rows
-                        .length
+                    duplicateAgain
+                        .rows.length
                 ) {
-                    return res.status(400).json({
-                        error:
-                            "Transaction นี้ถูกใช้แล้ว"
-                    });
+                    await client.query(
+                        "ROLLBACK"
+                    );
+
+                    return res
+                        .status(409)
+                        .json({
+                            error:
+                                "สลิปนี้ถูกใช้ไปแล้ว"
+                        });
                 }
-            }
 
-            /* DATABASE TRANSACTION */
-
-            const client =
-                await pool.connect();
-
-            try {
-
-                await client.query(
-                    "BEGIN"
-                );
-
-                /* SUCCESS PAYMENT */
+                /*
+                 * SUCCESS PAYMENT
+                 */
 
                 const updatePayment =
                     await client.query(
@@ -1110,17 +1266,24 @@ app.post(
                         UPDATE payments
 
                         SET
-                            status = 'SUCCESS',
-                            transaction_id = $1
+                            status =
+                                'SUCCESS',
 
-                        WHERE id = $2
+                            transaction_id =
+                                $1
 
-                        AND user_id = $3
+                        WHERE
+                            id = $2
 
-                        AND status =
-                            'PENDING'
+                        AND
+                            user_id = $3
 
-                        RETURNING amount
+                        AND
+                            status =
+                                'PENDING'
+
+                        RETURNING
+                            amount
                         `,
                         [
                             transactionId,
@@ -1137,10 +1300,12 @@ app.post(
                         "ROLLBACK"
                     );
 
-                    return res.status(400).json({
-                        error:
-                            "รายการนี้ถูกดำเนินการไปแล้ว"
-                    });
+                    return res
+                        .status(400)
+                        .json({
+                            error:
+                                "รายการนี้ถูกดำเนินการไปแล้ว"
+                        });
                 }
 
                 const amount =
@@ -1150,22 +1315,30 @@ app.post(
                             .amount
                     );
 
-                /* ADD USER BALANCE */
+                /*
+                 * ADD BALANCE
+                 */
 
-                await client.query(
-                    `
-                    UPDATE users
+                const balanceResult =
+                    await client.query(
+                        `
+                        UPDATE users
 
-                    SET balance =
-                        balance + $1
+                        SET
+                            balance =
+                                balance + $1
 
-                    WHERE id = $2
-                    `,
-                    [
-                        amount,
-                        req.user.id
-                    ]
-                );
+                        WHERE
+                            id = $2
+
+                        RETURNING
+                            balance
+                        `,
+                        [
+                            amount,
+                            req.user.id
+                        ]
+                    );
 
                 await client.query(
                     "COMMIT"
@@ -1179,15 +1352,43 @@ app.post(
                     success: true,
 
                     message:
-                        "ตรวจสอบสลิปสำเร็จ เติมเงินเรียบร้อย",
+                        "อ่านสลิปสำเร็จ เติมเงินเรียบร้อย",
 
                     amount,
 
-                    transactionId
+                    balance:
+                        Number(
+                            balanceResult
+                                .rows[0]
+                                .balance
+                        ),
+
+                    transactionId,
+
+                    slip: {
+                        sender:
+                            slip.sender ||
+                            "",
+
+                        receiver:
+                            slip.receiver ||
+                            "",
+
+                        amount:
+                            slip.amount ||
+                            "",
+
+                        date:
+                            slip.date ||
+                            "",
+
+                        time:
+                            slip.time ||
+                            ""
+                    }
                 });
 
             } catch (error) {
-
                 await client.query(
                     "ROLLBACK"
                 );
@@ -1195,22 +1396,44 @@ app.post(
                 throw error;
 
             } finally {
-
                 client.release();
             }
 
         } catch (error) {
-
             console.error(
                 "VERIFY ERROR:",
                 error
             );
 
-            res.status(500).json({
-                error:
-                    error.message ||
-                    "เกิดข้อผิดพลาดในการตรวจสอบสลิป"
-            });
+            if (
+                error.code ===
+                "23505"
+            ) {
+                return res
+                    .status(409)
+                    .json({
+                        error:
+                            "Transaction นี้ถูกใช้แล้ว"
+                    });
+            }
+
+            return res
+                .status(500)
+                .json({
+                    error:
+                        error.message ||
+                        "เกิดข้อผิดพลาดในการตรวจสอบสลิป"
+                });
+
+        } finally {
+            /*
+             * ลบรูปจาก uploads
+             * หลัง OCR เสร็จ
+             */
+
+            await removeUploadedFile(
+                uploadedPath
+            );
         }
     }
 );
@@ -1221,11 +1444,11 @@ app.post(
 
 app.get(
     "/api/transactions",
+
     auth,
 
     async (req, res) => {
         try {
-
             const result =
                 await pool.query(
                     `
@@ -1245,7 +1468,9 @@ app.get(
 
                     LIMIT 100
                     `,
-                    [req.user.id]
+                    [
+                        req.user.id
+                    ]
                 );
 
             res.json({
@@ -1253,7 +1478,7 @@ app.get(
 
                 transactions:
                     result.rows.map(
-                        (item) => ({
+                        item => ({
                             id:
                                 item.id,
 
@@ -1275,7 +1500,6 @@ app.get(
             });
 
         } catch (error) {
-
             console.error(
                 "TRANSACTIONS ERROR:",
                 error
@@ -1295,7 +1519,6 @@ app.get(
 
 async function cleanSessions() {
     try {
-
         await pool.query(
             `
             DELETE FROM sessions
@@ -1304,7 +1527,6 @@ async function cleanSessions() {
         );
 
     } catch (error) {
-
         console.error(
             "SESSION CLEAN ERROR:",
             error
@@ -1318,7 +1540,6 @@ async function cleanSessions() {
 
 app.use(
     (error, req, res, next) => {
-
         console.error(
             "SERVER ERROR:",
             error
@@ -1328,10 +1549,12 @@ app.use(
             error.code ===
             "LIMIT_FILE_SIZE"
         ) {
-            return res.status(400).json({
-                error:
-                    "ไฟล์สลิปต้องไม่เกิน 4MB"
-            });
+            return res
+                .status(400)
+                .json({
+                    error:
+                        "ไฟล์สลิปต้องไม่เกิน 10MB"
+                });
         }
 
         res.status(500).json({
@@ -1347,9 +1570,7 @@ app.use(
 ========================= */
 
 async function start() {
-
     try {
-
         await initDatabase();
 
         setInterval(
@@ -1360,17 +1581,15 @@ async function start() {
         app.listen(
             PORT,
             "0.0.0.0",
-            () => {
 
+            () => {
                 console.log(
                     `Server running on port ${PORT}`
                 );
-
             }
         );
 
     } catch (error) {
-
         console.error(
             "START ERROR:",
             error
