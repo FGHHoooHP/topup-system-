@@ -21,6 +21,9 @@ const REQUIRED_RECEIVER_NAME =
 const REQUIRED_RECEIVER_NUMBER =
     "2202587596";
 
+const REQUIRED_RECEIVER_VISIBLE_DIGITS =
+    "8759";
+
 /* =========================
    UPLOAD
 ========================= */
@@ -320,33 +323,43 @@ function hasRequiredReceiverNumber(
             .filter(Boolean);
 
     /*
-     * ตรวจเลขทุกบรรทัดของ OCR
-     * เพราะบางสลิปมีชื่อธนาคาร/ข้อความคั่นหลายบรรทัด
-     * ระหว่างชื่อผู้รับกับเลขบัญชี
+     * บัญชีจริง: 220-2-58759-6
+     * แต่ K PLUS แสดงแบบปิดบัง เช่น:
+     * XXX-X-X8759-x
      *
-     * ตัดขีด เว้นวรรค และอักขระอื่นออกก่อนเทียบ
-     * ดังนั้น 220-2-58759-6 จะกลายเป็น 2202587596
+     * ดังนั้นถ้าสลิปปิดบังเลขบัญชี
+     * จะตรวจเฉพาะตัวเลขที่มองเห็น คือ 8759
+     * และต้องเป็นบรรทัดที่มี X/x ปิดบังเลขอยู่จริง
      */
 
     for (const line of lines) {
         const digits =
             line.replace(/[^0-9]/g, "");
 
+        /*
+         * ถ้า OCR อ่านเลขเต็มได้ ก็ยอมรับเลขเต็มตามปกติ
+         */
         if (
             digits ===
-            REQUIRED_RECEIVER_NUMBER
+            REQUIRED_RECEIVER_NUMBER ||
+            digits.includes(
+                REQUIRED_RECEIVER_NUMBER
+            )
         ) {
             return true;
         }
 
         /*
-         * รองรับกรณี OCR ใส่ข้อความติดกับเลขในบรรทัดเดียวกัน
-         * แต่ยังต้องมีเลข 10 หลักที่ตรงกันครบทุกตัว
+         * กรณีเลขถูกปิดบัง เช่น XXX-X-X8759-x
          */
+        const maskCount =
+            (line.match(/[xX]/g) || [])
+                .length;
+
         if (
-            digits.includes(
-                REQUIRED_RECEIVER_NUMBER
-            )
+            maskCount >= 5 &&
+            digits ===
+                REQUIRED_RECEIVER_VISIBLE_DIGITS
         ) {
             return true;
         }
@@ -1335,7 +1348,7 @@ app.post(
             ) {
                 return res.status(400).json({
                     error:
-                        "เลขผู้รับไม่ถูกต้อง ต้องเป็น 220-2-58759-6"
+                        "เลขผู้รับไม่ถูกต้อง ต้องตรงกับบัญชีที่แสดงท้าย 8759"
                 });
             }
 
