@@ -931,7 +931,7 @@ app.post(
 );
 
 /* =========================
-   VERIFY SLIP - LOCAL OCR
+   VERIFY SLIP
 ========================= */
 
 app.post(
@@ -942,10 +942,12 @@ app.post(
     upload.single("slip"),
 
     async (req, res) => {
+
         const uploadedPath =
             req.file?.path;
 
         try {
+
             /* =====================
                FILE
             ===================== */
@@ -968,12 +970,17 @@ app.post(
                     req.body.paymentId
                 );
 
-            if (!paymentId) {
+            if (
+                !Number.isInteger(
+                    paymentId
+                ) ||
+                paymentId <= 0
+            ) {
                 return res
                     .status(400)
                     .json({
                         error:
-                            "ไม่พบ Payment ID"
+                            "Payment ID ไม่ถูกต้อง"
                     });
             }
 
@@ -984,7 +991,14 @@ app.post(
             const paymentResult =
                 await pool.query(
                     `
-                    SELECT *
+                    SELECT
+                        id,
+                        user_id,
+                        amount,
+                        transaction_id,
+                        status,
+                        created_at
+
                     FROM payments
 
                     WHERE id = $1
@@ -1012,7 +1026,7 @@ app.post(
                 paymentResult.rows[0];
 
             /* =====================
-               STATUS
+               PAYMENT STATUS
             ===================== */
 
             if (
@@ -1020,10 +1034,10 @@ app.post(
                 "PENDING"
             ) {
                 return res
-                    .status(400)
+                    .status(409)
                     .json({
                         error:
-                            "รายการนี้ถูกตรวจสอบแล้ว"
+                            "รายการนี้ถูกตรวจสอบไปแล้ว"
                     });
             }
 
@@ -1033,32 +1047,31 @@ app.post(
 
             console.log("");
             console.log(
-                "================================"
+                "=============================="
             );
+
             console.log(
-                "กำลังอ่านสลิป..."
+                "กำลังตรวจสลิป"
             );
+
             console.log(
-                "ไฟล์:",
+                "Payment:",
+                paymentId
+            );
+
+            console.log(
+                "File:",
                 req.file.originalname
             );
+
             console.log(
-                "SIZE:",
-                req.file.size
-            );
-            console.log(
-                "================================"
+                "=============================="
             );
 
             const slip =
                 await parseSlip(
                     req.file.path
                 );
-
-            console.log(
-                "OCR RESULT:",
-                slip
-            );
 
             /* =====================
                TRANSACTION ID
@@ -1068,19 +1081,16 @@ app.post(
                 String(
                     slip.transaction_id ||
                     ""
-                )
-                    .trim();
+                ).trim();
 
-            if (!transactionId) {
+            if (
+                !transactionId
+            ) {
                 return res
                     .status(400)
                     .json({
                         error:
-                            "ไม่พบเลขที่รายการในสลิป",
-
-                        rawText:
-                            slip.raw_text ||
-                            ""
+                            "OCR ไม่พบเลขที่รายการในสลิป"
                     });
             }
 
@@ -1091,7 +1101,8 @@ app.post(
             const slipAmount =
                 Number(
                     String(
-                        slip.amount || ""
+                        slip.amount ||
+                        ""
                     )
                         .replace(
                             /,/g,
@@ -1109,71 +1120,36 @@ app.post(
                     .status(400)
                     .json({
                         error:
-                            "ไม่สามารถอ่านจำนวนเงินจากสลิปได้",
-
-                        rawText:
-                            slip.raw_text ||
-                            ""
+                            "OCR ไม่สามารถอ่านจำนวนเงินได้"
                     });
             }
 
-            const requiredAmount =
+            const paymentAmount =
                 Number(
                     payment.amount
                 );
 
             if (
+                !Number.isFinite(
+                    paymentAmount
+                )
+            ) {
+                throw new Error(
+                    "จำนวนเงินของ Payment ในฐานข้อมูลไม่ถูกต้อง"
+                );
+            }
+
+            if (
                 Math.abs(
                     slipAmount -
-                    requiredAmount
+                    paymentAmount
                 ) > 0.001
             ) {
                 return res
                     .status(400)
                     .json({
                         error:
-                            `จำนวนเงินไม่ตรง ต้องเป็น ${requiredAmount.toFixed(2)} บาท แต่ OCR อ่านได้ ${slipAmount.toFixed(2)} บาท`,
-
-                        amount:
-                            slipAmount,
-
-                        rawText:
-                            slip.raw_text ||
-                            ""
-                    });
-            }
-
-            /* =====================
-               DUPLICATE TRANSACTION
-            ===================== */
-
-            const duplicate =
-                await pool.query(
-                    `
-                    SELECT
-                        id,
-                        user_id,
-                        status
-
-                    FROM payments
-
-                    WHERE transaction_id = $1
-
-                    LIMIT 1
-                    `,
-                    [
-                        transactionId
-                    ]
-                );
-
-            if (
-                duplicate.rows.length
-            ) {
-                return res
-                    .status(409)
-                    .json({
-                        error:
-                            "สลิปนี้ถูกใช้ไปแล้ว"
+                            "จำนวนเงินในสลิปไม่ตรงกับรายการเติมเงิน"
                     });
             }
 
@@ -1185,12 +1161,15 @@ app.post(
                 await pool.connect();
 
             try {
+
                 await client.query(
                     "BEGIN"
                 );
 
                 /*
-                 * Lock payment
+                 * Lock Payment
+                 * กัน request สองตัว
+                 * เติมยอดพร้อมกัน
                  */
 
                 const lockedPayment =
@@ -1218,6 +1197,7 @@ app.post(
                     !lockedPayment
                         .rows.length
                 ) {
+
                     await client.query(
                         "ROLLBACK"
                     );
@@ -1230,12 +1210,49 @@ app.post(
                         });
                 }
 
-                if (
+                const locked =
                     lockedPayment
-                        .rows[0]
-                        .status !==
+                        .rows[0];
+
+                /*
+                 * เช็กสถานะซ้ำ
+                 * หลัง lock
+                 */
+
+                if (
+                    locked.status !==
                     "PENDING"
                 ) {
+
+                    await client.query(
+                        "ROLLBACK"
+                    );
+
+                    return res
+                        .status(409)
+                        .json({
+                            error:
+                                "รายการนี้ถูกดำเนินการไปแล้ว"
+                        });
+                }
+
+                /*
+                 * เช็กยอดซ้ำ
+                 * จาก row ที่ lock แล้ว
+                 */
+
+                const lockedAmount =
+                    Number(
+                        locked.amount
+                    );
+
+                if (
+                    Math.abs(
+                        slipAmount -
+                        lockedAmount
+                    ) > 0.001
+                ) {
+
                     await client.query(
                         "ROLLBACK"
                     );
@@ -1244,16 +1261,15 @@ app.post(
                         .status(400)
                         .json({
                             error:
-                                "รายการนี้ถูกดำเนินการไปแล้ว"
+                                "จำนวนเงินในสลิปไม่ตรงกับรายการเติมเงิน"
                         });
                 }
 
                 /*
-                 * Check duplicate again
-                 * inside transaction
+                 * Duplicate Transaction
                  */
 
-                const duplicateAgain =
+                const duplicate =
                     await client.query(
                         `
                         SELECT id
@@ -1270,9 +1286,10 @@ app.post(
                     );
 
                 if (
-                    duplicateAgain
+                    duplicate
                         .rows.length
                 ) {
+
                     await client.query(
                         "ROLLBACK"
                     );
@@ -1286,7 +1303,7 @@ app.post(
                 }
 
                 /*
-                 * SUCCESS PAYMENT
+                 * Payment SUCCESS
                  */
 
                 const updatePayment =
@@ -1301,15 +1318,12 @@ app.post(
                             transaction_id =
                                 $1
 
-                        WHERE
-                            id = $2
+                        WHERE id = $2
 
-                        AND
-                            user_id = $3
+                        AND user_id = $3
 
-                        AND
-                            status =
-                                'PENDING'
+                        AND status =
+                            'PENDING'
 
                         RETURNING
                             amount
@@ -1325,12 +1339,13 @@ app.post(
                     !updatePayment
                         .rows.length
                 ) {
+
                     await client.query(
                         "ROLLBACK"
                     );
 
                     return res
-                        .status(400)
+                        .status(409)
                         .json({
                             error:
                                 "รายการนี้ถูกดำเนินการไปแล้ว"
@@ -1348,20 +1363,17 @@ app.post(
                  * ADD BALANCE
                  */
 
-                const balanceResult =
+                const userResult =
                     await client.query(
                         `
                         UPDATE users
 
-                        SET
-                            balance =
-                                balance + $1
+                        SET balance =
+                            balance + $1
 
-                        WHERE
-                            id = $2
+                        WHERE id = $2
 
-                        RETURNING
-                            balance
+                        RETURNING balance
                         `,
                         [
                             amount,
@@ -1369,28 +1381,52 @@ app.post(
                         ]
                     );
 
+                if (
+                    !userResult
+                        .rows.length
+                ) {
+                    throw new Error(
+                        "ไม่พบผู้ใช้งาน"
+                    );
+                }
+
                 await client.query(
                     "COMMIT"
                 );
 
+                const newBalance =
+                    Number(
+                        userResult
+                            .rows[0]
+                            .balance
+                    );
+
                 console.log(
-                    `User #${req.user.id} Payment #${paymentId} SUCCESS +${amount}`
+                    `Payment #${paymentId} SUCCESS`
                 );
+
+                console.log(
+                    `Transaction: ${transactionId}`
+                );
+
+                console.log(
+                    `Amount: ${amount}`
+                );
+
+                /* =====================
+                   SUCCESS
+                ===================== */
 
                 return res.json({
                     success: true,
 
                     message:
-                        "อ่านสลิปสำเร็จ เติมเงินเรียบร้อย",
+                        "ตรวจสอบสลิปสำเร็จ เติมเงินเรียบร้อย",
 
                     amount,
 
                     balance:
-                        Number(
-                            balanceResult
-                                .rows[0]
-                                .balance
-                        ),
+                        newBalance,
 
                     transactionId,
 
@@ -1401,10 +1437,6 @@ app.post(
 
                         receiver:
                             slip.receiver ||
-                            "",
-
-                        amount:
-                            slip.amount ||
                             "",
 
                         date:
@@ -1418,6 +1450,7 @@ app.post(
                 });
 
             } catch (error) {
+
                 await client.query(
                     "ROLLBACK"
                 );
@@ -1425,14 +1458,21 @@ app.post(
                 throw error;
 
             } finally {
+
                 client.release();
             }
 
         } catch (error) {
+
             console.error(
                 "VERIFY ERROR:",
                 error
             );
+
+            /*
+             * PostgreSQL UNIQUE
+             * transaction_id
+             */
 
             if (
                 error.code ===
@@ -1442,7 +1482,7 @@ app.post(
                     .status(409)
                     .json({
                         error:
-                            "Transaction นี้ถูกใช้แล้ว"
+                            "สลิปนี้ถูกใช้ไปแล้ว"
                     });
             }
 
@@ -1451,22 +1491,40 @@ app.post(
                 .json({
                     error:
                         error.message ||
-                        "เกิดข้อผิดพลาดในการตรวจสอบสลิป"
+                        "ตรวจสอบสลิปไม่สำเร็จ"
                 });
 
         } finally {
+
             /*
-             * ลบรูปจาก uploads
-             * หลัง OCR เสร็จ
+             * ลบไฟล์สลิป
+             * หลังใช้งานเสร็จ
              */
 
-            await removeUploadedFile(
+            if (
                 uploadedPath
-            );
+            ) {
+                try {
+
+                    await fs
+                        .promises
+                        .unlink(
+                            uploadedPath
+                        );
+
+                } catch (
+                    deleteError
+                ) {
+
+                    console.error(
+                        "DELETE SLIP ERROR:",
+                        deleteError.message
+                    );
+                }
+            }
         }
     }
 );
-
 /* =========================
    TRANSACTION HISTORY
 ========================= */
