@@ -141,7 +141,141 @@ async function initDatabase() {
 /* =========================
    HELPERS
 ========================= */
+function parseSlipDateTime(
+    dateText,
+    timeText
+) {
+    const months = {
+        "ม.ค.": 0,
+        "ก.พ.": 1,
+        "มี.ค.": 2,
+        "เม.ย.": 3,
+        "พ.ค.": 4,
+        "มิ.ย.": 5,
+        "ก.ค.": 6,
+        "ส.ค.": 7,
+        "ก.ย.": 8,
+        "ต.ค.": 9,
+        "พ.ย.": 10,
+        "ธ.ค.": 11
+    };
 
+    const dateMatch =
+        String(dateText || "")
+            .trim()
+            .match(
+                /^(\d{1,2})\s+(\S+)\s+(\d{2,4})$/
+            );
+
+    const timeMatch =
+        String(timeText || "")
+            .trim()
+            .match(
+                /^(\d{1,2}):(\d{2})$/
+            );
+
+    if (
+        !dateMatch ||
+        !timeMatch
+    ) {
+        return null;
+    }
+
+    const day =
+        Number(dateMatch[1]);
+
+    const monthName =
+        dateMatch[2];
+
+    const month =
+        months[monthName];
+
+    let year =
+        Number(dateMatch[3]);
+
+    const hour =
+        Number(timeMatch[1]);
+
+    const minute =
+        Number(timeMatch[2]);
+
+    if (
+        month === undefined ||
+        !Number.isInteger(day) ||
+        !Number.isInteger(year) ||
+        !Number.isInteger(hour) ||
+        !Number.isInteger(minute)
+    ) {
+        return null;
+    }
+
+    /*
+     * สลิปไทย:
+     * 69 = พ.ศ. 2569
+     */
+
+    if (year < 100) {
+        year += 2500;
+    }
+
+    /*
+     * พ.ศ. → ค.ศ.
+     */
+
+    if (year >= 2400) {
+        year -= 543;
+    }
+
+    if (
+        hour < 0 ||
+        hour > 23 ||
+        minute < 0 ||
+        minute > 59
+    ) {
+        return null;
+    }
+
+    /*
+     * เวลาในสลิป K PLUS
+     * เป็นเวลาไทย UTC+7
+     */
+
+    const timestamp =
+        Date.UTC(
+            year,
+            month,
+            day,
+            hour - 7,
+            minute,
+            0,
+            0
+        );
+
+    const result =
+        new Date(timestamp);
+
+    /*
+     * เช็กวันที่ผิด เช่น 32 ต.ค.
+     */
+
+    const check =
+        new Date(
+            timestamp +
+            7 * 60 * 60 * 1000
+        );
+
+    if (
+        check.getUTCFullYear() !== year ||
+        check.getUTCMonth() !== month ||
+        check.getUTCDate() !== day ||
+        check.getUTCHours() !== hour ||
+        check.getUTCMinutes() !== minute
+    ) {
+        return null;
+    }
+
+    return result;
+}
 function hashToken(token) {
     return crypto
         .createHash("sha256")
@@ -838,18 +972,20 @@ app.post(
                         amount,
                         status
                     )
-
+            
                     VALUES (
                         $1,
                         $2,
                         'PENDING'
                     )
-
+            
                     RETURNING
                         id,
                         amount,
                         status,
-                        created_at
+                        created_at,
+                        created_at + INTERVAL '5 minutes'
+                            AS expires_at
                     `,
                     [
                         req.user.id,
@@ -940,7 +1076,42 @@ app.post(
 
             const payment =
                 paymentResult.rows[0];
-
+           
+            const expiresAt =
+                new Date(
+                    payment.expires_at
+                );
+            
+            const serverNow =
+                new Date(
+                    payment.server_now
+                );
+            
+            if (
+                serverNow.getTime() >
+                expiresAt.getTime()
+            ) {
+                await pool.query(
+                    `
+                    UPDATE payments
+            
+                    SET status = 'EXPIRED'
+            
+                    WHERE id = $1
+                    AND user_id = $2
+                    AND status = 'PENDING'
+                    `,
+                    [
+                        paymentId,
+                        req.user.id
+                    ]
+                );
+            
+                return res.status(410).json({
+                    error:
+                        "QR หมดอายุแล้ว กรุณาสร้างรายการใหม่"
+                });
+            }
             if (payment.status !== "PENDING") {
                 return res.status(409).json({
                     error: "รายการนี้ถูกตรวจสอบไปแล้ว"
@@ -1027,24 +1198,69 @@ app.post(
                     "BEGIN"
                 );
 
-                const lockedPayment =
-                    await client.query(
-                        `
-                        SELECT
-                            id,
-                            amount,
-                            status
-                        FROM payments
-                        WHERE id = $1
-                        AND user_id = $2
-                        FOR UPDATE
-                        `,
-                        [
-                            paymentId,
-                            req.user.id
-                        ]
-                    );
-
+            const lockedPayment =
+                await client.query(
+                    `
+                    SELECT
+                        id,
+                        amount,
+                        status,
+                        created_at,
+            
+                        created_at + INTERVAL '5 minutes'
+                            AS expires_at,
+            
+                        NOW()
+                            AS server_now
+            
+                    FROM payments
+            
+                    WHERE id = $1
+                    AND user_id = $2
+            
+                    FOR UPDATE
+                    `,
+                    [
+                        paymentId,
+                        req.user.id
+                    ]
+                );
+               const lockedRow =
+                   lockedPayment.rows[0];
+               
+               if (
+                   new Date(
+                       lockedRow.server_now
+                   ).getTime() >
+                   new Date(
+                       lockedRow.expires_at
+                   ).getTime()
+               ) {
+                   await client.query(
+                       `
+                       UPDATE payments
+               
+                       SET status = 'EXPIRED'
+               
+                       WHERE id = $1
+                       AND user_id = $2
+                       AND status = 'PENDING'
+                       `,
+                       [
+                           paymentId,
+                           req.user.id
+                       ]
+                   );
+               
+                   await client.query(
+                       "COMMIT"
+                   );
+               
+                   return res.status(410).json({
+                       error:
+                           "รายการหมดเวลา 5 นาทีแล้ว กรุณาสร้างรายการใหม่"
+                   });
+               }
                 if (!lockedPayment.rows.length) {
                     await client.query(
                         "ROLLBACK"
