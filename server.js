@@ -15,6 +15,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const SESSION_DAYS = 30;
 
+const REQUIRED_RECEIVER_NAME =
+    "ด.ช. ชลชาติ";
+
+const REQUIRED_RECEIVER_NUMBER =
+    "2202587596";
+
 /* =========================
    UPLOAD
 ========================= */
@@ -284,6 +290,87 @@ function parseSlipDateTime(
 
     return result;
 }
+function normalizeReceiverText(value) {
+    return String(value || "")
+        .normalize("NFC")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function isRequiredReceiverName(value) {
+    const text =
+        normalizeReceiverText(value);
+
+    return /^ด\s*\.?\s*ช\s*\.?\s*ชลชาติ(?:\s|$)/u
+        .test(text);
+}
+
+function hasRequiredReceiverNumber(
+    rawText
+) {
+    const lines =
+        String(rawText || "")
+            .split(/\r?\n/)
+            .map(
+                line =>
+                    normalizeReceiverText(
+                        line
+                    )
+            )
+            .filter(Boolean);
+
+    const receiverLineIndex =
+        lines.findIndex(
+            line =>
+                isRequiredReceiverName(
+                    line
+                )
+        );
+
+    if (receiverLineIndex < 0) {
+        return false;
+    }
+
+    /*
+     * ตรวจเลขเฉพาะบริเวณข้อมูลผู้รับ
+     * 1 บรรทัดก่อนชื่อ ถึง 4 บรรทัดหลังชื่อ
+     * รองรับเลขที่มีขีด/เว้นวรรค เช่น
+     * 220-2-58759-6
+     */
+
+    const start =
+        Math.max(
+            0,
+            receiverLineIndex - 1
+        );
+
+    const end =
+        Math.min(
+            lines.length,
+            receiverLineIndex + 5
+        );
+
+    for (
+        let i = start;
+        i < end;
+        i++
+    ) {
+        const digits =
+            lines[i]
+                .replace(/\D/g, "");
+
+        if (
+            digits.includes(
+                REQUIRED_RECEIVER_NUMBER
+            )
+        ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function hashToken(token) {
     return crypto
         .createHash("sha256")
@@ -1236,6 +1323,42 @@ app.post(
             console.log(
                 "OCR RESULT:",
                 slip
+            );
+
+            /*
+             * RECEIVER
+             *
+             * ผู้รับต้องเป็น:
+             * ด.ช. ชลชาติ
+             * เลข 2202587596
+             */
+
+            if (
+                !isRequiredReceiverName(
+                    slip.receiver
+                )
+            ) {
+                return res.status(400).json({
+                    error:
+                        "ผู้รับไม่ถูกต้อง ต้องเป็น ด.ช. ชลชาติ"
+                });
+            }
+
+            if (
+                !hasRequiredReceiverNumber(
+                    slip.raw_text
+                )
+            ) {
+                return res.status(400).json({
+                    error:
+                        "เลขผู้รับไม่ถูกต้อง ต้องเป็น 2202587596"
+                });
+            }
+
+            console.log(
+                "Receiver verified:",
+                REQUIRED_RECEIVER_NAME,
+                REQUIRED_RECEIVER_NUMBER
             );
 
             /*
