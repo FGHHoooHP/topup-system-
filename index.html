@@ -1548,8 +1548,104 @@ button:active,.method-card:active,.nav-item:active{transform:translateY(0) scale
 </section><footer class="store-footer">GAME STORE <span>MEMBER · WALLET · CHECK SLIP</span></footer></div></section><script>
 
 let currentPaymentId = null;
+let paymentExpiresAt = null;
+let paymentCountdown = null;
+function startPaymentCountdown(
+    expiresAt
+) {
+    paymentExpiresAt =
+        new Date(
+            expiresAt
+        ).getTime();
 
+    if (paymentCountdown) {
+        clearInterval(
+            paymentCountdown
+        );
+    }
 
+    let timer =
+        document.getElementById(
+            "paymentTimer"
+        );
+
+    if (!timer) {
+        timer =
+            document.createElement(
+                "div"
+            );
+
+        timer.id =
+            "paymentTimer";
+
+        timer.style.marginTop =
+            "12px";
+
+        timer.style.fontWeight =
+            "700";
+
+        timer.style.textAlign =
+            "center";
+
+        document
+            .getElementById(
+                "paymentBox"
+            )
+            .prepend(timer);
+    }
+
+    function update() {
+
+        const remaining =
+            paymentExpiresAt -
+            Date.now();
+
+        if (remaining <= 0) {
+
+            clearInterval(
+                paymentCountdown
+            );
+
+            timer.textContent =
+                "หมดเวลาแล้ว กรุณาสร้างรายการใหม่";
+
+            const button =
+                document.getElementById(
+                    "verifyButton"
+                );
+
+            if (button) {
+                button.disabled = true;
+            }
+
+            return;
+        }
+
+        const totalSeconds =
+            Math.ceil(
+                remaining / 1000
+            );
+
+        const minutes =
+            Math.floor(
+                totalSeconds / 60
+            );
+
+        const seconds =
+            totalSeconds % 60;
+
+        timer.textContent =
+            `กรุณาโอนและส่งสลิปภายใน ${minutes}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    update();
+
+    paymentCountdown =
+        setInterval(
+            update,
+            1000
+        );
+}
 /* =========================
    UI
 ========================= */
@@ -2068,7 +2164,18 @@ async function createTopup(){
         document
             .getElementById("paymentBox")
             .classList.remove("hidden");
-
+        const verifyButton =
+            document.getElementById(
+                "verifyButton"
+            );
+        
+        if (verifyButton) {
+            verifyButton.disabled = false;
+        }
+        
+        startPaymentCountdown(
+            data.payment.expires_at
+        );
         toast(
             "สร้างรายการเติมเงินแล้ว",
             "success"
@@ -2146,7 +2253,18 @@ async function verifySlip(){
 
     const button =
         document.getElementById("verifyButton");
-
+    if (
+        paymentExpiresAt &&
+        Date.now() >
+        paymentExpiresAt
+    ) {
+        toast(
+            "รายการหมดเวลา 5 นาทีแล้ว กรุณาสร้างรายการใหม่",
+            "error"
+        );
+    
+        return;
+    }
     if(!file){
 
         toast(
