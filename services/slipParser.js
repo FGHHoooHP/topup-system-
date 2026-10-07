@@ -31,14 +31,12 @@ function findTransactionId(text) {
         if (
             /เลขที่รายการ|เลขรายการ|transaction|reference/i.test(lines[i])
         ) {
-            // เลขอยู่บรรทัดเดียวกัน
             let match = lines[i].match(/[A-Z0-9]{15,30}/i);
 
             if (match) {
                 return match[0];
             }
 
-            // หรืออยู่บรรทัดถัดไป
             for (
                 let x = i + 1;
                 x < Math.min(i + 4, lines.length);
@@ -118,10 +116,7 @@ async function parseSlip(imageInput) {
     );
 
     try {
-        const result =
-            await worker.recognize(
-                imageInput
-            );
+        const result = await worker.recognize(imageInput);
 
         const raw_text =
             result?.data?.text || "";
@@ -144,22 +139,12 @@ async function parseSlip(imageInput) {
             findTransactionId(raw_text);
 
         const parsed = {
-            sender:
-                people.sender,
-
-            receiver:
-                people.receiver,
-
+            sender: people.sender,
+            receiver: people.receiver,
             amount,
-
             transaction_id,
-
-            date:
-                dateTime.date,
-
-            time:
-                dateTime.time,
-
+            date: dateTime.date,
+            time: dateTime.time,
             raw_text
         };
 
