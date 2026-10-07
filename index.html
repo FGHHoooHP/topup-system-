@@ -3,3039 +3,1057 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#06080d">
-<title>GAME STORE</title>
-
+<meta name="theme-color" content="#08090e">
+<meta name="description" content="GAME STORE — บัญชีสมาชิก กระเป๋าเงิน และการเติมเงินของคุณในที่เดียว">
+<title>GAME STORE — Your next level</title>
 <style>
-*{
-    box-sizing:border-box;
-}
-
-:root{
-    color-scheme:dark;
-    --bg:#05070b;
-    --panel:rgba(15,18,25,.72);
-    --panel2:rgba(10,13,19,.82);
-    --border:rgba(255,255,255,.09);
-    --text:#f4f7fb;
-    --muted:#8993a4;
-    --muted2:#5e6878;
-    --accent:#8ea9ff;
-    --accent2:#657fff;
-    --success:#68e0a1;
-    --danger:#ff7585;
-}
-
-html{
-    scroll-behavior:smooth;
-}
-
-body{
-    margin:0;
-    min-height:100vh;
-    color:var(--text);
-    font-family:Tahoma,Arial,sans-serif;
-    background:
-        radial-gradient(circle at 15% 15%,rgba(77,103,190,.18),transparent 32%),
-        radial-gradient(circle at 85% 75%,rgba(88,63,160,.14),transparent 30%),
-        radial-gradient(circle at 50% 100%,rgba(44,80,140,.10),transparent 35%),
-        var(--bg);
-    overflow-x:hidden;
-}
-
-/* =========================
-   BACKGROUND
-========================= */
-
-body::before{
-    content:"";
-    position:fixed;
-    inset:-30%;
-    pointer-events:none;
-    background:
-        radial-gradient(circle at 20% 30%,rgba(120,150,255,.07),transparent 25%),
-        radial-gradient(circle at 80% 60%,rgba(170,100,255,.06),transparent 25%);
-    filter:blur(50px);
-    animation:bgFloat 14s ease-in-out infinite alternate;
-}
-
-@keyframes bgFloat{
-    from{transform:translate3d(-2%,-2%,0) scale(1)}
-    to{transform:translate3d(2%,2%,0) scale(1.06)}
-}
-
-.grid-bg{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    opacity:.18;
-    background-image:
-        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
-    background-size:70px 70px;
-    mask-image:linear-gradient(to bottom,black,transparent 85%);
-}
-
-/* =========================
-   GENERAL
-========================= */
-
-.hidden{
-    display:none!important;
-}
-
-.page{
-    width:100%;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:40px 20px;
-    position:relative;
-    z-index:1;
-}
-
-.fade-in{
-    animation:fadeIn .5s cubic-bezier(.2,.8,.2,1);
-}
-
-@keyframes fadeIn{
-    from{
-        opacity:0;
-        transform:translateY(12px) scale(.985);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0) scale(1);
-    }
-}
-
-/* =========================
-   AUTH
-========================= */
-
-.auth-shell{
-    width:min(1050px,100%);
-    min-height:650px;
-    display:grid;
-    grid-template-columns:1.05fr .95fr;
-    background:rgba(9,12,17,.76);
-    border:1px solid var(--border);
-    border-radius:28px;
-    overflow:hidden;
-    box-shadow:
-        0 40px 120px rgba(0,0,0,.65),
-        inset 0 1px rgba(255,255,255,.04);
-    backdrop-filter:blur(24px);
-}
-
-.hero{
-    position:relative;
-    padding:65px 55px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    border-right:1px solid rgba(255,255,255,.06);
-    overflow:hidden;
-}
-
-.hero::before{
-    content:"";
-    position:absolute;
-    width:400px;
-    height:400px;
-    left:-180px;
-    top:-170px;
-    background:radial-gradient(circle,rgba(94,126,255,.22),transparent 70%);
-    filter:blur(10px);
-}
-
-.hero::after{
-    content:"";
-    position:absolute;
-    width:350px;
-    height:350px;
-    right:-180px;
-    bottom:-180px;
-    background:radial-gradient(circle,rgba(128,81,255,.14),transparent 70%);
-}
-
-.logo{
-    width:76px;
-    height:76px;
-    border-radius:22px;
-    display:grid;
-    place-items:center;
-    font-size:29px;
-    font-weight:900;
-    font-style:italic;
-    background:
-        linear-gradient(145deg,#252d3d,#080b11);
-    border:1px solid rgba(255,255,255,.13);
-    box-shadow:
-        0 18px 45px rgba(0,0,0,.45),
-        inset 0 1px rgba(255,255,255,.08);
-    text-shadow:0 0 25px rgba(150,180,255,.8);
-    margin-bottom:30px;
-    position:relative;
-    z-index:1;
-}
-
-.eyebrow{
-    font-size:10px;
-    letter-spacing:3px;
-    color:#8894a8;
-    font-weight:700;
-    position:relative;
-    z-index:1;
-}
-
-.hero h2{
-    font-size:42px;
-    line-height:1.2;
-    margin:20px 0 18px;
-    letter-spacing:-1px;
-    position:relative;
-    z-index:1;
-}
-
-.hero p{
-    color:#8d97a8;
-    line-height:1.9;
-    font-size:14px;
-    position:relative;
-    z-index:1;
-}
-
-.features{
-    margin-top:32px;
-    display:grid;
-    gap:11px;
-    position:relative;
-    z-index:1;
-}
-
-.feature{
-    padding:14px 15px;
-    border-radius:13px;
-    border:1px solid rgba(255,255,255,.055);
-    background:rgba(255,255,255,.018);
-    color:#b8c1d0;
-    font-size:12px;
-    transition:.25s ease;
-}
-
-.feature:hover{
-    transform:translateX(5px);
-    border-color:rgba(150,175,255,.2);
-    background:rgba(130,155,255,.045);
-}
-
-.feature span{
-    color:#a9bcff;
-    margin-right:9px;
-}
-
-/* =========================
-   FORM
-========================= */
-
-.auth-form{
-    padding:55px 48px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-}
-
-.auth-form h1{
-    font-size:28px;
-    margin:0 0 8px;
-}
-
-.subtitle{
-    color:#747f91;
-    font-size:13px;
-    line-height:1.7;
-}
-
-.tabs{
-    display:flex;
-    gap:5px;
-    padding:5px;
-    margin:30px 0 22px;
-    background:#0a0d12;
-    border:1px solid rgba(255,255,255,.07);
-    border-radius:15px;
-}
-
-.tabs button{
-    flex:1;
-    border:0;
-    background:transparent;
-    color:#697384;
-    padding:12px;
-    border-radius:10px;
-    margin:0;
-    font-size:11px;
-    letter-spacing:2px;
-}
-
-.tabs button.active{
-    color:#10151e;
-    background:linear-gradient(120deg,#f5f8ff,#9eafd0);
-    box-shadow:0 7px 25px rgba(130,155,220,.14);
-}
-
-label{
-    display:block;
-    color:#858fa0;
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:1.5px;
-    margin:17px 0 8px;
-}
-
-.input-wrap{
-    position:relative;
-}
-
-.input-wrap input{
-    padding-right:48px;
-}
-
-input{
-    width:100%;
-    padding:15px 16px;
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,.08);
-    outline:none;
-    background:#070a0f;
-    color:white;
-    font:inherit;
-    font-size:14px;
-    transition:.25s ease;
-}
-
-input:hover{
-    border-color:rgba(255,255,255,.14);
-}
-
-input:focus{
-    border-color:rgba(150,175,255,.55);
-    box-shadow:
-        0 0 0 3px rgba(120,150,255,.08),
-        0 0 30px rgba(90,120,255,.06);
-}
-
-input::placeholder{
-    color:#4e5867;
-}
-
-.password-toggle{
-    position:absolute;
-    right:7px;
-    top:50%;
-    transform:translateY(-50%);
-    width:38px;
-    height:38px;
-    padding:0;
-    margin:0;
-    border:0;
-    background:transparent;
-    color:#657084;
-    cursor:pointer;
-}
-
-.password-toggle:hover{
-    color:#b7c5df;
-    transform:translateY(-50%);
-    filter:none;
-}
-
-.primary-btn{
-    position:relative;
-    overflow:hidden;
-    width:100%;
-    padding:15px;
-    margin-top:22px;
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,.13);
-    background:linear-gradient(110deg,#f7faff,#a3b3cf);
-    color:#0d1118;
-    font-weight:900;
-    letter-spacing:1.5px;
-    cursor:pointer;
-    transition:
-        transform .2s ease,
-        filter .2s ease,
-        box-shadow .2s ease;
-}
-
-.primary-btn:hover{
-    transform:translateY(-2px);
-    filter:brightness(1.08);
-    box-shadow:0 12px 35px rgba(130,155,255,.14);
-}
-
-.primary-btn:active{
-    transform:translateY(0) scale(.985);
-}
-
-.primary-btn.loading{
-    pointer-events:none;
-    opacity:.7;
-}
-
-.spinner{
-    width:17px;
-    height:17px;
-    border:2px solid rgba(0,0,0,.2);
-    border-top-color:#111827;
-    border-radius:50%;
-    display:inline-block;
-    vertical-align:middle;
-    animation:spin .7s linear infinite;
-}
-
-@keyframes spin{
-    to{transform:rotate(360deg)}
-}
-
-.switch{
-    text-align:center;
-    margin-top:24px;
-    color:#697383;
-    font-size:12px;
-}
-
-.switch button{
-    width:auto;
-    padding:0;
-    margin:0;
-    border:0;
-    background:transparent;
-    color:#c5d0e3;
-    font-size:12px;
-    cursor:pointer;
-}
-
-.note{
-    text-align:center;
-    color:#4e5766;
-    font-size:10px;
-    line-height:1.8;
-    margin-top:20px;
-}
-
-/* =========================
-   DASHBOARD
-========================= */
-
-.dashboard-page{
-    width:100%;
-    min-height:100vh;
-    padding:30px;
-    position:relative;
-    z-index:1;
-}
-
-.dashboard{
-    width:min(1150px,100%);
-    margin:auto;
-}
-
-.dash-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:20px;
-    margin-bottom:25px;
-}
-
-.user-info h1{
-    margin:9px 0 5px;
-    font-size:29px;
-}
-
-.user-info .subtitle{
-    margin:0;
-}
-
-.user-badge{
-    padding:10px 15px;
-    border-radius:30px;
-    border:1px solid rgba(150,175,255,.16);
-    background:rgba(120,150,255,.045);
-    color:#aab9d6;
-    font-size:10px;
-    letter-spacing:2px;
-}
-
-/* =========================
-   WALLET
-========================= */
-
-.wallet{
-    position:relative;
-    overflow:hidden;
-    padding:30px;
-    min-height:190px;
-    border-radius:23px;
-    border:1px solid rgba(160,180,255,.16);
-    background:
-        radial-gradient(circle at 85% 20%,rgba(123,150,255,.19),transparent 35%),
-        linear-gradient(125deg,#1d2637,#0d121b 65%);
-    box-shadow:
-        0 25px 70px rgba(0,0,0,.3),
-        inset 0 1px rgba(255,255,255,.07);
-    margin-bottom:22px;
-}
-
-.wallet::before{
-    content:"";
-    position:absolute;
-    width:260px;
-    height:260px;
-    right:-100px;
-    top:-130px;
-    border-radius:50%;
-    border:1px solid rgba(255,255,255,.05);
-    box-shadow:
-        0 0 0 35px rgba(255,255,255,.015),
-        0 0 0 70px rgba(255,255,255,.01);
-}
-
-.wallet-title{
-    color:#9ca9be;
-    font-size:11px;
-    letter-spacing:1.5px;
-}
-
-.balance-value{
-    font-size:46px;
-    font-weight:900;
-    letter-spacing:-2px;
-    margin:13px 0 5px;
-}
-
-.wallet small{
-    color:#687589;
-}
-
-.wallet-chip{
-    position:absolute;
-    right:30px;
-    bottom:27px;
-    width:45px;
-    height:34px;
-    border-radius:8px;
-    border:1px solid rgba(255,255,255,.15);
-    background:linear-gradient(135deg,#7787a0,#252d3b);
-    opacity:.7;
-}
-
-/* =========================
-   GRID
-========================= */
-
-.dash-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:22px;
-}
-
-.card{
-    background:rgba(10,13,18,.76);
-    border:1px solid rgba(255,255,255,.075);
-    border-radius:20px;
-    padding:24px;
-    box-shadow:
-        0 20px 55px rgba(0,0,0,.22),
-        inset 0 1px rgba(255,255,255,.025);
-    backdrop-filter:blur(18px);
-    transition:.3s ease;
-}
-
-.card:hover{
-    border-color:rgba(150,175,255,.14);
-    transform:translateY(-2px);
-}
-
-.card h3{
-    margin:0 0 7px;
-    font-size:17px;
-}
-
-.card-desc{
-    color:#788496;
-    font-size:12px;
-    line-height:1.7;
-}
-
-.amount-row{
-    position:relative;
-}
-
-.currency{
-    position:absolute;
-    right:15px;
-    top:50%;
-    transform:translateY(-50%);
-    color:#68768b;
-    font-size:12px;
-    pointer-events:none;
-}
-
-.card button{
-    margin-top:17px;
-}
-
-.secondary-btn{
-    width:100%;
-    padding:13px;
-    border-radius:11px;
-    background:#151b26;
-    color:#b7c4da;
-    border:1px solid rgba(255,255,255,.08);
-    cursor:pointer;
-    font-weight:700;
-    transition:.2s;
-}
-
-.secondary-btn:hover{
-    background:#1a2230;
-    border-color:rgba(150,175,255,.18);
-}
-
-.payment{
-    margin-top:20px;
-    padding-top:20px;
-    border-top:1px solid rgba(255,255,255,.06);
-    animation:fadeIn .4s ease;
-}
-
-.payment-timer{
-    margin:14px 0 8px;
-    padding:14px 16px;
-    border-radius:12px;
-    background:rgba(230,190,90,.07);
-    border:1px solid rgba(230,190,90,.14);
-    text-align:center;
-}
-
-.payment-timer-label{
-    color:#8d98aa;
-    font-size:10px;
-    letter-spacing:.6px;
-    margin-bottom:5px;
-}
-
-.payment-timer-value{
-    font-size:28px;
-    font-weight:900;
-    letter-spacing:1px;
-    color:#f1d993;
-}
-
-.payment-timer-note{
-    margin-top:5px;
-    font-size:10px;
-    color:#687486;
-}
-
-.payment-timer.expired{
-    background:rgba(255,80,100,.07);
-    border-color:rgba(255,80,100,.16);
-}
-
-.payment-timer.expired .payment-timer-value{
-    color:#ff7d8d;
-}
-
-.payment-timer.success{
-    background:rgba(80,220,150,.08);
-    border-color:rgba(80,220,150,.15);
-}
-
-.payment-timer.success .payment-timer-value{
-    color:#72e5ab;
-}
-
-.payment-expired .qr{
-    opacity:.28;
-    filter:grayscale(1);
-}
-
-.payment-expired .file-box{
-    opacity:.55;
-}
-
-.qr{
-    width:220px;
-    max-width:100%;
-    display:block;
-    margin:20px auto;
-    padding:10px;
-    border-radius:15px;
-    background:white;
-    box-shadow:0 15px 40px rgba(0,0,0,.35);
-}
-
-.payment-info{
-    padding:13px;
-    border-radius:11px;
-    background:#080b10;
-    border:1px solid rgba(255,255,255,.06);
-    font-size:12px;
-    color:#8d98aa;
-    line-height:1.9;
-}
-
-.payment-id{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-}
-
-.copy-btn{
-    width:auto!important;
-    margin:0!important;
-    padding:7px 10px!important;
-    border-radius:8px!important;
-    background:#151d2b!important;
-    color:#aebddd!important;
-    border:1px solid rgba(255,255,255,.08)!important;
-    font-size:10px;
-}
-
-/* =========================
-   FILE
-========================= */
-
-.file-box{
-    margin-top:7px;
-    padding:12px;
-    border:1px dashed rgba(255,255,255,.11);
-    border-radius:12px;
-    background:#080b10;
-}
-
-input[type=file]{
-    padding:4px;
-    border:0;
-    background:transparent;
-    font-size:11px;
-}
-
-input[type=file]::file-selector-button{
-    padding:9px 12px;
-    border:0;
-    border-radius:8px;
-    background:#202838;
-    color:#dce5f4;
-    cursor:pointer;
-    margin-right:8px;
-}
-
-/* =========================
-   TRANSACTIONS
-========================= */
-
-.transaction-list{
-    margin-top:20px;
-    max-height:430px;
-    overflow:auto;
-    scrollbar-width:thin;
-}
-
-.transaction{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    padding:15px 0;
-    border-bottom:1px solid rgba(255,255,255,.055);
-}
-
-.transaction:last-child{
-    border-bottom:0;
-}
-
-.transaction-left{
-    min-width:0;
-}
-
-.transaction-amount{
-    font-size:16px;
-    font-weight:800;
-    margin-bottom:4px;
-}
-
-.transaction-date{
-    color:#596577;
-    font-size:10px;
-}
-
-.status{
-    padding:6px 9px;
-    border-radius:20px;
-    font-size:9px;
-    letter-spacing:.5px;
-    white-space:nowrap;
-}
-
-.status-success{
-    color:#72e5ab;
-    background:rgba(80,220,150,.08);
-    border:1px solid rgba(80,220,150,.13);
-}
-
-.status-pending{
-    color:#e6c77d;
-    background:rgba(230,190,90,.07);
-    border:1px solid rgba(230,190,90,.12);
-}
-
-.status-failed{
-    color:#ff7d8d;
-    background:rgba(255,80,100,.07);
-    border:1px solid rgba(255,80,100,.12);
-}
-
-.status-expired{
-    color:#ff9a7d;
-    background:rgba(255,120,80,.07);
-    border:1px solid rgba(255,120,80,.13);
-}
-
-/* =========================
-   LOGOUT
-========================= */
-
-.logout{
-    width:auto;
-    padding:11px 18px;
-    border-radius:10px;
-    border:1px solid rgba(255,90,110,.13);
-    background:rgba(255,60,80,.045);
-    color:#e28d99;
-    cursor:pointer;
-    font-size:11px;
-    transition:.2s;
-}
-
-.logout:hover{
-    background:rgba(255,60,80,.08);
-}
-
-/* =========================
-   TOAST
-========================= */
-
-.toast-container{
-    position:fixed;
-    top:22px;
-    right:22px;
-    z-index:9999;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-.toast{
-    min-width:260px;
-    max-width:350px;
-    padding:14px 16px;
-    border-radius:13px;
-    border:1px solid rgba(255,255,255,.09);
-    background:rgba(12,16,23,.9);
-    box-shadow:0 20px 50px rgba(0,0,0,.45);
-    backdrop-filter:blur(20px);
-    color:#dbe3f2;
-    font-size:12px;
-    animation:toastIn .35s cubic-bezier(.2,.8,.2,1);
-}
-
-.toast.success{
-    border-color:rgba(80,220,150,.18);
-}
-
-.toast.error{
-    border-color:rgba(255,80,100,.18);
-}
-
-@keyframes toastIn{
-    from{
-        opacity:0;
-        transform:translateX(25px) scale(.96);
-    }
-    to{
-        opacity:1;
-        transform:translateX(0) scale(1);
-    }
-}
-
-.toast.out{
-    animation:toastOut .3s ease forwards;
-}
-
-@keyframes toastOut{
-    to{
-        opacity:0;
-        transform:translateX(20px);
-    }
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:800px){
-
-    .page{
-        padding:20px 12px;
-    }
-
-    .auth-shell{
-        grid-template-columns:1fr;
-        min-height:auto;
-    }
-
-    .hero{
-        padding:35px 28px;
-        border-right:0;
-        border-bottom:1px solid rgba(255,255,255,.06);
-    }
-
-    .hero h2{
-        font-size:31px;
-    }
-
-    .features{
-        display:none;
-    }
-
-    .auth-form{
-        padding:35px 28px;
-    }
-
-    .dash-grid{
-        grid-template-columns:1fr;
-    }
-
-    .dashboard-page{
-        padding:18px 12px;
-    }
-
-    .dash-head{
-        align-items:flex-start;
-    }
-
-    .user-badge{
-        font-size:8px;
-        padding:8px 10px;
-    }
-
-    .wallet{
-        padding:24px;
-    }
-
-    .balance-value{
-        font-size:38px;
-    }
-}
-
-@media(max-width:480px){
-
-    .hero{
-        padding:28px 22px;
-    }
-
-    .auth-form{
-        padding:28px 20px;
-    }
-
-    .logo{
-        width:58px;
-        height:58px;
-        font-size:24px;
-        border-radius:17px;
-    }
-
-    .hero h2{
-        font-size:27px;
-    }
-
-    .user-info h1{
-        font-size:23px;
-    }
-
-    .dash-head{
-        flex-direction:column;
-    }
-
-    .user-badge{
-        align-self:flex-start;
-    }
-
-    .card{
-        padding:19px;
-    }
-
-    .toast-container{
-        left:12px;
-        right:12px;
-        top:12px;
-    }
-
-    .toast{
-        min-width:0;
-        max-width:none;
-    }
-}
-
-@media(prefers-reduced-motion:reduce){
-
-    *,
-    *::before,
-    *::after{
-        animation-duration:.01ms!important;
-        animation-iteration-count:1!important;
-        transition-duration:.01ms!important;
-        scroll-behavior:auto!important;
-    }
-}
-
-/* Store navigation and separate UI pages. Existing API code is unchanged. */
-body{background:radial-gradient(ellipse at 90% 0%,#12213955,transparent 45%),#070809}body:before{display:none}.grid-bg{opacity:.06}.dashboard-page{padding:0!important;min-height:100vh}.store-nav{max-width:1240px;margin:auto;padding:22px 30px;display:flex;align-items:center;gap:32px;border-bottom:1px solid #ffffff0b;position:relative;z-index:20}.store-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:white;font-size:17px;font-weight:900;white-space:nowrap}.brand-mark{font-size:23px;font-style:italic;color:#d7e6ff;text-shadow:3px 2px #296ca8}.store-nav nav{display:flex;gap:8px}.store-nav nav button{border:0;background:transparent;color:#9398a2;padding:11px 18px;border-radius:24px;font:inherit;font-size:13px;cursor:pointer}.store-nav nav button.active{color:#101217;background:#f4f6f9;font-weight:bold}.account-wrap{margin-left:auto;position:relative;padding-bottom:10px;margin-bottom:-10px}.account-trigger{display:flex;align-items:center;gap:10px;background:#0b0d11;border:1px solid #262a31;border-radius:25px;padding:6px 13px 6px 6px;color:#e6e9ef;cursor:pointer;font-size:12px}.avatar{width:29px;height:29px;display:grid;place-items:center;background:linear-gradient(135deg,#344668,#211526);border-radius:50%;font-weight:bold}.account-menu{position:absolute;right:0;top:100%;width:235px;border:1px solid #2d2e32;border-radius:20px;background:#101112;box-shadow:0 18px 50px #0009;overflow:hidden;visibility:hidden;opacity:0;transform:translateY(5px);transition:.18s}.account-wrap:hover .account-menu,.account-wrap:focus-within .account-menu,.account-wrap.is-open .account-menu{visibility:visible;opacity:1;transform:none}.menu-balance{padding:20px;border-bottom:1px solid #ffffff12}.menu-balance small{display:block;color:#868b93;font-size:11px;margin-bottom:9px}.menu-balance strong{font-size:19px}.account-menu button{width:100%;display:flex;gap:16px;text-align:left;background:none;border:0;color:#b9bec7;padding:16px 20px;cursor:pointer;font:inherit;font-size:13px}.account-menu button:hover{background:#ffffff06}.account-menu .menu-logout{color:#ff3468}.store-main{max-width:1140px;margin:auto;padding:64px 28px 24px;position:relative;z-index:1}.section-heading{padding-bottom:28px;border-bottom:1px solid #ffffff0b;margin-bottom:24px}.section-heading h1{font-size:30px;margin:12px 0}.section-heading p{font-size:13px;color:#8a919d;line-height:1.8}.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.method-card{position:relative;display:flex;align-items:center;gap:17px;padding:30px 22px;background:linear-gradient(120deg,#141516,#0d0e10);border:1px solid #2b2c30;border-radius:15px;color:white;text-align:left;cursor:pointer;min-height:145px;transition:.2s}.method-card:hover{border-color:#748299;transform:translateY(-3px);box-shadow:0 14px 40px #0005}.slip-icon{position:relative;flex-shrink:0;width:52px;height:56px;display:grid;place-items:center;background:#090b0d;border:1px solid #292c31;border-radius:12px;font-size:33px;color:#e2e7ef}.slip-icon i{position:absolute;bottom:4px;right:5px;background:#263d40;border-radius:50%;font-size:12px;font-style:normal;padding:2px}.method-copy strong{display:block;font-size:17px}.method-copy small{display:block;color:#92969e;font-size:11px;line-height:1.7;margin:6px 0}.method-copy em{font-size:10px;color:#44c89d;font-style:normal}.method-arrow{position:absolute;right:16px;top:18px;color:#818792}.method-note{font-size:11px;color:#777f8c;margin-top:23px;border-left:2px solid #344458;padding-left:12px}.back-link{background:none;border:0;color:#a5b3cb;padding:0;margin-bottom:26px;cursor:pointer}.home-hero{position:relative;padding:60px 38px;min-height:380px;border:1px solid #ffffff0c;border-radius:24px;background:linear-gradient(120deg,#161c27,#090b0f);overflow:hidden}.home-hero h1{font-size:clamp(32px,5vw,58px);line-height:1.25;margin:22px 0}.home-hero h1 span{color:#acbbd3}.home-hero p{color:#8d98a9;font-size:14px;line-height:1.9}.home-cta{background:#eef3fc;border:0;border-radius:12px;color:#111620;padding:14px 22px;font-weight:bold;cursor:pointer;margin-top:15px}.hero-orbit{position:absolute;right:40px;top:90px;font-size:145px;font-weight:900;font-style:italic;transform:rotate(-15deg);color:#ffffff08;text-shadow:8px 8px #6aa6ff09;pointer-events:none}.home-panels{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}.home-panels article{padding:24px;border:1px solid #ffffff0b;background:#0e1013;border-radius:16px}.home-panels article span{font-size:10px;color:#8494af;letter-spacing:1px}.home-panels article h3{font-size:17px}.home-panels article p{font-size:12px;color:#828c9c;line-height:1.8}.store-footer{margin-top:80px;padding:24px 0;border-top:1px solid #ffffff0b;color:#737c8a;font-size:11px;letter-spacing:1px;display:flex;justify-content:space-between}.snow-layer{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}.snow-dot{position:absolute;top:-12px;border-radius:50%;background:white;box-shadow:0 0 4px #ffffff40;animation:snowFall linear infinite}.page,.toast-container{position:relative;z-index:2}.toast-container{position:fixed;z-index:9999}@keyframes snowFall{0%{transform:translate3d(0,-12px,0);opacity:0}10%{opacity:var(--opacity)}90%{opacity:var(--opacity)}100%{transform:translate3d(var(--drift),105vh,0);opacity:0}}button:focus-visible,a:focus-visible{outline:2px solid #9bb9e4;outline-offset:4px}@media(max-width:850px){.method-grid{grid-template-columns:repeat(2,1fr)}.store-nav{gap:18px;padding:18px}.home-panels{grid-template-columns:1fr}}@media(max-width:550px){.store-nav{flex-wrap:wrap;gap:12px}.store-brand{font-size:14px}.store-nav nav{order:3;width:100%;padding-top:8px}.store-nav nav button{flex:1}.store-main{padding:36px 18px 20px}.method-grid{grid-template-columns:1fr}.home-hero{padding:34px 23px}.hero-orbit{right:-10px;top:120px;font-size:100px}.account-menu{width:220px}.store-footer{gap:15px;flex-direction:column}.section-heading h1{font-size:26px}}@media(prefers-reduced-motion:reduce){.snow-dot{animation:none!important;top:var(--static-top)}}
-
-
-/* =========================
-   PURPLE PREMIUM MOTION UI
-========================= */
-:root{
-    --accent:#a875ff;
-    --accent2:#7c4dff;
-    --accent3:#c6a3ff;
-    --purple-glow:rgba(151,91,255,.22);
-}
-body{
-    background:
-        radial-gradient(circle at 12% 8%,rgba(126,72,255,.18),transparent 30%),
-        radial-gradient(circle at 88% 80%,rgba(183,93,255,.13),transparent 32%),
-        radial-gradient(circle at 50% 45%,rgba(91,52,180,.08),transparent 45%),
-        #05060b;
-}
-body::before{
-    display:block!important;
-    background:
-        radial-gradient(circle at 20% 25%,rgba(143,82,255,.11),transparent 27%),
-        radial-gradient(circle at 78% 65%,rgba(193,95,255,.08),transparent 28%);
-    animation:purpleFloat 12s ease-in-out infinite alternate;
-}
-@keyframes purpleFloat{
-    from{transform:translate3d(-2%,-1%,0) scale(1)}
-    to{transform:translate3d(2%,2%,0) scale(1.06)}
-}
-.grid-bg{
-    opacity:.08;
-    background-image:
-        linear-gradient(rgba(170,120,255,.035) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(170,120,255,.035) 1px,transparent 1px);
-}
-
-/* smooth entrance for every major UI view */
-.page:not(.hidden),
-.dashboard-page:not(.hidden){
-    animation:purplePageIn .55s cubic-bezier(.16,1,.3,1) both;
-}
-@keyframes purplePageIn{
-    0%{opacity:0;transform:translateY(18px) scale(.965);filter:blur(9px)}
-    55%{opacity:.8}
-    100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
-}
-[data-store-page]:not(.hidden){
-    animation:storePageIn .48s cubic-bezier(.16,1,.3,1) both;
-}
-@keyframes storePageIn{
-    0%{opacity:0;transform:translateY(14px) scale(.975);filter:blur(6px)}
-    100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
-}
-
-/* UI hover: static purple light + gentle zoom, no mouse-follow spotlight */
-.card,.method-card,.home-panels article,.feature,.wallet,.home-hero,.auth-shell,.primary-btn,.secondary-btn,.store-nav,.account-trigger,.tabs{
-    position:relative;
-}
-.card::after,.method-card::after,.home-panels article::after,.feature::after,.wallet::after,.home-hero::after,.auth-shell::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    border-radius:inherit;
-    pointer-events:none;
-    opacity:0;
-    background:linear-gradient(135deg,rgba(197,158,255,.11),transparent 42%,rgba(130,75,255,.07));
-    transition:opacity .35s ease;
-}
-.card:hover,.method-card:hover,.home-panels article:hover,.feature:hover,.wallet:hover,.home-hero:hover{
-    transform:translateY(-4px) scale(1.012);
-    border-color:rgba(174,126,255,.30)!important;
-    box-shadow:0 22px 65px rgba(83,35,170,.20),0 0 32px rgba(139,82,255,.08),inset 0 1px rgba(255,255,255,.055);
-}
-.card:hover::after,.method-card:hover::after,.home-panels article:hover::after,.feature:hover::after,.wallet:hover::after,.home-hero:hover::after,.auth-shell:hover::after{
-    opacity:1;
-}
-.card,.method-card,.home-panels article,.feature,.wallet,.home-hero{
-    transition:transform .38s cubic-bezier(.16,1,.3,1),border-color .3s ease,box-shadow .38s ease,background .35s ease;
-}
-
-/* purple controls */
-.primary-btn{
-    background:linear-gradient(120deg,#f1e9ff,#b88aff 48%,#8b5cf6);
-    box-shadow:0 10px 35px rgba(139,92,246,.16);
-}
-.primary-btn:hover{filter:brightness(1.08);box-shadow:0 14px 45px rgba(139,92,246,.28)!important}
-input:focus{border-color:rgba(172,125,255,.65);box-shadow:0 0 0 3px rgba(139,92,246,.10),0 0 32px rgba(139,92,246,.10)}
-.feature:hover{border-color:rgba(175,126,255,.30)!important;background:rgba(139,92,246,.07)}
-.wallet{background:radial-gradient(circle at 85% 20%,rgba(154,102,255,.25),transparent 35%),linear-gradient(125deg,#241b39,#0d121b 68%)}
-.user-badge{border-color:rgba(171,120,255,.25);background:rgba(139,92,246,.07)}
-.method-card:hover{box-shadow:0 18px 55px rgba(91,39,178,.25)!important}
-.home-cta{background:linear-gradient(120deg,#f5edff,#b98cff);box-shadow:0 12px 35px rgba(139,92,246,.18);transition:.35s cubic-bezier(.16,1,.3,1)}
-.home-cta:hover{transform:translateY(-3px) scale(1.025);box-shadow:0 18px 45px rgba(139,92,246,.30)}
-
-/* Login/Register tabs: white pill slides between buttons */
-.tabs{isolation:isolate;overflow:hidden}
-.tabs::before{
-    content:"";
-    position:absolute;
-    z-index:0;
-    top:5px;
-    bottom:5px;
-    left:5px;
-    width:calc(50% - 2.5px);
-    border-radius:10px;
-    background:linear-gradient(120deg,#ffffff,#ddd8e8);
-    box-shadow:0 8px 28px rgba(255,255,255,.10);
-    transform:translateX(var(--tab-slide,0));
-    transition:transform .46s cubic-bezier(.16,1,.3,1);
-}
-.tabs button{position:relative;z-index:1;transition:color .3s ease,transform .3s ease}
-.tabs button.active{background:transparent!important;box-shadow:none!important;color:#10131b}
-.tabs button:not(.active){color:#727887}
-.tabs button:hover{transform:translateY(-1px)}
-
-/* Nav selection slides with a soft purple-white feel */
-.store-nav nav button{position:relative;overflow:hidden;transition:color .3s ease,transform .3s ease}
-.store-nav nav button::after{
-    content:"";position:absolute;left:18px;right:18px;bottom:4px;height:2px;border-radius:9px;
-    background:linear-gradient(90deg,#fff,#a875ff);transform:scaleX(0);transform-origin:center;transition:transform .35s cubic-bezier(.16,1,.3,1)
-}
-.store-nav nav button.active::after{transform:scaleX(1)}
-.store-nav nav button:hover{color:#ddd0ff;transform:translateY(-1px)}
-
-/* Account / buttons also get subtle premium hover */
-.account-trigger:hover{border-color:rgba(174,126,255,.28);box-shadow:0 0 28px rgba(139,92,246,.10);transform:scale(1.025)}
-.secondary-btn:hover{border-color:rgba(174,126,255,.28)!important;box-shadow:0 8px 28px rgba(139,92,246,.10)}
-.logout:hover{border-color:rgba(174,126,255,.25);background:rgba(139,92,246,.08)}
-
-/* Remove old snow completely */
-.snow-layer,.snow-dot{display:none!important}
-
-@media(prefers-reduced-motion:reduce){
-    .page:not(.hidden),.dashboard-page:not(.hidden),[data-store-page]:not(.hidden){animation:none!important}
-}
-
-
-/* UI MOVE */
-.ui-move{transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s ease!important;will-change:transform}
-.ui-move:hover{transform:translateY(-5px) scale(1.025)!important}
-button:hover,.method-card:hover,.feature:hover,.home-panels article:hover,.card:hover,.wallet:hover,.home-hero:hover,.nav-item:hover{transform:translateY(-3px) scale(1.018);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s ease}
-button:active,.method-card:active,.nav-item:active{transform:translateY(0) scale(.975)!important}
-.page:not(.hidden),.dashboard-page:not(.hidden),[data-store-page]:not(.hidden){animation:uiMovePage .48s cubic-bezier(.16,1,.3,1) both}
-@keyframes uiMovePage{from{opacity:0;transform:translateY(22px) scale(.94);filter:blur(7px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
-.tabs button{transition:color .35s ease,transform .35s cubic-bezier(.16,1,.3,1)!important}
-.tabs button:hover{transform:translateY(-1px) scale(1.03)!important}
-.tabs::before{transition:transform .48s cubic-bezier(.16,1,.3,1)!important}
+/* GAME STORE — unified visual system. No animation library required. */
+:root {
+ color-scheme:dark; --bg:#08090e; --panel:rgba(20,21,33,.72); --panel-strong:#141520;
+ --text:#f5f4fc; --muted:#a2a2b8; --quiet:#77788e; --line:rgba(206,199,255,.11);
+ --accent:#b3a0ff; --accent-deep:#8762f5; --mint:#a8f0c6; --danger:#ff9ba8;
+ --ease:cubic-bezier(.22,1,.36,1); --radius:24px; --container:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:120px}
+body{margin:0;min-width:320px;min-height:100vh;background:var(--bg);color:var(--text);font-family:"Segoe UI","Leelawadee UI",Tahoma,sans-serif;font-size:14px;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+button,input{font:inherit} button,a,input{-webkit-tap-highlight-color:transparent}
+button,a{touch-action:manipulation} button{cursor:pointer} a{color:inherit;text-decoration:none}
+button{color:inherit} button:disabled{cursor:not-allowed;opacity:.5}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:5px}
+::selection{background:#8662e9;color:white} [hidden],.hidden{display:none!important}
+h1,h2,h3,p{margin-top:0} svg{width:20px;height:20px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip-link{position:fixed;top:8px;left:12px;z-index:200;background:var(--accent);color:#161126;padding:10px 18px;border-radius:10px;transform:translateY(-150%)}
+.skip-link:focus{transform:translateY(0)}
+.ambient{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.ambient::before{content:"";position:absolute;inset:-20%;background:radial-gradient(ellipse at 18% 25%,rgba(112,70,216,.17),transparent 34%),radial-gradient(ellipse at 83% 54%,rgba(64,96,150,.12),transparent 35%),radial-gradient(ellipse at 42% 95%,rgba(109,61,190,.08),transparent 35%)}
+.ambient::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(181,177,215,.14) .7px,transparent .7px);background-size:28px 28px;mask-image:linear-gradient(black,transparent 86%);opacity:.55}
+#particles{position:absolute;inset:0;width:100%;height:100%;opacity:.8}
+.site-header{position:relative;z-index:30;max-width:calc(var(--container) + 64px);padding:24px 32px 0;margin:auto}
+.header-inner{height:76px;display:flex;align-items:center;gap:28px;padding:0 22px;background:rgba(15,16,25,.76);border:1px solid var(--line);border-radius:20px;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 10px 35px rgba(0,0,0,.12)}
+.brand{display:inline-flex;align-items:center;gap:12px;flex-shrink:0}
+.brand-mark{display:grid;place-items:center;width:41px;height:41px;border-radius:13px;background:linear-gradient(145deg,#b7a1ff,#7150d8);color:#141023;box-shadow:0 6px 22px #815af12b;font-size:18px;line-height:1;font-weight:900;font-style:italic;letter-spacing:-2px;padding-right:3px}
+.brand-name{font-size:12px;font-weight:750;letter-spacing:2px;line-height:1.5}
+.brand-name small{display:block;color:var(--quiet);font-size:8px;letter-spacing:3.7px;font-weight:500}
+.main-nav{display:flex;gap:5px;padding:4px;background:#090a1066;border-radius:12px;margin-left:auto}
+.nav-item{border:0;background:transparent;color:var(--muted);border-radius:9px;padding:8px 17px;font-size:12px;display:flex;align-items:center;gap:8px;transition:background .25s,color .25s}
+.nav-item svg{width:15px;height:15px}
+.nav-item.active{background:rgba(178,155,255,.12);color:#d9cdff}
+.header-actions{display:flex;align-items:center;gap:12px;margin-left:auto}
+#memberNav:not(.hidden)~.header-actions{margin-left:0}
+.public-label{font-size:10px;letter-spacing:1.7px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.status-dot{width:6px;height:6px;display:inline-block;border-radius:50%;background:var(--mint);box-shadow:0 0 10px #a8f0c640;flex-shrink:0}
+.icon-button{height:38px;width:38px;border:1px solid var(--line);border-radius:11px;display:grid;place-items:center;background:#ffffff03;color:var(--muted);transition:background .2s,color .2s}
+.icon-button:hover{background:#b6a0ff10;color:var(--text)}
+.icon-button svg{width:17px;height:17px}
+.account-wrap{position:relative}
+.account-trigger{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:#ffffff03;border-radius:12px;padding:6px 10px 6px 6px;min-height:44px;font-size:12px}
+.account-trigger strong{font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.account-trigger>svg{width:14px;height:14px;transition:transform .3s var(--ease)}
+.is-open .account-trigger>svg{transform:rotate(180deg)}
+.avatar{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:#b3a0ff19;color:#cbbaff;font-size:12px;font-weight:700}
+.account-menu{position:absolute;right:0;top:calc(100% + 12px);width:254px;padding:10px;background:rgba(26,25,39,.96);border:1px solid #c5baff24;border-radius:17px;box-shadow:0 22px 60px #0007;backdrop-filter:blur(28px);transform-origin:90% 0;transition:transform .25s var(--ease),opacity .2s,visibility .2s;transform:translateY(-6px) scale(.96);opacity:0;visibility:hidden}
+.is-open .account-menu{visibility:visible;transform:translateY(0) scale(1);opacity:1}
+.menu-balance{padding:12px 12px 16px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.menu-balance small{display:block;color:var(--muted);font-size:11px}
+.menu-balance strong{font-size:26px;letter-spacing:-1px}
+.account-menu button{border:0;background:transparent;width:100%;text-align:left;padding:11px;border-radius:9px;display:flex;align-items:center;gap:10px;font-size:12px}
+.account-menu button:hover{background:#ffffff07}
+.account-menu .menu-logout{color:#ffaab5}
+main{position:relative;z-index:1;max-width:calc(var(--container) + 64px);padding:36px 32px 0;margin:auto;min-height:calc(100vh - 188px)}
+.glass{background:var(--panel);border:1px solid var(--line);box-shadow:inset 0 1px 0 #ffffff03,0 25px 65px #0002;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.eyebrow{display:flex;align-items:center;gap:9px;font-size:10px;font-weight:650;letter-spacing:2.4px;color:#b5a5e5}
+.eyebrow::before{content:"";width:17px;height:1px;background:currentColor;opacity:.6}
+.subtitle{color:var(--muted);font-size:13px;line-height:1.9}
+.muted{color:var(--muted)}
+.auth-shell{display:grid;grid-template-columns:1.1fr 1fr;min-height:656px;border-radius:var(--radius);overflow:hidden}
+.auth-story{position:relative;isolation:isolate;padding:44px 46px 30px;display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 60%,#7257bd1c,transparent 60%),linear-gradient(150deg,#31204620,#14131f55);border-right:1px solid var(--line);overflow:hidden}
+.auth-story::before{content:"";width:480px;height:480px;position:absolute;left:50%;top:27%;transform:translateX(-50%);border-radius:50%;border:1px solid #b29bff08;box-shadow:0 0 0 50px #b29bff03,0 0 0 100px #b29bff02;z-index:-1}
+.story-top{display:flex;justify-content:space-between;align-items:center}
+.edition{font-size:10px;letter-spacing:2px;color:var(--quiet)}
+.story-title{font-size:clamp(40px,4.5vw,61px);font-weight:800;line-height:1.07;letter-spacing:-2.8px;margin:29px 0 16px}
+.story-title span{background:linear-gradient(115deg,#dbcfff,#9980dd);color:transparent;background-clip:text;-webkit-background-clip:text}
+.story-description{max-width:340px;color:#aaa5bc;font-size:12px;line-height:1.9;margin-bottom:0}
+.orb-scene{position:relative;height:250px;display:grid;place-items:center;isolation:isolate;flex:1;min-height:210px}
+.orb-scene::before{content:"";position:absolute;width:190px;height:190px;background:#8f64fc20;border-radius:50%;filter:blur(28px);z-index:-1}
+.orb-ring{position:absolute;border:1px solid rgba(178,148,255,.24);width:247px;height:247px;border-radius:50%;transform:rotateX(64deg) rotateZ(-28deg);box-shadow:0 0 22px #9876ff05}
+.orb-ring.ring-two{width:230px;height:230px;transform:rotateY(65deg) rotateZ(28deg);border-color:#bda6ff20}
+.orb-ring.ring-three{width:196px;height:196px;transform:rotateX(22deg) rotateY(47deg);border-style:dashed;border-color:#d0b9ff18}
+.orb-core{width:128px;height:128px;display:grid;place-items:center;position:relative;transform:rotate(-12deg);border-radius:32px;border:1px solid #dbc4ff45;background:linear-gradient(145deg,rgba(209,184,255,.26),rgba(97,67,146,.07) 65%);box-shadow:inset 0 1px 15px #d6bfff0f,0 25px 45px #0005;backdrop-filter:blur(12px);animation:floatCore 7s ease-in-out infinite}
+.orb-core::after{content:"";position:absolute;inset:8px;border:1px solid #e0cdff10;border-radius:24px}
+.orb-core b{font-size:48px;letter-spacing:-7px;padding-right:7px;font-weight:850;font-style:italic;color:#e5d7ff;text-shadow:0 3px 24px #b490ff40}
+.orb-star{position:absolute;width:6px;height:6px;border-radius:50%;background:#ddcaff;box-shadow:0 0 13px #a785ff;top:21%;right:25%}
+.floating-chip{position:absolute;display:flex;align-items:center;gap:9px;border:1px solid #d0bbff1d;background:#1a1626d9;border-radius:12px;backdrop-filter:blur(14px);box-shadow:0 10px 25px #0002;padding:10px 12px;animation:floatChip 6s ease-in-out infinite;font-size:10px;color:#d1c8e5}
+.floating-chip svg{color:#b59be9;width:17px;height:17px}
+.chip-wallet{left:0;bottom:28%;transform:rotate(-7deg)}
+.chip-ready{right:-6px;top:26%;animation-delay:-3s}
+.chip-ready .status-dot{width:5px;height:5px}
+.story-footer{display:flex;align-items:center;gap:13px;border-top:1px solid var(--line);padding-top:18px;margin-top:9px}
+.story-footer .mini-icon{color:#ad97dc;background:#b3a0ff0b;border:1px solid #b3a0ff15;border-radius:10px;width:35px;height:35px;display:grid;place-items:center}
+.story-footer strong{display:block;font-size:11px;font-weight:500;color:#d1cadf}
+.story-footer small{display:block;color:var(--quiet);font-size:10px;margin-top:2px}
+.story-footer>span:last-child{margin-left:auto;font-size:10px;color:var(--quiet);letter-spacing:1px}
+.auth-form{padding:48px 50px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.step-label{font-size:10px;letter-spacing:2px;color:var(--quiet);margin-bottom:12px}
+.auth-form h1{font-size:30px;line-height:1.4;letter-spacing:-.5px;margin-bottom:8px}
+.auth-form .subtitle{font-size:12px;margin-bottom:0}
+.tabs{position:relative;display:grid;grid-template-columns:1fr 1fr;background:#07080d75;border:1px solid var(--line);border-radius:12px;padding:5px;margin:27px 0 25px}
+.tabs::before{content:"";position:absolute;top:5px;bottom:5px;left:5px;width:calc(50% - 5px);background:#c0abff;border-radius:8px;transform:translateX(var(--tab-x,0%));transition:transform .5s var(--ease);box-shadow:0 3px 13px #a37cf21c}
+.tabs.register-active::before{transform:translateX(100%)}
+.tabs button{position:relative;z-index:1;border:0;background:transparent;padding:9px 6px;color:var(--muted);font-size:12px;transition:color .3s}
+.tabs button.active{color:#1c132f;font-weight:700}
+.field{margin-bottom:18px}
+label{display:block;color:#cfcbdd;font-size:11px;margin-bottom:8px}
+.label-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.label-row>span{color:var(--quiet);font-size:10px;margin-bottom:8px}
+.input-wrap{position:relative}
+input:not([type=file]){width:100%;height:49px;padding:0 15px;border:1px solid #c9c2e41c;border-radius:11px;outline:0;background:#090a125e;color:var(--text);font-size:13px;transition:background .2s,border-color .2s,box-shadow .2s}
+.input-wrap>svg{position:absolute;left:14px;top:16px;width:17px;height:17px;color:var(--quiet);pointer-events:none}
+.input-wrap>svg~input{padding-left:42px}
+.input-wrap input[type=password],.input-wrap input.password-visible{padding-right:49px}
+input:not([type=file]):hover{border-color:#c9c2e435}
+input:not([type=file]):focus{background:#100e1d;border-color:#aa8fe68a;box-shadow:0 0 0 4px #a180ed0c}
+input::placeholder{color:#646277;opacity:1}
+.password-toggle{position:absolute;right:5px;top:5px;display:grid;place-items:center;width:39px;height:39px;border:0;background:transparent;color:var(--quiet);border-radius:8px}
+.password-toggle:hover{color:var(--accent);background:#b3a0ff08}
+.password-toggle svg{width:17px;height:17px}
+.primary-btn,.secondary-btn{position:relative;display:inline-flex;justify-content:center;align-items:center;gap:11px;min-height:48px;border-radius:11px;font-size:12px;font-weight:650;padding:12px 21px;overflow:hidden;isolation:isolate;transition:transform .35s var(--ease),box-shadow .3s,background .3s}
+.primary-btn{border:1px solid #dfceff2a;background:linear-gradient(110deg,#c2adff,#a58ae9);color:#201435;box-shadow:0 6px 24px #8555dc0e}
+.primary-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,#ffffff55 50%,transparent 80%);transform:translateX(-120%);transition:transform .7s var(--ease);pointer-events:none}
+.primary-btn:hover::after{transform:translateX(120%)}
+.primary-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 30px #9a72f327}
+.primary-btn:active:not(:disabled),.secondary-btn:active:not(:disabled){transform:scale(.98)}
+.primary-btn svg,.secondary-btn svg{width:17px;height:17px}
+.full-width{width:100%}
+.auth-form form .primary-btn{margin-top:5px}
+.secondary-btn{border:1px solid var(--line);background:#ffffff04;color:#d4cce6}
+.secondary-btn:hover:not(:disabled){background:#b7a0ff0c;transform:translateY(-2px)}
+.spinner{display:inline-block;width:17px;height:17px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .75s linear infinite}
+.switch{text-align:center;color:var(--muted);font-size:11px;margin-top:23px}
+.text-btn{border:0;background:none;padding:3px;color:#c5adff;font-size:inherit}
+.text-btn:hover{text-decoration:underline;text-underline-offset:4px}
+.form-note{display:flex;justify-content:center;align-items:center;gap:7px;font-size:10px;color:var(--quiet);padding-top:22px;margin-top:25px;border-top:1px solid var(--line)}
+.form-note svg{width:13px;height:13px}
+.auth-pane{transform-origin:center top}
+.page-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;margin:6px 0 28px}
+.page-heading h1{font-size:32px;font-weight:650;letter-spacing:-1px;line-height:1.4;margin:10px 0 6px}
+.page-heading p{color:var(--muted);font-size:12px;margin:0}
+.page-index{color:var(--quiet);font-size:11px;letter-spacing:2px;white-space:nowrap}
+.home-layout{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);gap:22px}
+.home-hero{position:relative;min-height:350px;padding:36px;border-radius:var(--radius);isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 93% 45%,#67419327,transparent 60%),var(--panel)}
+.home-hero .eyebrow{font-size:9px}
+.home-hero h2{font-size:clamp(29px,3.15vw,44px);letter-spacing:-1.5px;line-height:1.35;margin:24px 0 14px;max-width:440px}
+.home-hero h2 span{color:#c4aafa}
+.home-hero p{color:var(--muted);font-size:12px;line-height:1.9;max-width:300px;margin-bottom:25px}
+.home-hero .orb-scene{position:absolute;width:230px;height:260px;right:-14px;top:63px;z-index:-1;opacity:.6}
+.home-hero .orb-core{width:110px;height:110px}
+.home-hero .orb-core b{font-size:42px}
+.home-hero .floating-chip{display:none}
+.hero-content{max-width:76%}
+.wallet{position:relative;overflow:hidden;border-radius:var(--radius);padding:28px;display:flex;flex-direction:column;justify-content:space-between;background:radial-gradient(ellipse at 100% 0,#8769c638,transparent 60%),linear-gradient(150deg,#211a32dd,#14131dee)}
+.wallet::after{content:"";position:absolute;width:160px;height:160px;border:1px solid #c5b0fb0a;border-radius:50%;right:-65px;top:90px;box-shadow:0 0 0 28px #c5b0fb04,0 0 0 56px #c5b0fb02;pointer-events:none}
+.wallet-top{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted);font-size:11px}
+.wallet-top svg{color:#cfb7ff}
+.wallet-amount{position:relative;z-index:1;font-size:39px;font-weight:650;letter-spacing:-1.6px;line-height:1.3;margin:18px 0 7px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.wallet-amount>small{font-size:23px;font-weight:400;color:#c7b4e8;vertical-align:top;display:inline-block;margin:6px 5px 0 0}
+.wallet-caption{font-size:11px;color:var(--quiet);margin-bottom:24px}
+.wallet .secondary-btn{width:100%;position:relative;z-index:1;justify-content:space-between}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:34px 0 17px}
+.section-title h2{font-size:17px;margin:0;font-weight:600}
+.section-title span{font-size:10px;letter-spacing:1.5px;color:var(--quiet)}
+.quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.quick-card{position:relative;text-align:left;border-radius:18px;padding:23px;transition:transform .45s var(--ease),border-color .3s,box-shadow .4s;min-width:0}
+.quick-card:hover{transform:translateY(-5px);border-color:#bca2f93a;box-shadow:0 24px 50px #0003}
+.quick-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.tile-icon{display:grid;place-items:center;width:43px;height:43px;background:#b29afc0a;border:1px solid #b29afc1c;border-radius:12px;color:#bca5ef}
+.quick-number{font-size:10px;font-variant-numeric:tabular-nums;letter-spacing:1px;color:var(--quiet)}
+.quick-card h3{font-size:15px;font-weight:600;margin-bottom:7px}
+.quick-card p{font-size:11px;color:var(--muted);margin-bottom:19px}
+.quick-bottom{display:flex;justify-content:space-between;align-items:center;color:#c1a5f4;font-size:11px}
+.quick-bottom svg{width:15px;height:15px}
+.inline-note{display:flex;align-items:center;gap:9px;color:var(--quiet);font-size:11px;line-height:1.8;margin:23px 0 0}
+.inline-note svg{width:15px;height:15px;flex-shrink:0}
+.topup-layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px}
+.method-card{position:relative;border-radius:20px;padding:29px;display:flex;align-items:center;gap:23px;text-align:left;width:100%;transition:transform .4s var(--ease),border-color .3s;background:radial-gradient(ellipse at 0 0,#a275ed14,transparent 70%),var(--panel)}
+.method-card:hover{transform:translateY(-4px);border-color:#bca2f966}
+.method-icon{width:67px;height:75px;display:grid;place-items:center;border-radius:16px;flex-shrink:0;color:#cbb0ff;background:linear-gradient(145deg,#b891ef20,#8055c307);border:1px solid #bc9beb30;transform:rotate(-7deg)}
+.method-icon svg{width:32px;height:32px}
+.method-copy{flex:1;min-width:0}
+.method-copy strong{display:block;font-size:24px;letter-spacing:-.7px;font-weight:650;margin:3px 0 4px}
+.method-copy small{display:block;color:var(--muted);font-size:11px}
+.method-tag{display:inline-flex;align-items:center;gap:6px;font-size:9px;color:#b2ddc6;border:1px solid #a8f0c616;background:#a8f0c605;padding:3px 8px;border-radius:6px;letter-spacing:.5px}
+.method-card>.arrow-circle{width:31px;height:31px;border-radius:50%;background:#b3a0ff0b;display:grid;place-items:center}
+.arrow-circle svg{width:15px;height:15px}
+.steps-card{border-radius:20px;padding:27px}
+.steps-card h2{font-size:15px;margin-bottom:23px;font-weight:600}
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:22px}
+.steps li{display:flex;gap:15px;position:relative}
+.steps li:not(:last-child)::after{content:"";position:absolute;left:14px;top:36px;bottom:-16px;width:1px;background:var(--line)}
+.step-num{width:29px;height:29px;flex-shrink:0;border:1px solid #ba9ff329;display:grid;place-items:center;border-radius:9px;color:#bea5ef;font-size:11px;background:#bc9bf00a}
+.steps strong{font-size:12px;font-weight:500}
+.steps p{font-size:11px;color:var(--quiet);margin:3px 0 0}
+.compact-wallet{margin-top:20px;border-radius:18px;min-height:130px;padding:23px;flex-direction:row;align-items:center;gap:20px}
+.compact-wallet .wallet-amount{font-size:29px;margin:4px 0 0}
+.compact-wallet .wallet-amount>small{font-size:18px;margin-top:3px}
+.compact-wallet .wallet-top{font-size:10px}
+.compact-wallet>.tile-icon{width:45px;height:45px;flex-shrink:0}
+.back-link{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;color:var(--muted);padding:0;font-size:11px;margin-bottom:18px}
+.back-link svg{width:14px;height:14px}
+.back-link:hover{color:var(--accent)}
+.dash-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);gap:24px;align-items:start}
+.card{border-radius:20px;padding:28px;min-width:0}
+.card-heading{display:flex;align-items:center;gap:13px;margin-bottom:23px}
+.card-heading h2{font-size:17px;font-weight:600;margin:0 0 3px}
+.card-heading p{color:var(--muted);font-size:11px;margin:0}
+.card-heading .tile-icon{width:39px;height:39px;border-radius:11px}
+.amount-row{position:relative}
+.amount-row input{height:61px;padding-right:62px;font-size:23px;font-weight:500;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.amount-row input::placeholder{font-size:18px;font-weight:400;letter-spacing:0}
+.currency{position:absolute;right:17px;top:50%;transform:translateY(-50%);font-size:11px;letter-spacing:1px;color:var(--quiet)}
+.amount-presets{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0 21px}
+.amount-presets button{border:1px solid var(--line);background:#ffffff03;color:var(--muted);border-radius:9px;padding:8px 5px;font-size:11px;transition:border-color .2s,background .2s,color .2s}
+.amount-presets button:hover,.amount-presets button.selected{background:#b69cef10;border-color:#bca2f957;color:#d7bfff}
+.payment{margin-top:26px;padding-top:25px;border-top:1px solid var(--line)}
+.payment-heading{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:500}
+.payment-heading svg{color:var(--accent);width:18px;height:18px}
+.payment-timer{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#eac27907;border:1px solid #eac27918;border-radius:12px;padding:12px 16px;margin-top:17px}
+.payment-timer-label{font-size:10px;color:#d8c79e}
+.payment-timer-note{font-size:10px;color:var(--muted);margin-top:3px}
+.payment-timer-value{font-size:25px;letter-spacing:1px;font-weight:650;font-variant-numeric:tabular-nums;color:#eed298;flex-shrink:0}
+.payment-timer.expired{background:#ff899408;border-color:#ff899425}
+.payment-timer.expired .payment-timer-value{color:var(--danger)}
+.payment-timer.success{background:#a8f0c607;border-color:#a8f0c625}
+.payment-timer.success .payment-timer-value{color:var(--mint);font-size:20px;letter-spacing:.4px}
+.qr-shell{display:flex;flex-direction:column;align-items:center;padding:24px 0 20px}
+.qr{display:block;width:218px;max-width:100%;min-height:170px;border:12px solid #fff;border-radius:14px;background:white;box-shadow:0 12px 30px #0002}
+.qr-caption{color:var(--quiet);font-size:10px;letter-spacing:.6px;margin-top:10px}
+.qr-error{color:var(--danger);font-size:11px;text-align:center;margin-top:8px}
+.payment-expired .qr{opacity:.28;filter:grayscale(1)}
+.payment-paid .qr{opacity:.45}
+.payment-info{padding:14px 16px;background:#090a124d;border:1px solid var(--line);border-radius:11px;font-size:11px;display:grid;gap:10px;margin-bottom:22px}
+.payment-amount-row,.payment-id{display:flex;justify-content:space-between;align-items:center;gap:14px;color:var(--muted)}
+.payment-amount-row strong{font-size:17px;color:var(--text);font-variant-numeric:tabular-nums}
+.payment-id>span{min-width:0}
+.payment-id strong{display:block;overflow-wrap:anywhere;font-size:10px;color:#c5b8e0;font-weight:400}
+.copy-btn{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:#ffffff04;border-radius:7px;padding:6px 8px;font-size:10px;color:#c6b4e8;flex-shrink:0}
+.copy-btn svg{width:12px;height:12px}
+.file-box{position:relative;border:1px dashed #c1a6ff3c;border-radius:12px;background:#b3a0ff04;padding:19px;text-align:center;transition:background .2s,border-color .2s;overflow:hidden;margin-bottom:15px}
+.file-box:hover,.file-box:focus-within{background:#b3a0ff09;border-color:#c1a6ff79}
+.file-box>svg{color:#b69bdc;width:23px;height:23px;display:block;margin:0 auto 7px}
+.file-box strong{display:block;font-size:12px;font-weight:500;color:#c5b0e9}
+.file-box small{display:block;color:var(--quiet);font-size:10px;margin-top:3px}
+.file-box input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.file-box:has(input:disabled){opacity:.45}
+.file-box input:disabled{cursor:not-allowed}
+#fileName{font-size:11px;color:var(--muted);margin-top:10px;overflow-wrap:anywhere}
+#slipPreview{max-width:100%;max-height:155px;border-radius:8px;display:block;margin:12px auto 0;object-fit:contain}
+.transaction-list{max-height:520px;overflow:auto;scrollbar-width:thin;scrollbar-color:#74638733 transparent}
+.transaction{display:flex;align-items:center;gap:11px;padding:16px 0;border-bottom:1px solid var(--line)}
+.transaction:last-child{border-bottom:0}
+.transaction-icon{width:34px;height:34px;border:1px solid #b3a0ff12;background:#b3a0ff07;border-radius:10px;display:grid;place-items:center;color:#aa94d2;flex-shrink:0}
+.transaction-icon svg{width:16px;height:16px}
+.transaction-left{flex:1;min-width:0}
+.transaction-amount{font-size:15px;font-weight:550;font-variant-numeric:tabular-nums}
+.transaction-date{font-size:10px;color:var(--quiet);margin-top:2px}
+.status{font-size:9px;white-space:nowrap;border:1px solid;border-radius:6px;padding:4px 7px}
+.status-success{color:#a2e1bb;border-color:#a2e1bb20;background:#a2e1bb05}
+.status-pending{color:#e1c496;border-color:#e1c49620;background:#e1c49605}
+.status-failed{color:#f99fa8;border-color:#f99fa820;background:#f99fa805}
+.status-expired{color:#cbad9f;border-color:#cbad9f20;background:#cbad9f05}
+.empty-state{text-align:center;padding:40px 10px}
+.empty-state .tile-icon{margin:0 auto 16px;width:51px;height:51px;border-radius:15px}
+.empty-state strong{display:block;font-size:12px;font-weight:500;color:#c5bed6}
+.empty-state p{font-size:11px;color:var(--quiet);margin:6px 0 0}
+.history-caption{border-top:1px solid var(--line);padding-top:16px;margin:15px 0 0;display:flex;align-items:center;gap:7px;color:var(--quiet);font-size:10px}
+.history-caption svg{width:13px;height:13px}
+.history-head{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.history-head .card-heading{margin-bottom:17px}
+.history-head .icon-button{width:32px;height:32px;flex-shrink:0}
+.history-head .icon-button svg{width:14px;height:14px}
+.site-footer{position:relative;z-index:1;display:flex;justify-content:space-between;gap:20px;align-items:center;max-width:calc(var(--container) + 64px);padding:27px 32px 26px;margin:auto;color:#767284;font-size:9px;letter-spacing:1.7px}
+.footer-right{display:flex;align-items:center;gap:14px;font-size:10px;letter-spacing:0}
+.footer-right .status-dot{width:4px;height:4px;box-shadow:none}
+.footer-motion{display:none}@media(max-width:520px){.footer-motion{display:grid;width:30px;height:30px;flex-shrink:0}.footer-right{max-width:170px}}
+.toast-container{position:fixed;bottom:26px;right:26px;z-index:100;display:flex;flex-direction:column;gap:9px;max-width:min(390px,calc(100vw - 32px));pointer-events:none}
+.toast{display:flex;align-items:center;gap:11px;padding:15px 17px;border-radius:14px;border:1px solid #c6adff29;background:rgba(30,26,43,.96);box-shadow:0 15px 50px #0006;backdrop-filter:blur(20px);color:#ded5ed;font-size:12px;animation:toastIn .45s var(--ease) both;pointer-events:auto}
+.toast>svg{width:18px;height:18px;color:var(--mint)}
+.toast.error>svg{color:var(--danger)}
+.toast>span{flex:1}
+.toast button{border:0;background:none;color:var(--quiet);padding:3px;display:grid;place-items:center}
+.toast button svg{width:14px;height:14px}
+.toast.out{animation:toastOut .25s ease forwards}
+.demo-banner{background:#b69bfb0c;border:1px solid #b69bfb25;border-radius:12px;padding:11px 16px;margin-bottom:20px;color:#cebbf0;font-size:11px}
+.boot-status{position:fixed;left:50%;top:111px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:30px;background:#151320;padding:7px 14px;color:var(--muted);font-size:11px;box-shadow:0 8px 25px #0004}
+.boot-status .spinner{width:12px;height:12px}
+.no-script{position:relative;z-index:90;background:#2c1c2c;color:#ffcfdf;padding:16px;text-align:center}
+@keyframes floatCore{0%,100%{transform:translateY(0) rotate(-12deg)}50%{transform:translateY(-10px) rotate(-8deg)}}
+@keyframes floatChip{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes toastIn{from{opacity:0;transform:translateX(25px) scale(.96)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px) scale(.97)}}
+@media(min-width:1500px){main{padding-top:48px}.auth-shell{min-height:694px}.auth-story{padding:50px 52px 34px}.auth-form{padding:54px 62px}}
+@media(max-width:1000px){.auth-form{padding:36px 32px}.auth-story{padding:36px 32px 28px}.auth-shell{min-height:625px}.story-title{font-size:49px}.chip-wallet{left:-6px}.chip-ready{right:-14px}.home-layout{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}.home-hero{padding:28px}.home-hero .orb-scene{right:-40px;opacity:.35}.wallet{padding:24px}.wallet-amount{font-size:34px}.hero-content{max-width:90%}.topup-layout{grid-template-columns:1.2fr 1fr}.method-card{padding:25px 20px;gap:18px}.card{padding:24px}.dash-grid{gap:20px}.quick-card{padding:20px}}
+@media(max-width:760px){.site-header{padding:16px 20px 0}.header-inner{height:68px;padding:0 16px;border-radius:16px;gap:15px}main{padding:26px 20px 0}.auth-shell{grid-template-columns:1fr;min-height:auto}.auth-story{padding:28px 28px 25px;border-right:0;border-bottom:1px solid var(--line);min-height:228px}.story-title{font-size:43px;margin:18px 0 12px;letter-spacing:-2px}.story-description{max-width:64%;font-size:11px}.auth-story .orb-scene{position:absolute;width:220px;height:220px;min-height:0;right:0;top:20px;z-index:-1;opacity:.55}.auth-story .floating-chip{display:none}.auth-story .orb-core{width:105px;height:105px;border-radius:27px}.auth-story .orb-core b{font-size:41px}.auth-story .orb-ring{width:200px;height:200px}.story-footer{display:none}.edition{display:none}.auth-form{padding:31px 32px}.auth-form h1{font-size:27px}.step-label{margin-bottom:8px}.tabs{margin:23px 0}.site-footer{padding:23px 20px;font-size:8px}.footer-right{font-size:9px;gap:8px}.home-layout{grid-template-columns:1fr}.home-hero{min-height:325px;padding:30px}.home-hero .orb-scene{right:20px;opacity:.6}.home-hero h2{font-size:36px}.hero-content{max-width:75%}.home-layout>.wallet{min-height:210px;padding:25px}.home-layout>.wallet .secondary-btn{width:auto;position:absolute;right:25px;bottom:25px}.wallet-caption{margin:5px 0 0}.wallet-amount{margin:11px 0 5px}.quick-grid{gap:12px}.quick-card{padding:18px}.quick-card h3{font-size:13px}.quick-card p{font-size:10px}.quick-bottom{font-size:10px}.page-heading h1{font-size:29px}.topup-layout{grid-template-columns:1fr}.dash-grid{grid-template-columns:1fr}.method-card{padding:25px}.main-nav{gap:0}.nav-item{padding:9px 11px}.nav-item svg{display:none}.public-label{font-size:9px}.header-actions{gap:8px}.account-trigger strong{max-width:70px}.page-index{display:none}.compact-wallet{min-height:120px}.transaction-list{max-height:420px}.boot-status{top:91px}.history-head .icon-button{width:38px;height:38px}}
+@media(max-width:520px){.site-header{padding:12px 14px 0}.header-inner{padding:0 12px;gap:10px;height:64px;border-radius:14px}.brand{gap:8px}.brand-mark{width:34px;height:34px;border-radius:10px;font-size:16px}.brand-name{font-size:10px;letter-spacing:1.5px}.brand-name small{font-size:7px;letter-spacing:2.6px}.public-label{display:none}.header-actions{gap:7px}.icon-button{width:34px;height:34px}.account-trigger{min-height:36px;padding:4px 6px 4px 4px;gap:5px;border-radius:10px}.avatar{width:26px;height:26px}.account-trigger strong{display:none}.account-trigger>svg{width:12px}.main-nav{padding:3px;margin-left:auto}.nav-item{padding:7px 9px;font-size:10px}.header-inner:has(#memberNav:not(.hidden)) #motionButton{display:none}main{padding:20px 14px 0}.auth-shell{border-radius:19px}.auth-story{padding:23px 23px 22px;min-height:226px}.story-title{font-size:39px;margin:17px 0 12px}.story-description{max-width:71%;line-height:1.8;font-size:10.5px}.auth-story .orb-scene{right:-52px;top:32px;opacity:.42}.story-top .eyebrow{font-size:8px;letter-spacing:1.7px}.auth-form{padding:27px 23px 30px}.auth-form h1{font-size:26px}.auth-form .subtitle{font-size:11px}.form-note{margin-top:21px;padding-top:19px}.site-footer{padding:22px 16px;gap:10px;align-items:flex-start}.footer-right{max-width:135px;text-align:right;line-height:1.8;justify-content:flex-end}.footer-right .status-dot{display:none}.page-heading{margin-bottom:22px;gap:12px}.page-heading h1{font-size:26px}.page-heading p{font-size:11px}.eyebrow{font-size:9px;letter-spacing:1.7px}.home-hero{padding:26px 24px;min-height:326px;border-radius:20px}.home-hero h2{font-size:31px;letter-spacing:-1px}.home-hero .orb-scene{right:-67px;top:80px;opacity:.3}.home-hero p{font-size:11px}.hero-content{max-width:92%}.home-layout{gap:16px}.home-layout>.wallet{min-height:208px;border-radius:20px;padding:23px}.home-layout>.wallet .secondary-btn{right:23px;bottom:23px;padding:10px 15px;min-height:43px;font-size:11px}.wallet-amount{font-size:34px}.quick-grid{grid-template-columns:1fr;gap:12px}.quick-card{padding:20px 21px;display:grid;grid-template-columns:45px 1fr auto;column-gap:15px;align-items:center;border-radius:16px}.quick-top{display:contents}.quick-number{display:none}.quick-card h3{font-size:14px;grid-column:2;margin:0 0 4px;grid-row:1}.quick-card p{grid-column:2;margin:0;font-size:11px;grid-row:2}.quick-card .tile-icon{grid-column:1;grid-row:1/3}.quick-bottom{grid-column:3;grid-row:1/3;font-size:0}.quick-bottom svg{width:18px;height:18px}.section-title{margin-top:27px}.section-title span{font-size:8px}.method-card{padding:22px 19px;gap:17px}.method-icon{width:52px;height:62px;border-radius:13px}.method-icon svg{width:27px;height:27px}.method-copy strong{font-size:22px}.method-copy small{font-size:10px}.method-tag{font-size:8px}.method-card>.arrow-circle{width:27px;height:27px}.inline-note{font-size:10px;align-items:flex-start;gap:8px}.inline-note svg{margin-top:2px}.card{padding:23px 21px;border-radius:18px}.card-heading h2{font-size:16px}.card-heading p{font-size:10px}.amount-presets{gap:7px}.payment-timer{padding:11px 12px;gap:10px}.payment-timer-note{font-size:9px}.payment-timer-value{font-size:24px}.toast-container{bottom:15px;right:16px}.toast{font-size:11px;padding:13px 14px}.boot-status{top:83px}.account-menu{right:0;width:240px}.transaction{gap:9px}.status{font-size:8px;padding:4px 6px}}
+@media(max-width:365px){.header-inner{gap:7px}.brand-name small{display:none}.brand-name{font-size:9px}.nav-item{padding:7px;font-size:9px}.main-nav{padding:2px}.account-trigger{gap:3px}.card{padding:20px 17px}.auth-form{padding:26px 20px}.auth-story{padding:23px 20px}.site-footer{letter-spacing:1px}.method-card{gap:12px}.method-card>.arrow-circle{display:none}}
+@media(hover:none){.quick-card:hover,.primary-btn:hover:not(:disabled),.method-card:hover{transform:none}}
+html.motion-paused *,html.motion-paused *::before,html.motion-paused *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
-
 <body>
-
-<div class="grid-bg"></div>
-
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- =========================
-     LOGIN
-========================= -->
-
-<section class="page" id="loginPage">
-
-<div class="auth-shell fade-in">
-
-    <aside class="hero">
-
-        <div class="logo">GX</div>
-
-        <div class="eyebrow">
-            GAME STORE / MEMBER
-        </div>
-
-        <h2>
-            Welcome<br>
-            Back.
-        </h2>
-
-        <p>
-            ร้านไอเทมเกมและสินค้าดิจิทัล<br>
-            จัดการบัญชี กระเป๋าเงิน และรายการเติมเงิน
-            ได้ในที่เดียว
-        </p>
-
-        <div class="features">
-
-            <div class="feature">
-                <span>✦</span>
-                ระบบสมาชิกส่วนตัว
-            </div>
-
-            <div class="feature">
-                <span>◈</span>
-                Wallet แยกตามบัญชี
-            </div>
-
-            <div class="feature">
-                <span>✓</span>
-                ตรวจสอบสลิปอัตโนมัติ
-            </div>
-
-        </div>
-
-    </aside>
-
-    <div class="auth-form">
-
-        <h1>เข้าสู่ระบบ</h1>
-
-        <div class="subtitle">
-            Login to your GAME STORE account
-        </div>
-
-        <div class="tabs">
-
-            <button
-                type="button"
-                onclick="showRegister()">
-                REGISTER
-            </button>
-
-            <button
-                type="button"
-                class="active"
-                onclick="showLogin()">
-                LOGIN
-            </button>
-
-        </div>
-
-        <form onsubmit="event.preventDefault();login();">
-
-            <label>
-                USERNAME
-            </label>
-
-            <input
-                id="loginUsername"
-                type="text"
-                placeholder="ชื่อผู้ใช้"
-                autocomplete="username"
-                required
-            >
-
-            <label>
-                PASSWORD
-            </label>
-
-            <div class="input-wrap">
-
-                <input
-                    id="loginPassword"
-                    type="password"
-                    placeholder="รหัสผ่าน"
-                    autocomplete="current-password"
-                    required
-                >
-
-                <button
-                    type="button"
-                    class="password-toggle"
-                    onclick="togglePassword('loginPassword',this)">
-                    ◉
-                </button>
-
-            </div>
-
-            <button
-                id="loginButton"
-                class="primary-btn"
-                type="submit">
-                LOGIN
-            </button>
-
-        </form>
-
-        <div class="switch">
-            ยังไม่มีบัญชี?
-            <button
-                type="button"
-                onclick="showRegister()">
-                สมัครสมาชิก
-            </button>
-        </div>
-
-        <div class="note">
-            GAME STORE · SECURE MEMBER ACCESS
-        </div>
-
-        <div id="loginMessage"></div>
-
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg"><defs><symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id="i-up" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol><symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></symbol><symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-wallet" viewBox="0 0 24 24"><path d="M20 8V6a2 2 0 0 0-2-2H6a3 3 0 0 0 0 6h14v10H6a3 3 0 0 1-3-3V7"/><path d="M20 12h-4v5h4M17 14.5h.1"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M6 6c-2.7 2-4 6-4 6s3.5 7 10 7a12 12 0 0 0 5-1.2M10 5.2a11 11 0 0 1 2-.2c6.5 0 10 7 10 7a18 18 0 0 1-3 4"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></symbol><symbol id="i-slip" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3ZM9 7h6M9 11h6M9 15h3"/></symbol><symbol id="i-history" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2.5 7M3 4v7h7M12 7v5l3 2"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></symbol><symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3M7 8l5-5 5 5M4 16v4h16v-4"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/></symbol><symbol id="i-qr" viewBox="0 0 24 24"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h2v2h-2zM21 14v4h-4v3M21 21h.01M13 3v3M3 12h3M10 12h3v-2M12 15v6"/></symbol><symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 4H4v16h6M9 12h12m-5-5 5 5-5 5"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5M6 6a8 8 0 0 1 13 3M18 18A8 8 0 0 1 5 15"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 12 8-12 8V4Z"/></symbol><symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5h4"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="m12 3 10 18H2L12 3ZM12 9v5M12 17h.01"/></symbol></defs></svg>
+<a href="#mainContent" class="skip-link">ข้ามไปเนื้อหา</a>
+<div class="ambient" aria-hidden="true"><canvas id="particles"></canvas></div>
+<noscript><div class="no-script">กรุณาเปิด JavaScript เพื่อใช้งานระบบสมาชิกและเติมเงิน</div></noscript>
+<div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="false"></div>
+<div id="bootStatus" class="boot-status" role="status"><span class="spinner"></span>กำลังตรวจสอบบัญชี…</div>
+<header class="site-header">
+ <div class="header-inner">
+  <a href="#home" class="brand" onclick="brandHome(event)" aria-label="GAME STORE หน้าหลัก"><span class="brand-mark">GX</span><span class="brand-name">GAME STORE<small>YOUR NEXT LEVEL</small></span></a>
+  <nav id="memberNav" class="main-nav hidden" aria-label="เมนูหลัก">
+   <button class="nav-item active" data-nav="home" onclick="storeNavigate('home')"><svg aria-hidden="true"><use href="#i-home"></use></svg>หน้าหลัก</button>
+   <button class="nav-item" data-nav="topup" onclick="storeNavigate('topup')"><svg aria-hidden="true"><use href="#i-wallet"></use></svg>เติมเงิน</button>
+  </nav>
+  <div class="header-actions">
+   <span id="publicLabel" class="public-label"><i class="status-dot"></i> PLAYER ACCESS</span>
+   <button id="motionButton" class="icon-button" type="button" onclick="toggleMotion()" title="หยุดภาพเคลื่อนไหว" aria-label="หยุดภาพเคลื่อนไหว" aria-pressed="false"><svg aria-hidden="true"><use href="#i-pause"></use></svg></button>
+   <div class="account-wrap hidden" id="accountWrap">
+    <button class="account-trigger" id="accountTrigger" type="button" aria-expanded="false" aria-controls="accountMenu"><span class="avatar" id="avatarLetter">G</span><strong id="username">สมาชิก</strong><svg aria-hidden="true"><use href="#i-chevron"></use></svg></button>
+    <div class="account-menu" id="accountMenu" inert>
+     <div class="menu-balance"><small>ยอดเงินคงเหลือ</small><strong>฿<span id="balance" data-balance>—</span></strong></div>
+     <button onclick="storeNavigate('topup')"><svg aria-hidden="true"><use href="#i-wallet"></use></svg>เติมเงินเข้ากระเป๋า</button>
+     <button onclick="openHistory()"><svg aria-hidden="true"><use href="#i-history"></use></svg>ประวัติรายการ</button>
+     <button id="logoutButton" class="menu-logout" onclick="logout()"><svg aria-hidden="true"><use href="#i-logout"></use></svg>ออกจากระบบ</button>
     </div>
-
-</div>
-
-</section>
-
-
-<!-- =========================
-     REGISTER
-========================= -->
-
-<section class="page hidden" id="registerPage">
-
-<div class="auth-shell fade-in">
-
-    <aside class="hero">
-
-        <div class="logo">GX</div>
-
-        <div class="eyebrow">
-            GAME STORE / MEMBER
-        </div>
-
-        <h2>
-            Create<br>
-            Account.
-        </h2>
-
-        <p>
-            สร้างบัญชีสมาชิกเพื่อใช้งาน
-            Wallet และระบบเติมเงิน
-            ของ GAME STORE
-        </p>
-
-        <div class="features">
-
-            <div class="feature">
-                <span>✦</span>
-                สมัครสมาชิกง่าย
-            </div>
-
-            <div class="feature">
-                <span>◈</span>
-                Wallet ส่วนตัว
-            </div>
-
-            <div class="feature">
-                <span>✓</span>
-                ประวัติรายการส่วนตัว
-            </div>
-
-        </div>
-
-    </aside>
-
-    <div class="auth-form">
-
-        <h1>สร้างบัญชี</h1>
-
-        <div class="subtitle">
-            Create your GAME STORE account
-        </div>
-
-        <div class="tabs">
-
-            <button
-                type="button"
-                class="active"
-                onclick="showRegister()">
-                REGISTER
-            </button>
-
-            <button
-                type="button"
-                onclick="showLogin()">
-                LOGIN
-            </button>
-
-        </div>
-
-        <form onsubmit="event.preventDefault();register();">
-
-            <label>
-                USERNAME
-            </label>
-
-            <input
-                id="registerUsername"
-                type="text"
-                placeholder="ชื่อผู้ใช้"
-                autocomplete="username"
-                required
-            >
-
-            <label>
-                PASSWORD
-            </label>
-
-            <div class="input-wrap">
-
-                <input
-                    id="registerPassword"
-                    type="password"
-                    placeholder="รหัสผ่านอย่างน้อย 6 ตัว"
-                    autocomplete="new-password"
-                    required
-                >
-
-                <button
-                    type="button"
-                    class="password-toggle"
-                    onclick="togglePassword('registerPassword',this)">
-                    ◉
-                </button>
-
-            </div>
-
-            <button
-                id="registerButton"
-                class="primary-btn"
-                type="submit">
-                CREATE ACCOUNT
-            </button>
-
-        </form>
-
-        <div class="switch">
-            มีบัญชีอยู่แล้ว?
-            <button
-                type="button"
-                onclick="showLogin()">
-                เข้าสู่ระบบ
-            </button>
-        </div>
-
-        <div class="note">
-            GAME STORE · MEMBER ACCESS
-        </div>
-
-        <div id="registerMessage"></div>
-
+   </div>
+  </div>
+ </div>
+</header>
+<main id="mainContent" tabindex="-1">
+ <section id="authView" aria-label="บัญชีสมาชิก">
+  <div class="auth-shell glass">
+   <aside class="auth-story">
+    <div class="story-top"><div class="eyebrow">THE PLAYER'S SPACE</div><span class="edition">GX / 01</span></div>
+    <h2 class="story-title">YOUR NEXT<br><span>LEVEL.</span></h2>
+    <p class="story-description">ทุกการเล่น เริ่มต้นที่นี่<br>บัญชีสมาชิก กระเป๋าเงิน และการเติมเงิน<br>รวมไว้ในพื้นที่เดียวที่เป็นของคุณ</p>
+    <div class="orb-scene" aria-hidden="true"><div class="orb-ring"></div><div class="orb-ring ring-two"></div><div class="orb-ring ring-three"></div><div class="orb-core"><b>GX</b></div><i class="orb-star"></i><div class="floating-chip chip-wallet"><svg aria-hidden="true"><use href="#i-wallet"></use></svg> YOUR PERSONAL WALLET</div><div class="floating-chip chip-ready"><i class="status-dot"></i> READY FOR THE NEXT LEVEL</div></div>
+    <div class="story-footer"><span class="mini-icon"><svg aria-hidden="true"><use href="#i-shield"></use></svg></span><div><strong>กระเป๋าเงินส่วนตัวของคุณ</strong><small>จัดการยอดเงินและติดตามทุกรายการ</small></div><span>01 — 03</span></div>
+   </aside>
+   <div class="auth-form">
+    <div class="step-label">LET'S GET YOU STARTED</div>
+    <div class="tabs" id="authTabs" role="tablist" aria-label="เข้าสู่ระบบหรือสมัครสมาชิก">
+     <button id="loginTab" type="button" class="active" role="tab" aria-controls="loginPage" aria-selected="true" onclick="showLogin()">เข้าสู่ระบบ</button>
+     <button id="registerTab" type="button" role="tab" aria-controls="registerPage" aria-selected="false" tabindex="-1" onclick="showRegister()">สมัครสมาชิก</button>
     </div>
-
-</div>
-
-</section>
-
-
-<!-- =========================
-     DASHBOARD
-========================= -->
-
-<section class="dashboard-page hidden" id="dashboardPage"><header class="store-nav"><a href="#home" class="store-brand" onclick="storeNavigate('home');return false"><span class="brand-mark">GX</span> GAME STORE</a><nav aria-label="เมนูหลัก"><button data-nav="home" onclick="storeNavigate('home')">หน้าหลัก</button><button data-nav="topup" onclick="storeNavigate('topup')">เติมเงิน</button></nav><div class="account-wrap"><button class="account-trigger" id="accountTrigger" aria-expanded="false" aria-controls="accountMenu"><span class="avatar">G</span><strong id="username">สมาชิก</strong><span>⌄</span></button><div class="account-menu" id="accountMenu"><div class="menu-balance"><small>ยอดเงินคงเหลือ</small><strong>฿<span id="balance">0.00</span></strong></div><button onclick="storeNavigate('topup')"><span>▣</span> เติมเงิน</button><button class="menu-logout" onclick="storeCloseMenu();logout()"><span>↪</span> ออกจากระบบ</button></div></div></header><div class="store-main"><section data-store-page="home"><div class="home-hero"><span class="eyebrow">WELCOME TO GAME STORE</span><h1>ยกระดับทุกเกม<br><span>ในสไตล์ของคุณ.</span></h1><p>ร้านไอเทมเกมและสินค้าดิจิทัล<br>บัญชีสมาชิก กระเป๋าเงิน และระบบเติมเงินในที่เดียว</p><button class="home-cta" onclick="storeNavigate('topup')">เติมเงินเข้ากระเป๋า ↗</button><div class="hero-orbit" aria-hidden="true">GX</div></div><div class="home-panels"><article><span>01 / MEMBER</span><h3>บัญชีสมาชิก</h3><p>จัดการกระเป๋าเงินส่วนตัวของคุณ</p></article><article><span>02 / CHECK SLIP</span><h3>เติมเงินด้วยสลิป</h3><p>สร้าง QR และอัปโหลดหลักฐานการชำระเงิน</p></article><article><span>03 / ACTIVITY</span><h3>ประวัติเติมเงิน</h3><p>ดูรายการและสถานะในหน้าเติมเงิน</p></article></div></section><section data-store-page="topup" class="hidden"><div class="section-heading"><span class="eyebrow">WALLET</span><h1>ช่องทางเติมเงิน</h1><p>เลือกช่องทางที่สะดวก เพื่อเติมเงินเข้ากระเป๋าของคุณ</p></div><div class="method-grid"><button class="method-card" onclick="storeNavigate('check-slip')"><span class="slip-icon">▤<i>✓</i></span><span class="method-copy"><strong>Check Slip</strong><small>สแกน QR Code และแนบสลิป</small><em>● ตรวจสอบหลักฐานการชำระเงิน</em></span><span class="method-arrow">↗</span></button></div><p class="method-note">กรุณาตรวจสอบชื่อผู้รับและยอดเงินให้ถูกต้องก่อนยืนยันรายการ</p></section><section data-store-page="check-slip" class="hidden"><button class="back-link" onclick="storeNavigate('topup')">← กลับไปช่องทางเติมเงิน</button><div class="section-heading"><span class="eyebrow">WALLET / CHECK SLIP</span><h1>เติมเงินเข้ากระเป๋า</h1><p>สร้างรายการชำระเงิน สแกน QR และแนบสลิปเพื่อตรวจสอบ</p></div>    <!-- CONTENT -->
-
-    <div class="dash-grid">
-
-        <div>
-
-            <!-- TOPUP -->
-
-            <section class="card">
-
-                <div class="eyebrow">
-                    WALLET
-                </div>
-
-                <h3>
-                    เติมเงินเข้ากระเป๋า
-                </h3>
-
-                <div class="card-desc">
-                    ระบุจำนวนเงินเพื่อสร้าง QR
-                    สำหรับชำระเงิน
-                </div>
-
-                <label>
-                    AMOUNT
-                </label>
-
-                <div class="amount-row">
-
-                    <input
-                        id="topupAmount"
-                        type="number"
-                        min="1"
-                        step="0.01"
-                        placeholder="เช่น 100"
-                        inputmode="decimal"
-                    >
-
-                    <span class="currency">
-                        THB
-                    </span>
-
-                </div>
-
-                <button
-                    id="topupButton"
-                    class="primary-btn"
-                    onclick="createTopup()">
-                    CREATE PAYMENT
-                </button>
-
-                <div id="topupMessage"></div>
-
-
-                <!-- PAYMENT -->
-
-                <div
-                    class="payment hidden"
-                    id="paymentBox">
-
-                    <div class="eyebrow">
-                        PAYMENT REQUEST
-                    </div>
-
-                    <h3>
-                        สแกน QR เพื่อชำระเงิน
-                    </h3>
-
-                    <div
-                        class="payment-timer"
-                        id="paymentTimer">
-
-                        <div class="payment-timer-label">
-                            TIME REMAINING
-                        </div>
-
-                        <div
-                            class="payment-timer-value"
-                            id="paymentTimerValue">
-                            05:00
-                        </div>
-
-                        <div
-                            class="payment-timer-note"
-                            id="paymentTimerNote">
-                            กรุณาโอนและส่งสลิปภายใน 5 นาที
-                        </div>
-
-                    </div>
-
-                    <img
-                        id="qrImage"
-                        class="qr"
-                        alt="Payment QR">
-
-                    <div class="payment-info">
-
-                        <div>
-                            จำนวนเงิน:
-                            <strong>
-                                ฿<span id="paymentAmount">0.00</span>
-                            </strong>
-                        </div>
-
-                        <div class="payment-id">
-
-                            <span>
-                                Payment ID:
-                                <strong id="paymentId"></strong>
-                            </span>
-
-                            <button
-                                type="button"
-                                class="copy-btn"
-                                onclick="copyPaymentId()">
-                                COPY
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    <label>
-                        PAYMENT SLIP
-                    </label>
-
-                    <div class="file-box">
-
-                        <input
-                            id="slip"
-                            type="file"
-                            accept="image/*">
-
-                    </div>
-
-                    <button
-                        id="verifyButton"
-                        class="primary-btn"
-                        onclick="verifySlip()">
-                        VERIFY PAYMENT
-                    </button>
-
-                    <div id="slipMessage"></div>
-
-                </div>
-
-            </section>
-
-        </div>
-
-
-        <!-- TRANSACTIONS -->
-
-        <section class="card">
-
-            <div class="eyebrow">
-                WALLET ACTIVITY
-            </div>
-
-            <h3>
-                ประวัติรายการ
-            </h3>
-
-            <div class="card-desc">
-                รายการเติมเงินของบัญชีนี้
-            </div>
-
-            <div
-                id="transactions"
-                class="transaction-list">
-                กำลังโหลด...
-            </div>
-
-        </section>
-
+    <section id="loginPage" class="auth-pane" role="tabpanel" aria-labelledby="loginTab">
+     <h1>ยินดีต้อนรับกลับมา</h1><p class="subtitle" style="margin-bottom:25px">เข้าสู่ระบบ แล้วไปต่อในแบบของคุณ</p>
+     <form id="loginForm" onsubmit="event.preventDefault();login()">
+      <div class="field"><label for="loginUsername">ชื่อผู้ใช้</label><div class="input-wrap"><svg aria-hidden="true"><use href="#i-user"></use></svg><input id="loginUsername" type="text" placeholder="กรอกชื่อผู้ใช้ของคุณ" autocomplete="username" required autocapitalize="none" spellcheck="false"></div></div>
+      <div class="field"><label for="loginPassword">รหัสผ่าน</label><div class="input-wrap"><svg aria-hidden="true"><use href="#i-lock"></use></svg><input id="loginPassword" type="password" placeholder="กรอกรหัสผ่าน" autocomplete="current-password" required><button type="button" class="password-toggle" onclick="togglePassword('loginPassword',this)" aria-label="แสดงรหัสผ่าน" aria-pressed="false"><svg aria-hidden="true"><use href="#i-eye"></use></svg></button></div></div>
+      <button id="loginButton" class="primary-btn full-width" type="submit">เข้าสู่ระบบ <svg aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+     </form>
+     <div class="switch">ยังไม่มีบัญชี? <button type="button" class="text-btn" onclick="showRegister()">เริ่มต้นสมัครสมาชิก</button></div>
+     <div id="loginMessage" class="sr-only"></div>
+    </section>
+    <section id="registerPage" class="auth-pane hidden" role="tabpanel" aria-labelledby="registerTab">
+     <h1>พื้นที่ใหม่ของคุณ</h1><p class="subtitle" style="margin-bottom:25px">สร้างบัญชีเพื่อเริ่มใช้งาน GAME STORE</p>
+     <form id="registerForm" onsubmit="event.preventDefault();register()">
+      <div class="field"><label for="registerUsername">ชื่อผู้ใช้</label><div class="input-wrap"><svg aria-hidden="true"><use href="#i-user"></use></svg><input id="registerUsername" type="text" placeholder="ตั้งชื่อผู้ใช้ของคุณ" autocomplete="username" required autocapitalize="none" spellcheck="false"></div></div>
+      <div class="field"><label for="registerPassword">รหัสผ่าน</label><div class="input-wrap"><svg aria-hidden="true"><use href="#i-lock"></use></svg><input id="registerPassword" type="password" placeholder="ตั้งรหัสผ่านของคุณ" autocomplete="new-password" required><button type="button" class="password-toggle" onclick="togglePassword('registerPassword',this)" aria-label="แสดงรหัสผ่าน" aria-pressed="false"><svg aria-hidden="true"><use href="#i-eye"></use></svg></button></div></div>
+      <button id="registerButton" class="primary-btn full-width" type="submit">สร้างบัญชีสมาชิก <svg aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+     </form>
+     <div class="switch">มีบัญชีอยู่แล้ว? <button type="button" class="text-btn" onclick="showLogin()">เข้าสู่ระบบ</button></div>
+     <div id="registerMessage" class="sr-only"></div>
+    </section>
+    <div class="form-note"><svg aria-hidden="true"><use href="#i-lock"></use></svg> GAME STORE · MEMBER ACCESS</div>
+   </div>
+  </div>
+ </section>
+ <section id="dashboardPage" class="hidden" aria-label="พื้นที่สมาชิก">
+  <section data-store-page="home" aria-labelledby="homeTitle">
+   <div class="page-heading"><div><div class="eyebrow">YOUR PERSONAL SPACE</div><h1 id="homeTitle" tabindex="-1">พร้อมสำหรับเลเวลถัดไป?</h1><p>ยินดีต้อนรับ <span id="welcomeName">สมาชิก</span> — จัดการทุกอย่างได้จากที่นี่</p></div><span class="page-index">DASHBOARD / 01</span></div>
+   <div class="home-layout">
+    <article class="home-hero glass reveal">
+     <div class="hero-content"><div class="eyebrow">PLAY MORE. BE MORE.</div><h2>ยกระดับทุกเกม<br><span>ในสไตล์ของคุณ.</span></h2><p>เติมเงินเข้ากระเป๋า แล้วเตรียมพร้อม<br>สำหรับประสบการณ์การเล่นครั้งต่อไป</p><button class="primary-btn" onclick="storeNavigate('topup')">เติมเงินเข้ากระเป๋า <svg aria-hidden="true"><use href="#i-up"></use></svg></button></div><div class="orb-scene" aria-hidden="true"><div class="orb-ring"></div><div class="orb-ring ring-two"></div><div class="orb-ring ring-three"></div><div class="orb-core"><b>GX</b></div><i class="orb-star"></i><div class="floating-chip chip-wallet"><svg aria-hidden="true"><use href="#i-wallet"></use></svg> YOUR PERSONAL WALLET</div><div class="floating-chip chip-ready"><i class="status-dot"></i> READY FOR THE NEXT LEVEL</div></div>
+    </article>
+    <aside class="wallet glass reveal" aria-label="ยอดเงินคงเหลือ"><div class="wallet-top"><span>MY WALLET</span><svg aria-hidden="true"><use href="#i-wallet"></use></svg></div><div><div class="wallet-amount"><small>฿</small><span data-balance>—</span></div><p class="wallet-caption" id="balanceCaption">ยอดเงินที่พร้อมใช้งาน</p></div><button class="secondary-btn" onclick="openHistory()">ดูประวัติรายการ <svg aria-hidden="true"><use href="#i-arrow"></use></svg></button></aside>
+   </div>
+   <div class="section-title"><h2>ทุกอย่างที่คุณต้องการ</h2><span>QUICK ACCESS</span></div>
+   <div class="quick-grid">
+    <button class="quick-card glass reveal" onclick="storeNavigate('topup')"><span class="quick-top"><span class="tile-icon"><svg aria-hidden="true"><use href="#i-wallet"></use></svg></span><span class="quick-number">01 / WALLET</span></span><h3>กระเป๋าเงินของคุณ</h3><p>เลือกช่องทางเติมเงินที่สะดวก</p><span class="quick-bottom">จัดการกระเป๋าเงิน <svg aria-hidden="true"><use href="#i-up"></use></svg></span></button>
+    <button class="quick-card glass reveal" onclick="storeNavigate('check-slip')"><span class="quick-top"><span class="tile-icon"><svg aria-hidden="true"><use href="#i-slip"></use></svg></span><span class="quick-number">02 / CHECK SLIP</span></span><h3>เติมเงินด้วยสลิป</h3><p>สร้าง QR ชำระเงินและแนบสลิป</p><span class="quick-bottom">เริ่มรายการเติมเงิน <svg aria-hidden="true"><use href="#i-up"></use></svg></span></button>
+    <button class="quick-card glass reveal" onclick="openHistory()"><span class="quick-top"><span class="tile-icon"><svg aria-hidden="true"><use href="#i-history"></use></svg></span><span class="quick-number">03 / ACTIVITY</span></span><h3>ติดตามทุกรายการ</h3><p>เช็กสถานะและประวัติการเติมเงิน</p><span class="quick-bottom">ดูประวัติรายการ <svg aria-hidden="true"><use href="#i-up"></use></svg></span></button>
+   </div>
+   <p class="inline-note"><svg aria-hidden="true"><use href="#i-shield"></use></svg>ยอดเงินและประวัติรายการผูกกับบัญชีสมาชิกของคุณ</p>
+  </section>
+  <section data-store-page="topup" class="hidden" aria-labelledby="topupTitle">
+   <div class="page-heading"><div><div class="eyebrow">ADD TO YOUR WALLET</div><h1 id="topupTitle" tabindex="-1">เติมความพร้อมให้ทุกเกม</h1><p>เลือกช่องทางเติมเงินเข้ากระเป๋าของคุณ</p></div><span class="page-index">WALLET / 02</span></div>
+   <div class="topup-layout">
+    <div>
+     <button class="method-card glass reveal" onclick="storeNavigate('check-slip')"><span class="method-icon"><svg aria-hidden="true"><use href="#i-slip"></use></svg></span><span class="method-copy"><span class="method-tag"><i class="status-dot"></i> QR PAYMENT</span><strong>Check Slip</strong><small>สแกน QR Code แล้วแนบสลิปการโอนเงิน</small></span><span class="arrow-circle"><svg aria-hidden="true"><use href="#i-up"></use></svg></span></button>
+     <div class="wallet compact-wallet glass reveal"><div><div class="wallet-top">ยอดเงินคงเหลือในกระเป๋า</div><div class="wallet-amount"><small>฿</small><span data-balance>—</span></div></div><span class="tile-icon"><svg aria-hidden="true"><use href="#i-wallet"></use></svg></span></div>
+     <p class="inline-note"><svg aria-hidden="true"><use href="#i-info"></use></svg>ตรวจสอบชื่อผู้รับและยอดเงินให้ถูกต้องก่อนชำระทุกครั้ง</p>
     </div>
-
-
-</section><footer class="store-footer">GAME STORE <span>MEMBER · WALLET · CHECK SLIP</span></footer></div></section><script>
-
-let currentPaymentId = null;
-let currentPaymentExpiresAt = null;
-let paymentServerOffsetMs = 0;
-let paymentCountdownTimer = null;
-
-
-/* =========================
-   UI
-========================= */
-
-function showLogin(){
-
-    document.getElementById("loginPage")
-        .classList.remove("hidden");
-
-    document.getElementById("registerPage")
-        .classList.add("hidden");
-
-    document.getElementById("dashboardPage")
-        .classList.add("hidden");
-
-    requestAnimationFrame(updateTabSliders);
-
-}
-
-
-function showRegister(){
-
-    document.getElementById("loginPage")
-        .classList.add("hidden");
-
-    document.getElementById("registerPage")
-        .classList.remove("hidden");
-
-    document.getElementById("dashboardPage")
-        .classList.add("hidden");
-
-    requestAnimationFrame(updateTabSliders);
-
-}
-
-
-function showDashboard(){
-
-    document.getElementById("loginPage")
-        .classList.add("hidden");
-
-    document.getElementById("registerPage")
-        .classList.add("hidden");
-
-    document.getElementById("dashboardPage")
-        .classList.remove("hidden");
-
-    loadUser();
-    loadBalance();
-    loadTransactions();
-
-}
-
-
-/* =========================
-   TOAST
-========================= */
-
-function toast(message,type="success"){
-
-    const container =
-        document.getElementById("toastContainer");
-
-    const el =
-        document.createElement("div");
-
-    el.className =
-        `toast ${type}`;
-
-    el.textContent = message;
-
-    container.appendChild(el);
-
-    setTimeout(()=>{
-
-        el.classList.add("out");
-
-        setTimeout(()=>{
-            el.remove();
-        },300);
-
-    },3000);
-
-}
-
-
-/* =========================
-   PASSWORD
-========================= */
-
-function togglePassword(id,button){
-
-    const input =
-        document.getElementById(id);
-
-    if(input.type === "password"){
-
-        input.type = "text";
-        button.textContent = "◎";
-
-    }else{
-
-        input.type = "password";
-        button.textContent = "◉";
-
-    }
-
-}
-
-
-/* =========================
-   LOADING
-========================= */
-
-function setLoading(button,loading,text){
-
-    if(loading){
-
-        button.dataset.original =
-            button.innerHTML;
-
-        button.innerHTML =
-            `<span class="spinner"></span>`;
-
-        button.classList.add("loading");
-
-    }else{
-
-        button.innerHTML =
-            button.dataset.original || text;
-
-        button.classList.remove("loading");
-
-    }
-
-}
-
-
-/* =========================
-   REGISTER
-========================= */
-
-async function register(){
-
-    const username =
-        document
-        .getElementById("registerUsername")
-        .value
-        .trim();
-
-    const password =
-        document
-        .getElementById("registerPassword")
-        .value;
-
-    const button =
-        document.getElementById("registerButton");
-
-    const message =
-        document.getElementById("registerMessage");
-
-    if(!username || !password){
-
-        toast(
-            "กรุณากรอกข้อมูลให้ครบ",
-            "error"
-        );
-
-        return;
-    }
-
-    setLoading(button,true);
-
-    try{
-
-        const response =
-            await fetch(
-                "/api/auth/register",
-                {
-                    method:"POST",
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:JSON.stringify({
-                        username,
-                        password
-                    })
-                }
-            );
-
-        const data =
-            await response.json();
-
-        if(!response.ok){
-
-            toast(
-                data.error ||
-                "สมัครสมาชิกไม่สำเร็จ",
-                "error"
-            );
-
-            setLoading(button,false);
-            return;
-        }
-
-        toast(
-            "สมัครสมาชิกสำเร็จ",
-            "success"
-        );
-
-        setLoading(button,false);
-
-        setTimeout(()=>{
-
-            showLogin();
-
-            document
-                .getElementById("loginUsername")
-                .value = username;
-
-        },500);
-
-    }catch(error){
-
-        setLoading(button,false);
-
-        toast(
-            "ไม่สามารถเชื่อมต่อ Server ได้",
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =========================
-   LOGIN
-========================= */
-
-async function login(){
-
-    const username =
-        document
-        .getElementById("loginUsername")
-        .value
-        .trim();
-
-    const password =
-        document
-        .getElementById("loginPassword")
-        .value;
-
-    const button =
-        document.getElementById("loginButton");
-
-    if(!username || !password){
-
-        toast(
-            "กรุณากรอก Username และ Password",
-            "error"
-        );
-
-        return;
-    }
-
-    setLoading(button,true);
-
-    try{
-
-        const response =
-            await fetch(
-                "/api/auth/login",
-                {
-                    method:"POST",
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:JSON.stringify({
-                        username,
-                        password
-                    })
-                }
-            );
-
-        const data =
-            await response.json();
-
-        if(!response.ok){
-
-            toast(
-                data.error ||
-                "เข้าสู่ระบบไม่สำเร็จ",
-                "error"
-            );
-
-            setLoading(button,false);
-            return;
-        }
-
-        toast(
-            "เข้าสู่ระบบสำเร็จ",
-            "success"
-        );
-
-        setLoading(button,false);
-
-        setTimeout(()=>{
-            showDashboard();
-        },250);
-
-    }catch(error){
-
-        setLoading(button,false);
-
-        toast(
-            "ไม่สามารถเชื่อมต่อ Server ได้",
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =========================
-   USER
-========================= */
-
-async function loadUser(){
-
-    try{
-
-        const response =
-            await fetch(
-                "/api/auth/me"
-            );
-
-        if(!response.ok){
-
-            showLogin();
-            return;
-
-        }
-
-        const data =
-            await response.json();
-
-        document
-            .getElementById("username")
-            .textContent =
-            data.user.username;
-
-    }catch{
-
-        showLogin();
-
-    }
-
-}
-
-
-/* =========================
-   BALANCE
-========================= */
-
-async function loadBalance(){
-
-    try{
-
-        const response =
-            await fetch(
-                "/api/balance"
-            );
-
-        if(!response.ok)
-            return;
-
-        const data =
-            await response.json();
-
-        const target =
-            Number(data.balance);
-
-        animateBalance(target);
-
-    }catch{}
-
-}
-
-
-function animateBalance(target){
-
-    const element =
-        document.getElementById("balance");
-
-    const start =
-        Number(
-            element.textContent
-        ) || 0;
-
-    const duration = 500;
-
-    const startTime =
-        performance.now();
-
-    function frame(now){
-
-        const progress =
-            Math.min(
-                (now-startTime)/duration,
-                1
-            );
-
-        const eased =
-            1-Math.pow(1-progress,3);
-
-        const value =
-            start+(target-start)*eased;
-
-        element.textContent =
-            value.toFixed(2);
-
-        if(progress < 1)
-            requestAnimationFrame(frame);
-
-    }
-
-    requestAnimationFrame(frame);
-
-}
-
-
-
-function stopPaymentCountdown(){
-
-    if(paymentCountdownTimer){
-
-        clearInterval(
-            paymentCountdownTimer
-        );
-
-        paymentCountdownTimer = null;
-
-    }
-
-}
-
-
-function paymentNow(){
-
-    return Date.now() +
-        paymentServerOffsetMs;
-
-}
-
-
-function setPaymentExpiredUI(){
-
-    stopPaymentCountdown();
-
-    const box =
-        document.getElementById(
-            "paymentBox"
-        );
-
-    const timer =
-        document.getElementById(
-            "paymentTimer"
-        );
-
-    const value =
-        document.getElementById(
-            "paymentTimerValue"
-        );
-
-    const note =
-        document.getElementById(
-            "paymentTimerNote"
-        );
-
-    const verifyButton =
-        document.getElementById(
-            "verifyButton"
-        );
-
-    const slip =
-        document.getElementById(
-            "slip"
-        );
-
-    box.classList.add(
-        "payment-expired"
-    );
-
-    timer.classList.remove(
-        "success"
-    );
-
-    timer.classList.add(
-        "expired"
-    );
-
-    value.textContent =
-        "00:00";
-
-    note.textContent =
-        "QR หมดอายุแล้ว กรุณาสร้างรายการใหม่";
-
-    verifyButton.disabled =
-        true;
-
-    slip.disabled =
-        true;
-
-    currentPaymentId =
-        null;
-
-    currentPaymentExpiresAt =
-        null;
-
-}
-
-
-function setPaymentSuccessUI(){
-
-    stopPaymentCountdown();
-
-    const box =
-        document.getElementById(
-            "paymentBox"
-        );
-
-    const timer =
-        document.getElementById(
-            "paymentTimer"
-        );
-
-    const value =
-        document.getElementById(
-            "paymentTimerValue"
-        );
-
-    const note =
-        document.getElementById(
-            "paymentTimerNote"
-        );
-
-    const verifyButton =
-        document.getElementById(
-            "verifyButton"
-        );
-
-    const slip =
-        document.getElementById(
-            "slip"
-        );
-
-    box.classList.remove(
-        "payment-expired"
-    );
-
-    timer.classList.remove(
-        "expired"
-    );
-
-    timer.classList.add(
-        "success"
-    );
-
-    value.textContent =
-        "PAID";
-
-    note.textContent =
-        "ชำระเงินสำเร็จแล้ว";
-
-    verifyButton.disabled =
-        true;
-
-    slip.disabled =
-        true;
-
-    currentPaymentId =
-        null;
-
-    currentPaymentExpiresAt =
-        null;
-
-}
-
-
-function startPaymentCountdown(
-    expiresAt,
-    serverNow
-){
-
-    stopPaymentCountdown();
-
-    const expires =
-        new Date(
-            expiresAt
-        ).getTime();
-
-    const server =
-        new Date(
-            serverNow
-        ).getTime();
-
-    if(
-        !Number.isFinite(expires) ||
-        !Number.isFinite(server)
-    ){
-
-        setPaymentExpiredUI();
-        return;
-
-    }
-
-    paymentServerOffsetMs =
-        server - Date.now();
-
-    currentPaymentExpiresAt =
-        expires;
-
-    const box =
-        document.getElementById(
-            "paymentBox"
-        );
-
-    const timer =
-        document.getElementById(
-            "paymentTimer"
-        );
-
-    const value =
-        document.getElementById(
-            "paymentTimerValue"
-        );
-
-    const note =
-        document.getElementById(
-            "paymentTimerNote"
-        );
-
-    const verifyButton =
-        document.getElementById(
-            "verifyButton"
-        );
-
-    const slip =
-        document.getElementById(
-            "slip"
-        );
-
-    box.classList.remove(
-        "payment-expired"
-    );
-
-    timer.classList.remove(
-        "expired",
-        "success"
-    );
-
-    verifyButton.disabled =
-        false;
-
-    slip.disabled =
-        false;
-
-    note.textContent =
-        "กรุณาโอนและส่งสลิปภายใน 5 นาที";
-
-    function update(){
-
-        const remaining =
-            currentPaymentExpiresAt -
-            paymentNow();
-
-        if(remaining <= 0){
-
-            setPaymentExpiredUI();
-
-            loadTransactions();
-
-            return;
-
-        }
-
-        const totalSeconds =
-            Math.ceil(
-                remaining / 1000
-            );
-
-        const minutes =
-            Math.floor(
-                totalSeconds / 60
-            );
-
-        const seconds =
-            totalSeconds % 60;
-
-        value.textContent =
-            `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
-
-    }
-
-    update();
-
-    paymentCountdownTimer =
-        setInterval(
-            update,
-            1000
-        );
-
-}
-
-
-function showPayment(
-    payment,
-    qrUrl
-){
-
-    currentPaymentId =
-        payment.id;
-
-    document
-        .getElementById(
-            "paymentId"
-        )
-        .textContent =
-        currentPaymentId;
-
-    document
-        .getElementById(
-            "paymentAmount"
-        )
-        .textContent =
-        Number(
-            payment.amount
-        ).toFixed(2);
-
-    document
-        .getElementById(
-            "qrImage"
-        )
-        .src =
-        qrUrl;
-
-    document
-        .getElementById(
-            "paymentBox"
-        )
-        .classList.remove(
-            "hidden"
-        );
-
-    document
-        .getElementById(
-            "slip"
-        )
-        .value = "";
-
-    startPaymentCountdown(
-        payment.expires_at,
-        payment.server_now
-    );
-
-}
-
-/* =========================
-   TOPUP
-========================= */
-
-async function createTopup(){
-
-    const amount =
-        Number(
-            document
-            .getElementById("topupAmount")
-            .value
-        );
-
-    const button =
-        document.getElementById("topupButton");
-
-    if(!amount || amount <= 0){
-
-        toast(
-            "กรุณาใส่จำนวนเงิน",
-            "error"
-        );
-
-        return;
-    }
-
-    setLoading(button,true);
-
-    try{
-
-        const response =
-            await fetch(
-                "/api/topup",
-                {
-                    method:"POST",
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:JSON.stringify({
-                        amount
-                    })
-                }
-            );
-
-        const data =
-            await response.json();
-
-        /*
-         * ถ้ามี PENDING เดิมที่ยังไม่หมดเวลา
-         * Server จะคืน QR เดิมมาให้ใช้ต่อ
-         */
-        if(
-            response.status === 409 &&
-            data.code ===
-                "ACTIVE_PAYMENT_EXISTS" &&
-            data.payment
-        ){
-
-            showPayment(
-                data.payment,
-                data.qrUrl
-            );
-
-            toast(
-                "มีรายการเดิมที่ยังไม่หมดเวลา ใช้ QR เดิมต่อได้เลย",
-                "error"
-            );
-
-            setLoading(
-                button,
-                false
-            );
-
-            setTimeout(()=>{
-
-                document
-                    .getElementById(
-                        "paymentBox"
-                    )
-                    .scrollIntoView({
-                        behavior:"smooth",
-                        block:"center"
-                    });
-
-            },100);
-
-            return;
-        }
-
-        if(!response.ok){
-
-            toast(
-                data.error ||
-                "สร้างรายการไม่สำเร็จ",
-                "error"
-            );
-
-            setLoading(
-                button,
-                false
-            );
-
-            return;
-        }
-
-        showPayment(
-            data.payment,
-            data.qrUrl
-        );
-
-        toast(
-            "สร้างรายการเติมเงินแล้ว มีเวลา 5 นาที",
-            "success"
-        );
-
-        setLoading(
-            button,
-            false
-        );
-
-        await loadTransactions();
-
-        setTimeout(()=>{
-
-            document
-                .getElementById(
-                    "paymentBox"
-                )
-                .scrollIntoView({
-                    behavior:"smooth",
-                    block:"center"
-                });
-
-        },100);
-
-    }catch{
-
-        setLoading(
-            button,
-            false
-        );
-
-        toast(
-            "ไม่สามารถเชื่อมต่อ Server ได้",
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =========================
-   COPY PAYMENT ID
-========================= */
-
-async function copyPaymentId(){
-
-    if(!currentPaymentId)
-        return;
-
-    try{
-
-        await navigator.clipboard.writeText(
-            String(currentPaymentId)
-        );
-
-        toast(
-            "คัดลอก Payment ID แล้ว",
-            "success"
-        );
-
-    }catch{
-
-        toast(
-            "คัดลอกไม่สำเร็จ",
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =========================
-   VERIFY SLIP
-========================= */
-
-async function verifySlip(){
-
-    const file =
-        document
-        .getElementById("slip")
-        .files[0];
-
-    const button =
-        document.getElementById("verifyButton");
-
-    if(
-        currentPaymentExpiresAt &&
-        paymentNow() >=
-            currentPaymentExpiresAt
-    ){
-
-        setPaymentExpiredUI();
-
-        toast(
-            "QR หมดเวลา 5 นาทีแล้ว กรุณาสร้างรายการใหม่",
-            "error"
-        );
-
-        return;
-    }
-
-    if(!file){
-
-        toast(
-            "กรุณาเลือกสลิป",
-            "error"
-        );
-
-        return;
-    }
-
-    if(!currentPaymentId){
-
-        toast(
-            "ไม่พบรายการเติมเงิน หรือรายการหมดอายุแล้ว",
-            "error"
-        );
-
-        return;
-    }
-
-    const formData =
-        new FormData();
-
-    formData.append(
-        "slip",
-        file
-    );
-
-    formData.append(
-        "paymentId",
-        currentPaymentId
-    );
-
-    setLoading(
-        button,
-        true
-    );
-
-    try{
-
-        const response =
-            await fetch(
-                "/api/verify-slip",
-                {
-                    method:"POST",
-                    body:formData
-                }
-            );
-
-        const data =
-            await response.json();
-
-        if(!response.ok){
-
-            if(
-                response.status === 410
-            ){
-                setPaymentExpiredUI();
-            }
-
-            toast(
-                data.error ||
-                "ตรวจสอบสลิปไม่สำเร็จ",
-                "error"
-            );
-
-            setLoading(
-                button,
-                false
-            );
-
-            await loadTransactions();
-
-            return;
-        }
-
-        setPaymentSuccessUI();
-
-        toast(
-            "เติมเงินสำเร็จ! ยอดเงินอัปเดตแล้ว",
-            "success"
-        );
-
-        setLoading(
-            button,
-            false
-        );
-
-        await loadBalance();
-        await loadTransactions();
-
-    }catch{
-
-        setLoading(
-            button,
-            false
-        );
-
-        toast(
-            "ไม่สามารถเชื่อมต่อ Server ได้",
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =========================
-   TRANSACTIONS
-========================= */
-
-async function loadTransactions(){
-
-    const box =
-        document.getElementById(
-            "transactions"
-        );
-
-    try{
-
-        const response =
-            await fetch(
-                "/api/transactions"
-            );
-
-        if(!response.ok){
-
-            box.textContent =
-                "โหลดข้อมูลไม่สำเร็จ";
-
-            return;
-
-        }
-
-        const data =
-            await response.json();
-
-        if(
-            !data.transactions ||
-            data.transactions.length === 0
-        ){
-
-            box.innerHTML = `
-                <div style="
-                    text-align:center;
-                    padding:35px 10px;
-                    color:#566174;
-                ">
-                    ยังไม่มีรายการเติมเงิน
-                </div>
-            `;
-
-            return;
-        }
-
-        box.innerHTML =
-            data.transactions
-            .map(item=>{
-
-                let statusClass =
-                    "status-pending";
-
-                if(
-                    String(item.status)
-                    .toUpperCase()
-                    === "SUCCESS"
-                ){
-                    statusClass =
-                        "status-success";
-                }
-
-                if(
-                    String(item.status)
-                    .toUpperCase()
-                    === "FAILED"
-                ){
-                    statusClass =
-                        "status-failed";
-                }
-
-                if(
-                    String(item.status)
-                    .toUpperCase()
-                    === "EXPIRED"
-                ){
-                    statusClass =
-                        "status-expired";
-                }
-
-                return `
-
-                    <div class="transaction">
-
-                        <div class="transaction-left">
-
-                            <div class="transaction-amount">
-                                ฿${Number(
-                                    item.amount
-                                ).toFixed(2)}
-                            </div>
-
-                            <div class="transaction-date">
-                                ${
-                                    item.createdAt
-                                    ? new Date(
-                                        item.createdAt
-                                    ).toLocaleString(
-                                        "th-TH"
-                                    )
-                                    : "-"
-                                }
-                            </div>
-
-                        </div>
-
-                        <span class="status ${statusClass}">
-                            ${item.status}
-                        </span>
-
-                    </div>
-
-                `;
-
-            })
-            .join("");
-
-    }catch{
-
-        box.textContent =
-            "โหลดข้อมูลไม่สำเร็จ";
-
-    }
-
-}
-
-
-/* =========================
-   LOGOUT
-========================= */
-
-async function logout(){
-
-    try{
-
-        await fetch(
-            "/api/auth/logout",
-            {
-                method:"POST"
-            }
-        );
-
-    }catch{}
-
-    stopPaymentCountdown();
-
-    currentPaymentId = null;
-    currentPaymentExpiresAt = null;
-    paymentServerOffsetMs = 0;
-
-    toast(
-        "ออกจากระบบแล้ว",
-        "success"
-    );
-
-    setTimeout(()=>{
-        showLogin();
-    },300);
-
-}
-
-
-/* =========================
-   AUTO LOGIN
-========================= */
-
-async function checkSession(){
-
-    try{
-
-        const response =
-            await fetch(
-                "/api/auth/me"
-            );
-
-        if(response.ok){
-
-            showDashboard();
-
-        }else{
-
-            showLogin();
-
-        }
-
-    }catch{
-
-        showLogin();
-
-    }
-
-}
-
-
-/* =========================
-   ENTER KEY
-========================= */
-
-document.addEventListener(
-    "keydown",
-    event=>{
-
-        if(
-            event.key === "Enter" &&
-            document.activeElement?.id ===
-            "topupAmount"
-        ){
-
-            createTopup();
-
-        }
-
-    }
-);
-
-
-/* =========================
-   START
-========================= */
-
-checkSession();
-
-</script>
+    <aside class="steps-card glass reveal"><h2>เติมเงินได้ใน 3 ขั้นตอน</h2><ol class="steps"><li><span class="step-num">01</span><div><strong>ระบุจำนวนเงิน</strong><p>เลือกยอดที่ต้องการ แล้วสร้าง QR ชำระเงิน</p></div></li><li><span class="step-num">02</span><div><strong>สแกน QR และชำระเงิน</strong><p>ชำระเงินให้ตรงยอดภายในเวลาที่กำหนด</p></div></li><li><span class="step-num">03</span><div><strong>แนบสลิปเพื่อตรวจสอบ</strong><p>ยอดเงินจะอัปเดตเมื่อรายการสำเร็จ</p></div></li></ol></aside>
+   </div>
+  </section>
+  <section data-store-page="check-slip" class="hidden" aria-labelledby="slipTitle">
+   <button class="back-link" onclick="storeNavigate('topup')"><svg aria-hidden="true"><use href="#i-back"></use></svg>กลับไปช่องทางเติมเงิน</button>
+   <div class="page-heading"><div><div class="eyebrow">WALLET / CHECK SLIP</div><h1 id="slipTitle" tabindex="-1">เติมเงินเข้ากระเป๋า</h1><p>สร้าง QR ชำระเงิน แล้วแนบสลิปเพื่อตรวจสอบ</p></div><span class="page-index">CHECK SLIP / 03</span></div>
+   <div class="dash-grid">
+    <section class="card glass reveal" aria-labelledby="amountTitle">
+     <div class="card-heading"><span class="tile-icon"><svg aria-hidden="true"><use href="#i-wallet"></use></svg></span><div><h2 id="amountTitle">ระบุจำนวนเงิน</h2><p>ยอดเงินจะเข้ากระเป๋าเมื่อการตรวจสอบสำเร็จ</p></div></div>
+     <form id="topupForm" onsubmit="event.preventDefault();createTopup()">
+      <div class="label-row"><label for="topupAmount">จำนวนเงินที่ต้องการเติม</label><span>ขั้นต่ำ ฿1</span></div>
+      <div class="amount-row"><input id="topupAmount" type="number" min="1" step="0.01" placeholder="0.00" inputmode="decimal" required><span class="currency">THB</span></div>
+      <div class="amount-presets" aria-label="เลือกจำนวนเงิน"><button type="button" data-amount="100">฿100</button><button type="button" data-amount="300">฿300</button><button type="button" data-amount="500">฿500</button><button type="button" data-amount="1000">฿1,000</button></div>
+      <button id="topupButton" class="primary-btn full-width" type="submit"><svg aria-hidden="true"><use href="#i-qr"></use></svg>สร้าง QR ชำระเงิน <svg aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+     </form>
+     <div id="topupMessage" class="sr-only"></div>
+     <div class="payment hidden" id="paymentBox">
+      <div class="payment-heading"><svg aria-hidden="true"><use href="#i-qr"></use></svg>สแกน QR เพื่อชำระเงิน</div>
+      <div class="payment-timer" id="paymentTimer"><div><div class="payment-timer-label">เวลาที่เหลือสำหรับรายการนี้</div><div class="payment-timer-note" id="paymentTimerNote">กรุณาโอนและส่งสลิปภายในเวลาที่กำหนด</div></div><div class="payment-timer-value" id="paymentTimerValue" role="timer" aria-label="เวลาชำระเงินที่เหลือ">05:00</div></div>
+      <div class="qr-shell"><img id="qrImage" class="qr" alt="QR สำหรับชำระเงินรายการนี้"><span class="qr-caption">SCAN WITH YOUR BANKING APP</span><p id="qrError" class="qr-error hidden">โหลด QR ไม่สำเร็จ กรุณาลองสร้างรายการอีกครั้ง</p></div>
+      <div class="payment-info"><div class="payment-amount-row"><span>ยอดที่ต้องชำระ</span><strong>฿<span id="paymentAmount">0.00</span></strong></div><div class="payment-id"><span>หมายเลขรายการ<strong id="paymentId"></strong></span><button type="button" class="copy-btn" onclick="copyPaymentId()"><svg aria-hidden="true"><use href="#i-copy"></use></svg>คัดลอก</button></div></div>
+      <form id="slipForm" onsubmit="event.preventDefault();verifySlip()">
+       <label for="slip">หลักฐานการชำระเงิน</label>
+       <div class="file-box"><svg aria-hidden="true"><use href="#i-upload"></use></svg><strong>กดเพื่อเลือกสลิปการโอนเงิน</strong><small>รองรับไฟล์รูปภาพ · เลือกได้ 1 ไฟล์</small><input id="slip" type="file" accept="image/*" aria-describedby="fileName" required><div id="fileName">ยังไม่ได้เลือกไฟล์</div><img id="slipPreview" class="hidden" alt="ตัวอย่างสลิปที่เลือก"></div>
+       <button id="verifyButton" class="primary-btn full-width" type="submit"><svg aria-hidden="true"><use href="#i-shield"></use></svg>ตรวจสอบการชำระเงิน</button>
+      </form>
+      <div id="slipMessage" class="sr-only"></div>
+     </div>
+     <p class="inline-note"><svg aria-hidden="true"><use href="#i-clock"></use></svg>ชำระเงินและส่งสลิปก่อน QR หมดอายุ</p>
+    </section>
+    <div>
+     <section class="card glass reveal" id="historyCard" tabindex="-1" aria-labelledby="historyTitle">
+      <div class="history-head"><div class="card-heading"><span class="tile-icon"><svg aria-hidden="true"><use href="#i-history"></use></svg></span><div><h2 id="historyTitle">ประวัติรายการ</h2><p>การเติมเงินทั้งหมดของบัญชีนี้</p></div></div><button id="refreshHistory" class="icon-button" onclick="loadTransactions()" type="button" title="รีเฟรชประวัติ" aria-label="รีเฟรชประวัติ"><svg aria-hidden="true"><use href="#i-refresh"></use></svg></button></div>
+      <div id="transactions" class="transaction-list" aria-busy="false"><div class="empty-state"><span class="spinner"></span><p>กำลังโหลดรายการ…</p></div></div>
+      <p class="history-caption"><svg aria-hidden="true"><use href="#i-lock"></use></svg>แสดงเฉพาะรายการของบัญชีคุณ</p>
+     </section>
+     <div class="wallet compact-wallet glass reveal"><div><div class="wallet-top">ยอดเงินคงเหลือ</div><div class="wallet-amount"><small>฿</small><span data-balance>—</span></div></div><span class="tile-icon"><svg aria-hidden="true"><use href="#i-wallet"></use></svg></span></div>
+    </div>
+   </div>
+  </section>
+ </section>
+</main>
+<footer class="site-footer"><span>GAME STORE © 2026 · YOUR NEXT LEVEL</span><span class="footer-right"><button id="footerMotionButton" class="icon-button footer-motion" onclick="toggleMotion()" title="หยุดภาพเคลื่อนไหว" aria-label="หยุดภาพเคลื่อนไหว" aria-pressed="false"><svg aria-hidden="true"><use href="#i-pause"></use></svg></button><i class="status-dot"></i>พื้นที่ของคุณ ทุกการเล่น</span></footer>
 
 <script>
-// UI-only navigation; no changes to existing authentication/payment APIs.
-const storePages = ['home','topup','check-slip'];
-function updateTabSliders(){
- document.querySelectorAll('.tabs').forEach(t=>{
-  const active=t.querySelector('button.active');
-  if(!active)return;
-  t.style.setProperty('--tab-slide', active.offsetLeft-5+'px');
+
+'use strict';
+// Existing server contract is preserved. Serve this file from the same origin as /api/*.
+const $ = id => document.getElementById(id);
+const icon = name => '<svg aria-hidden="true"><use href="#i-' + name + '"></use></svg>';
+const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
+let motionPaused = false;
+try { motionPaused = localStorage.getItem('gx-motion-paused') === 'true'; } catch {}
+const motionEnabled = () => !motionPaused && !motionQuery.matches;
+let authenticated = false, sessionEpoch = 0;
+let currentPaymentId = null, currentPaymentExpiresAt = null;
+let paymentServerOffsetMs = 0, paymentCountdownTimer = null, paymentRevision = 0;
+let balanceValue = 0, balanceFrame = 0, historyRequest = 0, slipObjectURL = null;
+let currentRoute = 'home';
+const storePages = ['home', 'topup', 'check-slip'];
+const transitionVersions = new Map();
+const transitions = new Map();
+const money = value => Number(value).toLocaleString('th-TH', {minimumFractionDigits:2,maximumFractionDigits:2});
+
+function animateElement(el, frames, options) {
+ if (!motionEnabled() || !el.animate) return Promise.resolve();
+ const animation = el.animate(frames, options);
+ return animation.finished.catch(() => {});
+}
+async function transitionGroup(group, elements, target, {instant=false, direction=1}={}) {
+ const version = (transitionVersions.get(group) || 0) + 1;
+ transitionVersions.set(group, version);
+ elements.forEach(el => el.getAnimations().forEach(a => a.cancel()));
+ const previous = elements.find(el => !el.classList.contains('hidden'));
+ if (previous === target) {
+  elements.forEach(el => { el.classList.toggle('hidden', el !== target); el.inert = el !== target; });
+  return;
+ }
+ if (previous && !instant && motionEnabled()) {
+  previous.inert = true;
+  await animateElement(previous, [
+   {opacity:1,transform:'translate3d(0,0,0) scale(1)'},
+   {opacity:0,transform:'translate3d(' + (-8*direction) + 'px,-5px,0) scale(.988)'}
+  ], {duration:145,easing:'ease-out'});
+ }
+ if (transitionVersions.get(group) !== version) return;
+ elements.forEach(el => { el.classList.toggle('hidden', el !== target); el.inert = el !== target; });
+ if (!instant) {
+  await animateElement(target, [
+   {opacity:0,transform:'translate3d(' + (12*direction) + 'px,13px,0) scale(.982)'},
+   {opacity:1,transform:'translate3d(0,0,0) scale(1)'}
+  ], {duration:440,easing:'cubic-bezier(.22,1,.36,1)'});
+ }
+}
+function revealCards(container) {
+ if (!motionEnabled()) return;
+ container.querySelectorAll('.reveal').forEach((el,i) => {
+  el.getAnimations().forEach(a => a.cancel());
+  animateElement(el,[{opacity:0,transform:'translateY(18px) scale(.985)'},{opacity:1,transform:'translateY(0) scale(1)'}],
+   {duration:530,delay:i*55,easing:'cubic-bezier(.22,1,.36,1)'});
  });
 }
-window.addEventListener('resize',updateTabSliders);
-
-
-function enableUIMove(){
-  document.querySelectorAll('.card,.method-card,.home-panels article,.feature,.wallet,.home-hero,.nav-item,button').forEach(el=>el.classList.add('ui-move'));
+function updateHeader() {
+ $('memberNav').classList.toggle('hidden', !authenticated);
+ $('accountWrap').classList.toggle('hidden', !authenticated);
+ $('publicLabel').classList.toggle('hidden', authenticated);
 }
-requestAnimationFrame(enableUIMove);
-function storeCloseMenu(){document.querySelector('.account-wrap').classList.remove('is-open');document.getElementById('accountTrigger').setAttribute('aria-expanded','false');}
-function storeNavigate(page, updateHash = true){
- if(!storePages.includes(page)) page='home';
- document.querySelectorAll('[data-store-page]').forEach(el=>el.classList.toggle('hidden',el.dataset.storePage!==page));
- document.querySelectorAll('[data-nav]').forEach(el=>{const active=el.dataset.nav===(page==='home'?'home':'topup');el.classList.toggle('active',active);if(active)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});
+async function switchAuth(mode, focus=false) {
+ const loginMode = mode === 'login';
+ const target = $(loginMode ? 'loginPage' : 'registerPage');
+ $('authTabs').classList.toggle('register-active', !loginMode);
+ ['login','register'].forEach(name => {
+  const selected = name === mode;
+  $(name+'Tab').classList.toggle('active', selected);
+  $(name+'Tab').setAttribute('aria-selected', String(selected));
+  $(name+'Tab').tabIndex = selected ? 0 : -1;
+ });
+ await transitionGroup('auth',[$('loginPage'),$('registerPage')],target,{direction:loginMode?-1:1});
+ if (focus && !target.classList.contains('hidden')) $(mode+'Username').focus({preventScroll:true});
+}
+async function showLogin() {
+ if (authenticated) resetSessionUI();
+ authenticated = false;
+ updateHeader();
+ await transitionGroup('main',[$('authView'),$('dashboardPage')],$('authView'));
+ await switchAuth('login');
+ document.title = 'เข้าสู่ระบบ · GAME STORE';
+}
+async function showRegister() {
+ if (authenticated) return;
+ await switchAuth('register');
+ document.title = 'สมัครสมาชิก · GAME STORE';
+}
+async function showDashboard(user) {
+ authenticated = true;
+ updateHeader();
+ if (user) renderUser(user);
+ const route = storePages.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'home';
+ await storeNavigate(route,false,true);
+ await transitionGroup('main',[$('authView'),$('dashboardPage')],$('dashboardPage'));
+ revealCards(document.querySelector('[data-store-page="'+route+'"]'));
+ if (!user) loadUser();
+ loadBalance();
+ loadTransactions();
+}
+function brandHome(event) {
+ event.preventDefault();
+ if (authenticated) storeNavigate('home');
+ else showLogin();
+}
+async function storeNavigate(page, updateHash=true, instant=false) {
+ if (!storePages.includes(page)) page='home';
  storeCloseMenu();
- if(updateHash && location.hash!=='#'+page) location.hash=page;
- window.scrollTo({top:0,behavior:'auto'});
+ const oldIndex = storePages.indexOf(currentRoute);
+ currentRoute = page;
+ document.querySelectorAll('[data-nav]').forEach(el => {
+  const active = el.dataset.nav === (page === 'home' ? 'home' : 'topup');
+  el.classList.toggle('active',active);
+  if (active) el.setAttribute('aria-current','page'); else el.removeAttribute('aria-current');
+ });
+ if (updateHash && location.hash !== '#'+page) history.pushState(null,'','#'+page);
+ const target = document.querySelector('[data-store-page="'+page+'"]');
+ await transitionGroup('route',[...document.querySelectorAll('[data-store-page]')],target,{instant,direction:storePages.indexOf(page)>=oldIndex?1:-1});
+ if (currentRoute !== page) return;
+ if (authenticated) {
+  document.title = ({home:'หน้าหลัก',topup:'เติมเงิน','check-slip':'Check Slip'})[page]+' · GAME STORE';
+  if (!instant) {
+   window.scrollTo({top:0,behavior:'instant'});
+   target.querySelector('h1')?.focus({preventScroll:true});
+   revealCards(target);
+  }
+ }
 }
-document.getElementById('accountTrigger').addEventListener('click',()=>{const wrap=document.querySelector('.account-wrap');const open=wrap.classList.toggle('is-open');document.getElementById('accountTrigger').setAttribute('aria-expanded',String(open));});
-document.addEventListener('click',event=>{if(!event.target.closest('.account-wrap'))storeCloseMenu();});
-document.addEventListener('keydown',event=>{if(event.key==='Escape'){storeCloseMenu();document.activeElement?.blur();}});
-window.addEventListener('hashchange',()=>storeNavigate(location.hash.slice(1),false));
-storeNavigate(location.hash.slice(1)||'home',false);
-requestAnimationFrame(updateTabSliders);
+async function openHistory() {
+ await storeNavigate('check-slip');
+ if (!authenticated || currentRoute !== 'check-slip') return;
+ $('historyCard').scrollIntoView({behavior:motionEnabled()?'smooth':'instant',block:'center'});
+ $('historyCard').focus({preventScroll:true});
+}
+function storeCloseMenu(restoreFocus=false) {
+ const wasOpen = $('accountWrap').classList.contains('is-open');
+ $('accountWrap').classList.remove('is-open');
+ $('accountTrigger').setAttribute('aria-expanded','false');
+ $('accountMenu').inert = true;
+ if (restoreFocus && wasOpen) $('accountTrigger').focus();
+}
+$('accountTrigger').addEventListener('click', () => {
+ const open = !$('accountWrap').classList.contains('is-open');
+ $('accountWrap').classList.toggle('is-open',open);
+ $('accountTrigger').setAttribute('aria-expanded',String(open));
+ $('accountMenu').inert = !open;
+});
+document.addEventListener('click',e => {if (!e.target.closest('.account-wrap')) storeCloseMenu();});
+document.addEventListener('keydown',e => {if (e.key==='Escape') storeCloseMenu(true);});
+$('accountWrap').addEventListener('focusout',e => {
+ if (!$('accountWrap').contains(e.relatedTarget)) storeCloseMenu();
+});
+$('authTabs').addEventListener('keydown',e => {
+ if (!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
+ e.preventDefault();
+ const mode = e.key==='Home'?'login':e.key==='End'?'register':$('loginTab').getAttribute('aria-selected')==='true'?'register':'login';
+ $(mode+'Tab').focus();
+ mode==='login'?showLogin():showRegister();
+});
+window.addEventListener('hashchange',() => {if(authenticated) storeNavigate(location.hash.slice(1),false);});
+window.addEventListener('popstate',() => {if(authenticated) storeNavigate(location.hash.slice(1),false);});
 
-</script>
+function toast(message,type='success') {
+ const el = document.createElement('div');
+ el.className = 'toast '+type;
+ el.innerHTML = icon(type==='error'?'alert':type==='info'?'info':'check');
+ const text = document.createElement('span');
+ text.textContent = String(message);
+ el.append(text);
+ const close = document.createElement('button');
+ close.type='button';
+ close.setAttribute('aria-label','ปิดการแจ้งเตือน');
+ close.innerHTML=icon('close');
+ let timer;
+ const dismiss=() => {clearTimeout(timer);el.classList.add('out');setTimeout(()=>el.remove(),motionEnabled()?260:0);};
+ close.addEventListener('click',dismiss);
+ el.append(close);
+ $('toastContainer').append(el);
+ while ($('toastContainer').children.length>4) $('toastContainer').firstElementChild.remove();
+ timer=setTimeout(dismiss,type==='error'?6500:4000);
+}
+function togglePassword(id,button) {
+ const input=$(id), show=input.type==='password';
+ input.type=show?'text':'password';
+ input.classList.toggle('password-visible',show);
+ button.innerHTML=icon(show?'eyeoff':'eye');
+ button.setAttribute('aria-label',show?'ซ่อนรหัสผ่าน':'แสดงรหัสผ่าน');
+ button.setAttribute('aria-pressed',String(show));
+}
+function setLoading(button,loading,label='กำลังดำเนินการ') {
+ if (loading) {
+  if (button.dataset.loading==='true') return;
+  button.dataset.original=button.innerHTML;
+  button.dataset.loading='true';
+  button.innerHTML='<span class="spinner"></span><span>'+label+'</span>';
+ } else {
+  if (button.dataset.original) button.innerHTML=button.dataset.original;
+  delete button.dataset.loading;
+ }
+ button.disabled=loading;
+ button.classList.toggle('loading',loading);
+ button.setAttribute('aria-busy',String(loading));
+ // A completed or expired payment stays disabled even after a request finishes.
+ if (button.id==='verifyButton' && !currentPaymentId) button.disabled=true;
+}
+async function request(path, options={}) {
+ if (location.protocol==='file:') throw new Error('กรุณาเปิดหน้าเว็บผ่านเซิร์ฟเวอร์ของร้านเพื่อใช้งานบัญชีและการชำระเงิน');
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),path==='/api/verify-slip'?45000:20000);
+ try {
+  const response=await fetch(path,{credentials:'same-origin',...options,signal:controller.signal});
+  let data={};
+  const raw=await response.text();
+  if (raw) {try{data=JSON.parse(raw);}catch{throw new Error('เซิร์ฟเวอร์ส่งข้อมูลไม่ถูกต้อง กรุณาลองอีกครั้ง');}}
+  return {response,data};
+ } catch(error) {
+  if(error.name==='AbortError') throw new Error('เซิร์ฟเวอร์ตอบช้า กรุณาตรวจสอบรายการก่อนลองอีกครั้ง');
+  if(error instanceof TypeError) throw new Error('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองอีกครั้ง');
+  throw error;
+ } finally { clearTimeout(timer); }
+}
+const jsonPost = body => ({method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+async function register() {
+ const button=$('registerButton');
+ if (button.disabled) return;
+ const username=$('registerUsername').value.trim(), password=$('registerPassword').value;
+ if(!username||!password){toast('กรุณากรอกข้อมูลให้ครบ','error');return;}
+ const epoch=++sessionEpoch;
+ setLoading(button,true,'กำลังสร้างบัญชี');
+ try {
+  const {response,data}=await request('/api/auth/register',jsonPost({username,password}));
+  if(epoch!==sessionEpoch)return;
+  if(!response.ok) throw new Error(data.error||'สมัครสมาชิกไม่สำเร็จ');
+  $('registerPassword').value='';
+  $('loginUsername').value=username;
+  toast('สมัครสมาชิกสำเร็จ เข้าสู่ระบบได้เลย');
+  await showLogin();
+  $('loginPassword').focus({preventScroll:true});
+ } catch(error){if(epoch===sessionEpoch)toast(error.message,'error');}
+ finally{setLoading(button,false);}
+}
+async function login() {
+ const button=$('loginButton');
+ if(button.disabled)return;
+ const username=$('loginUsername').value.trim(),password=$('loginPassword').value;
+ if(!username||!password){toast('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน','error');return;}
+ const epoch=++sessionEpoch;
+ setLoading(button,true,'กำลังเข้าสู่ระบบ');
+ try {
+  const {response,data}=await request('/api/auth/login',jsonPost({username,password}));
+  if(epoch!==sessionEpoch)return;
+  if(!response.ok)throw new Error(data.error||'เข้าสู่ระบบไม่สำเร็จ');
+  $('loginPassword').value='';
+  toast('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับกลับมา');
+  await showDashboard();
+ } catch(error){if(epoch===sessionEpoch)toast(error.message,'error');}
+ finally{setLoading(button,false);}
+}
+function renderUser(user) {
+ const name=String(user?.username||'สมาชิก');
+ $('username').textContent=name;
+ $('welcomeName').textContent=name;
+ $('avatarLetter').textContent=Array.from(name)[0]?.toUpperCase()||'G';
+}
+async function loadUser() {
+ const epoch=sessionEpoch;
+ try{
+  const {response,data}=await request('/api/auth/me');
+  if(epoch!==sessionEpoch)return;
+  if(response.status===401||response.status===403){resetSessionUI();showLogin();return;}
+  if(!response.ok)throw new Error();
+  renderUser(data.user);
+ }catch{if(epoch===sessionEpoch)toast('โหลดข้อมูลสมาชิกไม่สำเร็จ','error');}
+}
+async function loadBalance() {
+ const epoch=sessionEpoch;
+ try {
+  const {response,data}=await request('/api/balance');
+  if(epoch!==sessionEpoch)return;
+  if(!response.ok||!Number.isFinite(Number(data.balance)))throw new Error();
+  animateBalance(Number(data.balance));
+  $('balanceCaption').textContent='ยอดเงินที่พร้อมใช้งาน';
+ }catch{
+  if(epoch===sessionEpoch) $('balanceCaption').textContent='ยังโหลดข้อมูลยอดเงินไม่ได้';
+ }
+}
+function animateBalance(target) {
+ cancelAnimationFrame(balanceFrame);
+ const start=balanceValue, startTime=performance.now();
+ const draw=value=>document.querySelectorAll('[data-balance]').forEach(el=>el.textContent=money(value));
+ if(!motionEnabled()){balanceValue=target;draw(target);return;}
+ function frame(now) {
+  const progress=Math.min((now-startTime)/620,1),eased=1-Math.pow(1-progress,3);
+  balanceValue=start+(target-start)*eased;
+  draw(balanceValue);
+  if(progress<1)balanceFrame=requestAnimationFrame(frame);
+ }
+ balanceFrame=requestAnimationFrame(frame);
+}
+function clearSlipPreview() {
+ if(slipObjectURL){URL.revokeObjectURL(slipObjectURL);slipObjectURL=null;}
+ $('slipPreview').removeAttribute('src');
+ $('slipPreview').classList.add('hidden');
+ $('fileName').textContent='ยังไม่ได้เลือกไฟล์';
+}
+function resetPaymentUI() {
+ paymentRevision++;
+ stopPaymentCountdown();
+ currentPaymentId=null;currentPaymentExpiresAt=null;paymentServerOffsetMs=0;
+ $('paymentBox').classList.add('hidden');
+ $('paymentBox').classList.remove('payment-expired','payment-paid');
+ $('qrImage').removeAttribute('src');
+ $('qrError').classList.add('hidden');
+ $('paymentAmount').textContent='0.00';
+ $('paymentId').textContent='';
+ $('paymentTimer').classList.remove('expired','success');
+ $('paymentTimerValue').textContent='05:00';
+ $('slip').value='';$('slip').disabled=true;$('verifyButton').disabled=true;
+ clearSlipPreview();
+}
+function resetSessionUI() {
+ sessionEpoch++;historyRequest++;
+ authenticated=false;
+ cancelAnimationFrame(balanceFrame);balanceValue=0;
+ resetPaymentUI();
+ storeCloseMenu();
+ $('username').textContent='สมาชิก';$('welcomeName').textContent='สมาชิก';$('avatarLetter').textContent='G';
+ document.querySelectorAll('[data-balance]').forEach(el=>el.textContent='—');
+ $('transactions').replaceChildren();
+ $('topupAmount').value='';
+ document.querySelectorAll('[data-amount]').forEach(el=>el.classList.remove('selected'));
+ $('loginPassword').value='';$('registerPassword').value='';
+ updateHeader();
+}
+function stopPaymentCountdown() {
+ if(paymentCountdownTimer!==null){clearInterval(paymentCountdownTimer);paymentCountdownTimer=null;}
+}
+const paymentNow=()=>Date.now()+paymentServerOffsetMs;
+function setPaymentExpiredUI() {
+ stopPaymentCountdown();
+ $('paymentBox').classList.add('payment-expired');
+ $('paymentBox').classList.remove('payment-paid');
+ $('paymentTimer').classList.remove('success');$('paymentTimer').classList.add('expired');
+ $('paymentTimerValue').textContent='00:00';
+ $('paymentTimerNote').textContent='QR หมดอายุแล้ว กรุณาสร้างรายการใหม่';
+ $('verifyButton').disabled=true;$('slip').disabled=true;
+ currentPaymentId=null;currentPaymentExpiresAt=null;
+}
+function setPaymentSuccessUI() {
+ stopPaymentCountdown();
+ $('paymentBox').classList.remove('payment-expired');
+ $('paymentBox').classList.add('payment-paid');
+ $('paymentTimer').classList.remove('expired');$('paymentTimer').classList.add('success');
+ $('paymentTimerValue').textContent='สำเร็จ';
+ $('paymentTimerNote').textContent='ตรวจสอบและเติมเงินเรียบร้อยแล้ว';
+ $('verifyButton').disabled=true;$('slip').disabled=true;
+ currentPaymentId=null;currentPaymentExpiresAt=null;
+}
+function startPaymentCountdown(expiresAt,serverNow) {
+ stopPaymentCountdown();
+ const expires=new Date(expiresAt).getTime(),server=new Date(serverNow).getTime();
+ if(!Number.isFinite(expires)||!Number.isFinite(server)){setPaymentExpiredUI();return;}
+ paymentServerOffsetMs=server-Date.now();
+ currentPaymentExpiresAt=expires;
+ $('paymentBox').classList.remove('payment-expired','payment-paid');
+ $('paymentTimer').classList.remove('expired','success');
+ $('slip').disabled=false;$('verifyButton').disabled=false;
+ $('paymentTimerNote').textContent='กรุณาโอนและส่งสลิปภายในเวลาที่กำหนด';
+ function update(){
+  if(currentPaymentExpiresAt===null)return false;
+  const remaining=currentPaymentExpiresAt-paymentNow();
+  if(remaining<=0){setPaymentExpiredUI();loadTransactions();return false;}
+  const seconds=Math.ceil(remaining/1000);
+  $('paymentTimerValue').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
+  return true;
+ }
+ if(update())paymentCountdownTimer=setInterval(update,1000);
+}
+function showPayment(payment,qrUrl) {
+ if(!payment||payment.id==null||!Number.isFinite(Number(payment.amount))||!qrUrl)throw new Error('ข้อมูลการชำระเงินไม่ครบ กรุณาลองอีกครั้ง');
+ paymentRevision++;
+ currentPaymentId=payment.id;
+ $('paymentId').textContent=String(payment.id);
+ $('paymentAmount').textContent=money(payment.amount);
+ $('qrError').classList.add('hidden');
+ $('qrImage').src=qrUrl;
+ $('paymentBox').classList.remove('hidden');
+ $('slip').value='';
+ clearSlipPreview();
+ startPaymentCountdown(payment.expires_at,payment.server_now);
+ animateElement($('paymentBox'),[{opacity:0,transform:'translateY(14px) scale(.98)'},{opacity:1,transform:'translateY(0) scale(1)'}],{duration:450,easing:'cubic-bezier(.22,1,.36,1)'});
+}
+async function createTopup() {
+ const button=$('topupButton');
+ if(button.disabled)return;
+ const amount=Number($('topupAmount').value);
+ if(!Number.isFinite(amount)||amount<1||!$('topupAmount').checkValidity()){toast('กรุณาระบุจำนวนเงินที่ถูกต้อง ตั้งแต่ 1 บาท','error');$('topupAmount').focus();return;}
+ if($('verifyButton').dataset.loading==='true'){toast('กำลังตรวจสอบสลิป กรุณารอสักครู่','info');return;}
+ const epoch=sessionEpoch;
+ setLoading(button,true,'กำลังสร้างรายการ');
+ try{
+  const {response,data}=await request('/api/topup',jsonPost({amount}));
+  if(epoch!==sessionEpoch)return;
+  if(response.status===409&&data.code==='ACTIVE_PAYMENT_EXISTS'&&data.payment) {
+   showPayment(data.payment,data.qrUrl);
+   toast('มีรายการที่ยังไม่หมดอายุ กรุณาใช้ QR เดิมต่อ','info');
+  }else{
+   if(!response.ok)throw new Error(data.error||'สร้างรายการไม่สำเร็จ');
+   showPayment(data.payment,data.qrUrl);
+   toast('สร้างรายการแล้ว กรุณาชำระภายในเวลาที่กำหนด');
+   loadTransactions();
+  }
+  if(currentRoute==='check-slip')$('paymentBox').scrollIntoView({behavior:motionEnabled()?'smooth':'instant',block:'start'});
+ }catch(error){if(epoch===sessionEpoch)toast(error.message,'error');}
+ finally{setLoading(button,false);}
+}
+async function copyPaymentId(){
+ const id=$('paymentId').textContent;
+ if(!id)return;
+ try{
+  if(!navigator.clipboard)throw new Error();
+  await navigator.clipboard.writeText(id);
+  toast('คัดลอกหมายเลขรายการแล้ว');
+ }catch{
+  const range=document.createRange();range.selectNodeContents($('paymentId'));
+  const selection=getSelection();selection.removeAllRanges();selection.addRange(range);
+  toast('เลือกหมายเลขรายการแล้ว กดคัดลอกด้วยตนเองได้เลย','info');
+ }
+}
+async function verifySlip(){
+ const button=$('verifyButton');
+ if(button.disabled)return;
+ if($('topupButton').dataset.loading==='true'){toast('กำลังสร้างรายการ กรุณารอสักครู่','info');return;}
+ if(currentPaymentExpiresAt&&paymentNow()>=currentPaymentExpiresAt){setPaymentExpiredUI();toast('QR หมดอายุแล้ว กรุณาสร้างรายการใหม่','error');return;}
+ const file=$('slip').files[0];
+ if(!file){toast('กรุณาเลือกสลิปการโอนเงิน','error');return;}
+ if(!currentPaymentId){toast('ไม่พบรายการ หรือรายการหมดอายุแล้ว','error');return;}
+ const epoch=sessionEpoch, revision=paymentRevision;
+ const formData=new FormData();formData.append('slip',file);formData.append('paymentId',String(currentPaymentId));
+ setLoading(button,true,'กำลังตรวจสอบสลิป');
+ try{
+  const {response,data}=await request('/api/verify-slip',{method:'POST',body:formData});
+  if(epoch!==sessionEpoch||revision!==paymentRevision)return;
+  if(!response.ok){
+   if(response.status===410)setPaymentExpiredUI();
+   loadTransactions();
+   throw new Error(data.error||'ตรวจสอบสลิปไม่สำเร็จ');
+  }
+  setPaymentSuccessUI();
+  toast('เติมเงินสำเร็จ กำลังอัปเดตยอดเงิน');
+  await Promise.allSettled([loadBalance(),loadTransactions()]);
+ }catch(error){if(epoch===sessionEpoch&&revision===paymentRevision)toast(error.message,'error');}
+ finally{setLoading(button,false);}
+}
+function historyState(title,description,type='history'){
+ const box=document.createElement('div');box.className='empty-state';
+ box.innerHTML='<span class="tile-icon">'+icon(type)+'</span>';
+ const strong=document.createElement('strong');strong.textContent=title;
+ const p=document.createElement('p');p.textContent=description;
+ box.append(strong,p);return box;
+}
+async function loadTransactions(){
+ const box=$('transactions'),epoch=sessionEpoch,requestId=++historyRequest;
+ $('refreshHistory').disabled=true;box.setAttribute('aria-busy','true');
+ try{
+  const {response,data}=await request('/api/transactions');
+  if(epoch!==sessionEpoch||requestId!==historyRequest)return;
+  if(!response.ok)throw new Error();
+  const items=Array.isArray(data.transactions)?data.transactions:[];
+  box.replaceChildren();
+  if(!items.length){box.append(historyState('ยังไม่มีรายการเติมเงิน','รายการใหม่ของคุณจะแสดงที่นี่'));return;}
+  const statuses={SUCCESS:['success','สำเร็จ'],PENDING:['pending','รอตรวจสอบ'],FAILED:['failed','ไม่สำเร็จ'],EXPIRED:['expired','หมดอายุ']};
+  const fragment=document.createDocumentFragment();
+  items.forEach(item=>{
+   const status=statuses[String(item.status).toUpperCase()]||['pending','รอตรวจสอบ'];
+   const row=document.createElement('div');row.className='transaction';
+   const mark=document.createElement('span');mark.className='transaction-icon';mark.innerHTML=icon(status[0]==='success'?'check':status[0]==='pending'?'clock':'slip');
+   const left=document.createElement('div');left.className='transaction-left';
+   const amount=document.createElement('div');amount.className='transaction-amount';amount.textContent='฿'+(Number.isFinite(Number(item.amount))?money(item.amount):'—');
+   const date=document.createElement('div');date.className='transaction-date';
+   const parsed=new Date(item.createdAt);
+   date.textContent=item.createdAt&&!Number.isNaN(parsed.getTime())?parsed.toLocaleString('th-TH',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'ไม่ระบุวันที่';
+   const badge=document.createElement('span');badge.className='status status-'+status[0];badge.textContent=status[1];
+   left.append(amount,date);row.append(mark,left,badge);fragment.append(row);
+  });
+  box.append(fragment);
+ }catch{
+  if(epoch===sessionEpoch&&requestId===historyRequest)box.replaceChildren(historyState('โหลดรายการไม่สำเร็จ','กดปุ่มรีเฟรชเพื่อลองอีกครั้ง','refresh'));
+ }finally{
+  if(requestId===historyRequest){$('refreshHistory').disabled=false;box.setAttribute('aria-busy','false');}
+ }
+}
+async function logout(){
+ const button=$('logoutButton');
+ if(button.disabled)return;
+ const epoch=sessionEpoch;
+ setLoading(button,true,'กำลังออกจากระบบ');
+ try{
+  const {response,data}=await request('/api/auth/logout',{method:'POST'});
+  if(epoch!==sessionEpoch)return;
+  if(!response.ok)throw new Error(data.error||'ออกจากระบบไม่สำเร็จ กรุณาลองอีกครั้ง');
+  resetSessionUI();
+  history.replaceState(null,'',location.pathname+location.search);
+  await showLogin();
+  toast('ออกจากระบบแล้ว');
+ }catch(error){if(epoch===sessionEpoch)toast(error.message,'error');}
+ finally{setLoading(button,false);}
+}
+async function checkSession(){
+ const epoch=sessionEpoch;
+ try{
+  const {response,data}=await request('/api/auth/me');
+  if(epoch!==sessionEpoch)return;
+  if(response.ok)await showDashboard(data.user);
+  else await showLogin();
+ }catch{if(epoch===sessionEpoch)await showLogin();}
+ finally{$('bootStatus').classList.add('hidden');}
+}
 
-<style id="premium-hover-upgrade">
-/* Xeno-inspired premium glass interaction layer */
-:root{--shine-x:50%;--shine-y:50%}
-.auth-shell,.card,.wallet,.home-hero,.home-panels article,.method-card,.account-menu,.tabs,.feature,.store-nav,.payment,.payment-info,.file-box,.toast{
-  position:relative;overflow:hidden;
-  isolation:isolate;
+document.querySelectorAll('[data-amount]').forEach(button=>button.addEventListener('click',()=>{
+ $('topupAmount').value=button.dataset.amount;updatePresets();
+}));
+function updatePresets(){document.querySelectorAll('[data-amount]').forEach(button=>{
+ const active=Number($('topupAmount').value)===Number(button.dataset.amount);
+ button.classList.toggle('selected',active);button.setAttribute('aria-pressed',String(active));
+});}
+$('topupAmount').addEventListener('input',updatePresets);
+$('slip').addEventListener('change',()=>{
+ clearSlipPreview();
+ const file=$('slip').files[0];
+ if(!file)return;
+ if(file.type&&!file.type.startsWith('image/')){$('slip').value='';toast('กรุณาเลือกไฟล์รูปภาพสลิป','error');return;}
+ $('fileName').textContent=file.name;
+ slipObjectURL=URL.createObjectURL(file);
+ $('slipPreview').src=slipObjectURL;$('slipPreview').classList.remove('hidden');
+});
+$('slipPreview').addEventListener('error',()=>{$('slipPreview').classList.add('hidden');});
+$('qrImage').addEventListener('error',()=>{if($('qrImage').hasAttribute('src'))$('qrError').classList.remove('hidden');});
+$('qrImage').addEventListener('load',()=>{$('qrError').classList.add('hidden');});
+document.addEventListener('visibilitychange',()=>{
+ if(!document.hidden&&currentPaymentExpiresAt&&paymentNow()>=currentPaymentExpiresAt){setPaymentExpiredUI();loadTransactions();}
+});
+
+// Lightweight drifting particles: capped density/DPR, paused in background tabs.
+const canvas=$('particles'),ctx=canvas.getContext('2d');
+let particles=[],width=0,height=0,particleFrame=0,lastFrame=0;
+const pointer={x:-1000,y:-1000};
+function resizeParticles(){
+ width=innerWidth;height=innerHeight;
+ const dpr=Math.min(devicePixelRatio||1,1.75);
+ canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
+ if(!ctx)return;
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+ const count=Math.max(24,Math.min(68,Math.round(width*height/21000)));
+ particles=Array.from({length:count},()=>({x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.15+.45,vx:(Math.random()-.5)*.16,vy:-(Math.random()*.16+.06),alpha:Math.random()*.35+.12,phase:Math.random()*Math.PI*2}));
+ drawParticles(0);syncParticleLoop();
 }
-.auth-shell::before,.card::before,.wallet::before,.home-hero::before,.home-panels article::before,.method-card::before,.account-menu::before,.feature::before,.store-nav::before,.payment::before,.payment-info::before,.file-box::before,.toast::before{
-  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(280px circle at var(--shine-x) var(--shine-y),rgba(255,255,255,.14),rgba(140,180,255,.055) 22%,transparent 58%);
-  opacity:0;transition:opacity .35s ease;
+function drawParticles(delta){
+ if(!ctx)return;
+ ctx.clearRect(0,0,width,height);
+ const movement=delta/16.67;
+ particles.forEach(p=>{
+  p.x+=p.vx*movement;p.y+=p.vy*movement;p.phase+=.003*movement;
+  if(p.y< -10)p.y=height+10;if(p.x< -10)p.x=width+10;if(p.x>width+10)p.x=-10;
+  const distance=Math.hypot(p.x-pointer.x,p.y-pointer.y);
+  const glow=distance<150?(1-distance/150)*.22:0;
+  ctx.beginPath();ctx.arc(p.x+Math.sin(p.phase)*7,p.y,p.r,0,Math.PI*2);
+  ctx.fillStyle='rgba(199,179,248,'+(p.alpha+glow)+')';ctx.fill();
+ });
 }
-.auth-shell::after,.card::after,.wallet::after,.home-hero::after,.home-panels article::after,.method-card::after,.account-menu::after,.feature::after,.store-nav::after,.payment::after,.payment-info::after,.file-box::after,.toast::after{
-  content:"";position:absolute;inset:-80%;pointer-events:none;z-index:0;
-  background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.10) 46%,rgba(255,255,255,.30) 50%,rgba(255,255,255,.07) 54%,transparent 62%);
-  transform:translateX(-55%) rotate(8deg);opacity:0;transition:transform .75s cubic-bezier(.16,1,.3,1),opacity .35s ease;
+function particleTick(now){
+ particleFrame=0;
+ if(document.hidden||!motionEnabled())return;
+ const delta=lastFrame?Math.min(now-lastFrame,40):16.67;lastFrame=now;
+ drawParticles(delta);
+ particleFrame=requestAnimationFrame(particleTick);
 }
-.auth-shell:hover::before,.card:hover::before,.wallet:hover::before,.home-hero:hover::before,.home-panels article:hover::before,.method-card:hover::before,.account-menu:hover::before,.feature:hover::before,.store-nav:hover::before,.payment:hover::before,.payment-info:hover::before,.file-box:hover::before,.toast:hover::before{opacity:1}
-.auth-shell:hover::after,.card:hover::after,.wallet:hover::after,.home-hero:hover::after,.home-panels article:hover::after,.method-card:hover::after,.account-menu:hover::after,.feature:hover::after,.store-nav:hover::after,.payment:hover::after,.payment-info:hover::after,.file-box:hover::after,.toast:hover::after{transform:translateX(55%) rotate(8deg);opacity:1}
-.auth-shell>* ,.card>* ,.wallet>* ,.home-hero>* ,.home-panels article>* ,.method-card>* ,.account-menu>* ,.feature>* ,.store-nav>* ,.payment>* ,.payment-info>* ,.file-box>* ,.toast>*{position:relative;z-index:1}
-.card,.method-card,.home-panels article,.feature,.wallet,.home-hero{transition:transform .45s cubic-bezier(.16,1,.3,1),border-color .35s ease,box-shadow .45s ease,background .35s ease,backdrop-filter .45s ease}
-.card:hover{transform:translateY(-5px);border-color:rgba(170,195,255,.25);box-shadow:0 28px 70px rgba(0,0,0,.35),0 0 35px rgba(105,140,255,.06),inset 0 1px rgba(255,255,255,.08);backdrop-filter:blur(24px) saturate(1.18)}
-.method-card:hover{transform:translateY(-7px) scale(1.012);border-color:rgba(170,195,255,.35);box-shadow:0 25px 65px rgba(0,0,0,.38),0 0 40px rgba(105,145,255,.11);background:linear-gradient(120deg,rgba(29,34,45,.95),rgba(14,16,21,.92));}
-.home-panels article:hover,.feature:hover{transform:translateY(-4px);border-color:rgba(160,190,255,.23);box-shadow:0 18px 45px rgba(0,0,0,.28),0 0 28px rgba(105,145,255,.07);}
-.wallet:hover{transform:translateY(-4px) scale(1.005);border-color:rgba(180,205,255,.28);box-shadow:0 30px 80px rgba(0,0,0,.38),0 0 45px rgba(110,150,255,.10),inset 0 1px rgba(255,255,255,.12)}
-.home-hero:hover{border-color:rgba(160,190,255,.22);box-shadow:0 30px 80px rgba(0,0,0,.30),0 0 50px rgba(90,135,255,.07);}
-.primary-btn::after,.home-cta::after,.copy-btn::after,.secondary-btn::after{content:"";position:absolute;inset:-100% -40%;background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.55) 50%,transparent 58%);transform:translateX(-70%);transition:transform .7s cubic-bezier(.16,1,.3,1);pointer-events:none}
-.primary-btn:hover::after,.home-cta:hover::after,.copy-btn:hover::after,.secondary-btn:hover::after{transform:translateX(70%)}
-.primary-btn,.home-cta,.copy-btn,.secondary-btn{overflow:hidden}
-input:hover{background:rgba(15,20,29,.9);box-shadow:0 0 25px rgba(100,140,255,.045)}
-input:focus{background:rgba(12,17,25,.94)}
-.snow-layer{z-index:0;filter:blur(.15px)}
-.snow-dot{will-change:transform,opacity;animation-name:snowFlow!important}
-@keyframes snowFlow{0%{transform:translate3d(0,-8vh,0) rotate(0deg);opacity:0}12%{opacity:var(--opacity)}35%{transform:translate3d(calc(var(--drift)*.35),35vh,0) rotate(90deg)}65%{transform:translate3d(calc(var(--drift)*-.25),70vh,0) rotate(190deg)}88%{opacity:var(--opacity)}100%{transform:translate3d(var(--drift),112vh,0) rotate(300deg);opacity:0}}
-@media(prefers-reduced-motion:reduce){.snow-dot{animation:none!important}.auth-shell::after,.card::after,.wallet::after,.home-hero::after,.home-panels article::after,.method-card::after,.account-menu::after,.feature::after,.store-nav::after,.payment::after,.payment-info::after,.file-box::after,.toast::after{display:none!important}}
-</style>
-<script>
-(()=>{
- const selectors='.auth-shell,.card,.wallet,.home-hero,.home-panels article,.method-card,.account-menu,.feature,.store-nav,.payment,.payment-info,.file-box,.toast';
- const move=e=>{const r=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty('--shine-x',((e.clientX-r.left)/r.width*100)+'%');e.currentTarget.style.setProperty('--shine-y',((e.clientY-r.top)/r.height*100)+'%')};
- const reset=e=>{e.currentTarget.style.setProperty('--shine-x','50%');e.currentTarget.style.setProperty('--shine-y','50%')};
- const bind=()=>document.querySelectorAll(selectors).forEach(el=>{if(el.dataset.shineBound)return;el.dataset.shineBound='1';el.addEventListener('pointermove',move);el.addEventListener('pointerleave',reset)});
- bind();new MutationObserver(bind).observe(document.body,{subtree:true,childList:true});
-})();
+function syncParticleLoop(){
+ if(particleFrame){cancelAnimationFrame(particleFrame);particleFrame=0;}
+ lastFrame=0;
+ if(motionEnabled()&&!document.hidden&&ctx)particleFrame=requestAnimationFrame(particleTick);
+ else drawParticles(0);
+}
+function updateMotion(){
+ document.documentElement.classList.toggle('motion-paused',!motionEnabled());
+ $('motionButton').innerHTML=icon(motionEnabled()?'pause':'play');
+ const label=motionEnabled()?'หยุดภาพเคลื่อนไหว':motionQuery.matches?'อุปกรณ์ตั้งค่าให้ลดการเคลื่อนไหว':'เปิดภาพเคลื่อนไหว';
+ $('motionButton').setAttribute('aria-label',label);$('motionButton').title=label;
+ $('motionButton').setAttribute('aria-pressed',String(!motionEnabled()));
+ $('footerMotionButton').innerHTML=$('motionButton').innerHTML;
+ $('footerMotionButton').setAttribute('aria-label',label);$('footerMotionButton').title=label;
+ $('footerMotionButton').setAttribute('aria-pressed',String(!motionEnabled()));
+ if(!motionEnabled())document.getAnimations().forEach(a=>a.cancel());
+ syncParticleLoop();
+}
+function toggleMotion(){
+ if(motionQuery.matches){toast('กำลังใช้การลดการเคลื่อนไหวตามการตั้งค่าของอุปกรณ์','info');return;}
+ motionPaused=!motionPaused;
+ try{localStorage.setItem('gx-motion-paused',String(motionPaused));}catch{}
+ updateMotion();
+}
+motionQuery.addEventListener('change',updateMotion);
+document.addEventListener('visibilitychange',syncParticleLoop);
+let resizeTimer;
+window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(resizeParticles,120);});
+window.addEventListener('pointermove',event=>{pointer.x=event.clientX;pointer.y=event.clientY;},{passive:true});
+window.addEventListener('pointerout',event=>{if(!event.relatedTarget){pointer.x=-1000;pointer.y=-1000;}});
+window.addEventListener('pagehide',event=>{stopPaymentCountdown();cancelAnimationFrame(particleFrame);if(!event.persisted&&slipObjectURL)URL.revokeObjectURL(slipObjectURL);});
+window.addEventListener('pageshow',event=>{if(event.persisted){syncParticleLoop();if(currentPaymentId&&currentPaymentExpiresAt)startPaymentCountdown(currentPaymentExpiresAt,paymentNow());}});
+resizeParticles();updateMotion();updatePresets();
+animateElement($('authView'),[{opacity:0,transform:'translateY(20px) scale(.975)'},{opacity:1,transform:'translateY(0) scale(1)'}],{duration:700,easing:'cubic-bezier(.22,1,.36,1)'});
+checkSession();
+
 </script>
 </body>
 </html>
