@@ -564,10 +564,21 @@ body{min-width:0}.home-toolbar{flex-wrap:wrap}
 // Existing server contract is preserved. Serve this file from the same origin as /api/*.
 const $ = id => document.getElementById(id);
 const icon = name => '<svg aria-hidden="true"><use href="#i-' + name + '"></use></svg>';
-const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
-let motionPaused = false, motionOverride = false;
-try { motionPaused = localStorage.getItem('gx-motion-paused') === 'true'; motionOverride = localStorage.getItem('gx-motion-override') === 'true'; } catch {}
-const motionEnabled = () => !motionPaused && (!motionQuery.matches || motionOverride);
+const motionQuery =
+    matchMedia('(prefers-reduced-motion: reduce)');
+
+let motionPaused = false;
+let motionOverride = true;
+
+try {
+    motionPaused =
+        localStorage.getItem(
+            'gx-motion-paused'
+        ) === 'true';
+} catch {}
+
+const motionEnabled = () =>
+    !motionPaused;
 let authenticated = false, sessionEpoch = 0;
 let currentPaymentId = null, currentPaymentExpiresAt = null;
 let paymentServerOffsetMs = 0, paymentCountdownTimer = null, paymentRevision = 0;
