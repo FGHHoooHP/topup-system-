@@ -417,6 +417,54 @@ main{padding-top:28px}.glass{background:var(--panel);box-shadow:inset 0 1px #fff
 html.motion-paused .glow-surface:hover{transform:none}
 
 body{min-width:0}.home-toolbar{flex-wrap:wrap}
+
+
+/* ===== SMOOTH PERFORMANCE PATCH =====
+   Keeps the same visual language while reducing expensive repaint/compositing work. */
+.header-inner{
+ backdrop-filter:blur(10px);
+ -webkit-backdrop-filter:blur(10px);
+}
+.glass{
+ backdrop-filter:blur(10px);
+ -webkit-backdrop-filter:blur(10px);
+}
+.account-menu{
+ backdrop-filter:blur(12px);
+ -webkit-backdrop-filter:blur(12px);
+}
+.floating-chip,.toast{
+ backdrop-filter:blur(8px);
+ -webkit-backdrop-filter:blur(8px);
+}
+.product-dialog::backdrop{
+ backdrop-filter:blur(2px);
+ -webkit-backdrop-filter:blur(2px);
+}
+.banner-slide{
+ transition:opacity .24s ease,transform .26s var(--ease),visibility .24s;
+ will-change:transform,opacity;
+ backface-visibility:hidden;
+ transform:translate3d(24px,0,0) scale(.988);
+}
+.banner-slide.is-active{transform:translate3d(0,0,0) scale(1)}
+.auth-pane,[data-store-page],.account-menu{
+ backface-visibility:hidden;
+ transform:translateZ(0);
+}
+.glow-surface{
+ transition:transform .2s var(--ease),border-color .2s;
+}
+.glow-surface::before,
+.stat-card::after,.product-card::after,.category-card::after,.card::after,.method-card::after{
+ transition:opacity .18s linear;
+}
+@media(hover:hover) and (pointer:fine){
+ .glow-surface:hover{
+  box-shadow:0 8px 24px #0004,0 0 14px #ffffff03;
+ }
+}
+
 </style>
 </head>
 <body>
@@ -608,7 +656,7 @@ async function transitionGroup(group, elements, target, {instant=false, directio
   await animateElement(previous, [
    {opacity:1,transform:'translate3d(0,0,0) scale(1)'},
    {opacity:0,transform:'translate3d(' + (-8*direction) + 'px,-5px,0) scale(.988)'}
-  ], {duration:200,easing:'ease-out'});
+  ], {duration:120,easing:'ease-out'});
  }
  if (transitionVersions.get(group) !== version) return;
  elements.forEach(el => { el.classList.toggle('hidden', el !== target); el.inert = el !== target; });
@@ -616,7 +664,7 @@ async function transitionGroup(group, elements, target, {instant=false, directio
   await animateElement(target, [
    {opacity:0,transform:'translate3d(' + (12*direction) + 'px,13px,0) scale(.982)'},
    {opacity:1,transform:'translate3d(0,0,0) scale(1)'}
-  ], {duration:350,easing:'cubic-bezier(.22,1,.36,1)'});
+  ], {duration:220,easing:'cubic-bezier(.22,1,.36,1)'});
  }
 }
 function revealCards(container) {
@@ -624,7 +672,7 @@ function revealCards(container) {
  container.querySelectorAll('.reveal').forEach((el,i) => {
   el.getAnimations().forEach(a => a.cancel());
   animateElement(el,[{opacity:0,transform:'translateY(18px) scale(.985)'},{opacity:1,transform:'translateY(0) scale(1)'}],
-   {duration:350,delay:i*55,easing:'cubic-bezier(.22,1,.36,1)'});
+   {duration:220,delay:Math.min(i,5)*25,easing:'cubic-bezier(.22,1,.36,1)'});
  });
 }
 
@@ -1112,11 +1160,11 @@ let particles=[],width=0,height=0,particleFrame=0,lastFrame=0;
 const pointer={x:-1000,y:-1000};
 function resizeParticles(){
  width=innerWidth;height=innerHeight;
- const dpr=Math.min(devicePixelRatio||1,1.75);
+ const dpr=Math.min(devicePixelRatio||1,1.25);
  canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
  if(!ctx)return;
  ctx.setTransform(dpr,0,0,dpr,0,0);
- const lowPower=width<600||(navigator.hardwareConcurrency||4)<=4;const count=Math.max(18,Math.min(lowPower?28:60,Math.round(width*height/24000)));
+ const lowPower=width<600||(navigator.hardwareConcurrency||4)<=4;const count=Math.max(12,Math.min(lowPower?18:32,Math.round(width*height/36000)));
  particles=Array.from({length:count},()=>({x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.15+.45,vx:(Math.random()-.5)*.16,vy:-(Math.random()*.16+.06),alpha:Math.random()*.35+.12,phase:Math.random()*Math.PI*2}));
  drawParticles(0);syncParticleLoop();
 }
@@ -1326,29 +1374,39 @@ document.addEventListener('visibilitychange',restartBanner);
 motionQuery.addEventListener('change',restartBanner);
 new MutationObserver(()=>{restartBanner();if(!motionEnabled())clearGlow();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 
-// One coalesced pointer pass per frame; no document-wide MutationObserver.
+// Lightweight pointer glow: only the surface under the mouse is measured each frame.
 const finePointer=matchMedia('(hover:hover) and (pointer:fine)');
-let glowTargets=[],glowFrame=0,mousePoint={x:-9999,y:-9999};
+let glowFrame=0,activeGlow=null,glowTarget=null,glowX=-9999,glowY=-9999;
 function refreshGlowTargets(){
- glowTargets=[...document.querySelectorAll('.stat-card,.product-card,.category-card,.card,.method-card,.primary-btn,.secondary-btn,.steps-card')];
- glowTargets.forEach(el=>el.classList.add('glow-surface'));
+ document.querySelectorAll('.stat-card,.product-card,.category-card,.card,.method-card,.primary-btn,.secondary-btn,.steps-card')
+  .forEach(el=>el.classList.add('glow-surface'));
 }
-function clearGlow(){if(glowFrame)cancelAnimationFrame(glowFrame);glowFrame=0;glowTargets.forEach(el=>el.style.setProperty('--glow-level','0'));}
+function clearGlow(){
+ if(glowFrame){cancelAnimationFrame(glowFrame);glowFrame=0;}
+ if(activeGlow)activeGlow.style.setProperty('--glow-level','0');
+ activeGlow=null;glowTarget=null;
+}
 function updateGlow(){
  glowFrame=0;
  if(!finePointer.matches||!motionEnabled()||document.hidden){clearGlow();return;}
- glowTargets.forEach(el=>{
-  const rect=el.getBoundingClientRect();
-  if(!rect.width||!rect.height||rect.bottom<0||rect.top>innerHeight){el.style.setProperty('--glow-level','0');return;}
-  const dx=Math.max(rect.left-mousePoint.x,0,mousePoint.x-rect.right),dy=Math.max(rect.top-mousePoint.y,0,mousePoint.y-rect.bottom);
-  const proximity=Math.max(0,1-Math.hypot(dx,dy)/75);
-  el.style.setProperty('--glow-level',String(proximity*.8));
-  if(proximity){el.style.setProperty('--glow-x',(mousePoint.x-rect.left)+'px');el.style.setProperty('--glow-y',(mousePoint.y-rect.top)+'px');}
- });
+ const el=glowTarget;
+ if(activeGlow&&activeGlow!==el)activeGlow.style.setProperty('--glow-level','0');
+ activeGlow=el;
+ if(!el)return;
+ const rect=el.getBoundingClientRect();
+ if(!rect.width||!rect.height){el.style.setProperty('--glow-level','0');return;}
+ el.style.setProperty('--glow-level','0.65');
+ el.style.setProperty('--glow-x',(glowX-rect.left)+'px');
+ el.style.setProperty('--glow-y',(glowY-rect.top)+'px');
 }
-document.addEventListener('pointermove',event=>{if(event.pointerType==='touch')return;mousePoint={x:event.clientX,y:event.clientY};if(!glowFrame)glowFrame=requestAnimationFrame(updateGlow);},{passive:true});
+document.addEventListener('pointermove',event=>{
+ if(event.pointerType==='touch')return;
+ glowX=event.clientX;glowY=event.clientY;
+ glowTarget=event.target.closest('.glow-surface');
+ if(!glowFrame)glowFrame=requestAnimationFrame(updateGlow);
+},{passive:true});
 document.addEventListener('pointerout',event=>{if(!event.relatedTarget)clearGlow();});
-window.addEventListener('scroll',()=>{if(!glowFrame)glowFrame=requestAnimationFrame(updateGlow);},{passive:true});
+window.addEventListener('scroll',()=>{if(activeGlow&&!glowFrame)glowFrame=requestAnimationFrame(updateGlow);},{passive:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)clearGlow();});
 let storefrontRefresh=setInterval(()=>{if(!document.hidden&&currentRoute==='home')loadStorefront();},60000);
 window.addEventListener('pagehide',()=>{clearInterval(bannerTimer);clearInterval(storefrontRefresh);clearGlow();});
