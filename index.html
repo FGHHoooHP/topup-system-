@@ -614,6 +614,62 @@ input::placeholder{
     animation:fadeIn .4s ease;
 }
 
+.payment-timer{
+    margin:14px 0 8px;
+    padding:14px 16px;
+    border-radius:12px;
+    background:rgba(230,190,90,.07);
+    border:1px solid rgba(230,190,90,.14);
+    text-align:center;
+}
+
+.payment-timer-label{
+    color:#8d98aa;
+    font-size:10px;
+    letter-spacing:.6px;
+    margin-bottom:5px;
+}
+
+.payment-timer-value{
+    font-size:28px;
+    font-weight:900;
+    letter-spacing:1px;
+    color:#f1d993;
+}
+
+.payment-timer-note{
+    margin-top:5px;
+    font-size:10px;
+    color:#687486;
+}
+
+.payment-timer.expired{
+    background:rgba(255,80,100,.07);
+    border-color:rgba(255,80,100,.16);
+}
+
+.payment-timer.expired .payment-timer-value{
+    color:#ff7d8d;
+}
+
+.payment-timer.success{
+    background:rgba(80,220,150,.08);
+    border-color:rgba(80,220,150,.15);
+}
+
+.payment-timer.success .payment-timer-value{
+    color:#72e5ab;
+}
+
+.payment-expired .qr{
+    opacity:.28;
+    filter:grayscale(1);
+}
+
+.payment-expired .file-box{
+    opacity:.55;
+}
+
 .qr{
     width:220px;
     max-width:100%;
@@ -745,6 +801,12 @@ input[type=file]::file-selector-button{
     color:#ff7d8d;
     background:rgba(255,80,100,.07);
     border:1px solid rgba(255,80,100,.12);
+}
+
+.status-expired{
+    color:#ff9a7d;
+    background:rgba(255,120,80,.07);
+    border:1px solid rgba(255,120,80,.13);
 }
 
 /* =========================
@@ -1457,6 +1519,28 @@ button:active,.method-card:active,.nav-item:active{transform:translateY(0) scale
                         สแกน QR เพื่อชำระเงิน
                     </h3>
 
+                    <div
+                        class="payment-timer"
+                        id="paymentTimer">
+
+                        <div class="payment-timer-label">
+                            TIME REMAINING
+                        </div>
+
+                        <div
+                            class="payment-timer-value"
+                            id="paymentTimerValue">
+                            05:00
+                        </div>
+
+                        <div
+                            class="payment-timer-note"
+                            id="paymentTimerNote">
+                            กรุณาโอนและส่งสลิปภายใน 5 นาที
+                        </div>
+
+                    </div>
+
                     <img
                         id="qrImage"
                         class="qr"
@@ -1548,104 +1632,11 @@ button:active,.method-card:active,.nav-item:active{transform:translateY(0) scale
 </section><footer class="store-footer">GAME STORE <span>MEMBER · WALLET · CHECK SLIP</span></footer></div></section><script>
 
 let currentPaymentId = null;
-let paymentExpiresAt = null;
-let paymentCountdown = null;
-function startPaymentCountdown(
-    expiresAt
-) {
-    paymentExpiresAt =
-        new Date(
-            expiresAt
-        ).getTime();
+let currentPaymentExpiresAt = null;
+let paymentServerOffsetMs = 0;
+let paymentCountdownTimer = null;
 
-    if (paymentCountdown) {
-        clearInterval(
-            paymentCountdown
-        );
-    }
 
-    let timer =
-        document.getElementById(
-            "paymentTimer"
-        );
-
-    if (!timer) {
-        timer =
-            document.createElement(
-                "div"
-            );
-
-        timer.id =
-            "paymentTimer";
-
-        timer.style.marginTop =
-            "12px";
-
-        timer.style.fontWeight =
-            "700";
-
-        timer.style.textAlign =
-            "center";
-
-        document
-            .getElementById(
-                "paymentBox"
-            )
-            .prepend(timer);
-    }
-
-    function update() {
-
-        const remaining =
-            paymentExpiresAt -
-            Date.now();
-
-        if (remaining <= 0) {
-
-            clearInterval(
-                paymentCountdown
-            );
-
-            timer.textContent =
-                "หมดเวลาแล้ว กรุณาสร้างรายการใหม่";
-
-            const button =
-                document.getElementById(
-                    "verifyButton"
-                );
-
-            if (button) {
-                button.disabled = true;
-            }
-
-            return;
-        }
-
-        const totalSeconds =
-            Math.ceil(
-                remaining / 1000
-            );
-
-        const minutes =
-            Math.floor(
-                totalSeconds / 60
-            );
-
-        const seconds =
-            totalSeconds % 60;
-
-        timer.textContent =
-            `กรุณาโอนและส่งสลิปภายใน ${minutes}:${String(seconds).padStart(2, "0")}`;
-    }
-
-    update();
-
-    paymentCountdown =
-        setInterval(
-            update,
-            1000
-        );
-}
 /* =========================
    UI
 ========================= */
@@ -2081,6 +2072,342 @@ function animateBalance(target){
 }
 
 
+
+function stopPaymentCountdown(){
+
+    if(paymentCountdownTimer){
+
+        clearInterval(
+            paymentCountdownTimer
+        );
+
+        paymentCountdownTimer = null;
+
+    }
+
+}
+
+
+function paymentNow(){
+
+    return Date.now() +
+        paymentServerOffsetMs;
+
+}
+
+
+function setPaymentExpiredUI(){
+
+    stopPaymentCountdown();
+
+    const box =
+        document.getElementById(
+            "paymentBox"
+        );
+
+    const timer =
+        document.getElementById(
+            "paymentTimer"
+        );
+
+    const value =
+        document.getElementById(
+            "paymentTimerValue"
+        );
+
+    const note =
+        document.getElementById(
+            "paymentTimerNote"
+        );
+
+    const verifyButton =
+        document.getElementById(
+            "verifyButton"
+        );
+
+    const slip =
+        document.getElementById(
+            "slip"
+        );
+
+    box.classList.add(
+        "payment-expired"
+    );
+
+    timer.classList.remove(
+        "success"
+    );
+
+    timer.classList.add(
+        "expired"
+    );
+
+    value.textContent =
+        "00:00";
+
+    note.textContent =
+        "QR หมดอายุแล้ว กรุณาสร้างรายการใหม่";
+
+    verifyButton.disabled =
+        true;
+
+    slip.disabled =
+        true;
+
+    currentPaymentId =
+        null;
+
+    currentPaymentExpiresAt =
+        null;
+
+}
+
+
+function setPaymentSuccessUI(){
+
+    stopPaymentCountdown();
+
+    const box =
+        document.getElementById(
+            "paymentBox"
+        );
+
+    const timer =
+        document.getElementById(
+            "paymentTimer"
+        );
+
+    const value =
+        document.getElementById(
+            "paymentTimerValue"
+        );
+
+    const note =
+        document.getElementById(
+            "paymentTimerNote"
+        );
+
+    const verifyButton =
+        document.getElementById(
+            "verifyButton"
+        );
+
+    const slip =
+        document.getElementById(
+            "slip"
+        );
+
+    box.classList.remove(
+        "payment-expired"
+    );
+
+    timer.classList.remove(
+        "expired"
+    );
+
+    timer.classList.add(
+        "success"
+    );
+
+    value.textContent =
+        "PAID";
+
+    note.textContent =
+        "ชำระเงินสำเร็จแล้ว";
+
+    verifyButton.disabled =
+        true;
+
+    slip.disabled =
+        true;
+
+    currentPaymentId =
+        null;
+
+    currentPaymentExpiresAt =
+        null;
+
+}
+
+
+function startPaymentCountdown(
+    expiresAt,
+    serverNow
+){
+
+    stopPaymentCountdown();
+
+    const expires =
+        new Date(
+            expiresAt
+        ).getTime();
+
+    const server =
+        new Date(
+            serverNow
+        ).getTime();
+
+    if(
+        !Number.isFinite(expires) ||
+        !Number.isFinite(server)
+    ){
+
+        setPaymentExpiredUI();
+        return;
+
+    }
+
+    paymentServerOffsetMs =
+        server - Date.now();
+
+    currentPaymentExpiresAt =
+        expires;
+
+    const box =
+        document.getElementById(
+            "paymentBox"
+        );
+
+    const timer =
+        document.getElementById(
+            "paymentTimer"
+        );
+
+    const value =
+        document.getElementById(
+            "paymentTimerValue"
+        );
+
+    const note =
+        document.getElementById(
+            "paymentTimerNote"
+        );
+
+    const verifyButton =
+        document.getElementById(
+            "verifyButton"
+        );
+
+    const slip =
+        document.getElementById(
+            "slip"
+        );
+
+    box.classList.remove(
+        "payment-expired"
+    );
+
+    timer.classList.remove(
+        "expired",
+        "success"
+    );
+
+    verifyButton.disabled =
+        false;
+
+    slip.disabled =
+        false;
+
+    note.textContent =
+        "กรุณาโอนและส่งสลิปภายใน 5 นาที";
+
+    function update(){
+
+        const remaining =
+            currentPaymentExpiresAt -
+            paymentNow();
+
+        if(remaining <= 0){
+
+            setPaymentExpiredUI();
+
+            loadTransactions();
+
+            return;
+
+        }
+
+        const totalSeconds =
+            Math.ceil(
+                remaining / 1000
+            );
+
+        const minutes =
+            Math.floor(
+                totalSeconds / 60
+            );
+
+        const seconds =
+            totalSeconds % 60;
+
+        value.textContent =
+            `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+
+    }
+
+    update();
+
+    paymentCountdownTimer =
+        setInterval(
+            update,
+            1000
+        );
+
+}
+
+
+function showPayment(
+    payment,
+    qrUrl
+){
+
+    currentPaymentId =
+        payment.id;
+
+    document
+        .getElementById(
+            "paymentId"
+        )
+        .textContent =
+        currentPaymentId;
+
+    document
+        .getElementById(
+            "paymentAmount"
+        )
+        .textContent =
+        Number(
+            payment.amount
+        ).toFixed(2);
+
+    document
+        .getElementById(
+            "qrImage"
+        )
+        .src =
+        qrUrl;
+
+    document
+        .getElementById(
+            "paymentBox"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+    document
+        .getElementById(
+            "slip"
+        )
+        .value = "";
+
+    startPaymentCountdown(
+        payment.expires_at,
+        payment.server_now
+    );
+
+}
+
 /* =========================
    TOPUP
 ========================= */
@@ -2129,6 +2456,48 @@ async function createTopup(){
         const data =
             await response.json();
 
+        /*
+         * ถ้ามี PENDING เดิมที่ยังไม่หมดเวลา
+         * Server จะคืน QR เดิมมาให้ใช้ต่อ
+         */
+        if(
+            response.status === 409 &&
+            data.code ===
+                "ACTIVE_PAYMENT_EXISTS" &&
+            data.payment
+        ){
+
+            showPayment(
+                data.payment,
+                data.qrUrl
+            );
+
+            toast(
+                "มีรายการเดิมที่ยังไม่หมดเวลา ใช้ QR เดิมต่อได้เลย",
+                "error"
+            );
+
+            setLoading(
+                button,
+                false
+            );
+
+            setTimeout(()=>{
+
+                document
+                    .getElementById(
+                        "paymentBox"
+                    )
+                    .scrollIntoView({
+                        behavior:"smooth",
+                        block:"center"
+                    });
+
+            },100);
+
+            return;
+        }
+
         if(!response.ok){
 
             toast(
@@ -2137,56 +2506,37 @@ async function createTopup(){
                 "error"
             );
 
-            setLoading(button,false);
+            setLoading(
+                button,
+                false
+            );
+
             return;
         }
 
-        currentPaymentId =
-            data.payment.id;
-
-        document
-            .getElementById("paymentId")
-            .textContent =
-            currentPaymentId;
-
-        document
-            .getElementById("paymentAmount")
-            .textContent =
-            Number(
-                data.payment.amount
-            ).toFixed(2);
-
-        document
-            .getElementById("qrImage")
-            .src =
-            data.qrUrl;
-
-        document
-            .getElementById("paymentBox")
-            .classList.remove("hidden");
-        const verifyButton =
-            document.getElementById(
-                "verifyButton"
-            );
-        
-        if (verifyButton) {
-            verifyButton.disabled = false;
-        }
-        
-        startPaymentCountdown(
-            data.payment.expires_at
+        showPayment(
+            data.payment,
+            data.qrUrl
         );
+
         toast(
-            "สร้างรายการเติมเงินแล้ว",
+            "สร้างรายการเติมเงินแล้ว มีเวลา 5 นาที",
             "success"
         );
 
-        setLoading(button,false);
+        setLoading(
+            button,
+            false
+        );
+
+        await loadTransactions();
 
         setTimeout(()=>{
 
             document
-                .getElementById("paymentBox")
+                .getElementById(
+                    "paymentBox"
+                )
                 .scrollIntoView({
                     behavior:"smooth",
                     block:"center"
@@ -2196,7 +2546,10 @@ async function createTopup(){
 
     }catch{
 
-        setLoading(button,false);
+        setLoading(
+            button,
+            false
+        );
 
         toast(
             "ไม่สามารถเชื่อมต่อ Server ได้",
@@ -2253,18 +2606,23 @@ async function verifySlip(){
 
     const button =
         document.getElementById("verifyButton");
-    if (
-        paymentExpiresAt &&
-        Date.now() >
-        paymentExpiresAt
-    ) {
+
+    if(
+        currentPaymentExpiresAt &&
+        paymentNow() >=
+            currentPaymentExpiresAt
+    ){
+
+        setPaymentExpiredUI();
+
         toast(
-            "รายการหมดเวลา 5 นาทีแล้ว กรุณาสร้างรายการใหม่",
+            "QR หมดเวลา 5 นาทีแล้ว กรุณาสร้างรายการใหม่",
             "error"
         );
-    
+
         return;
     }
+
     if(!file){
 
         toast(
@@ -2278,7 +2636,7 @@ async function verifySlip(){
     if(!currentPaymentId){
 
         toast(
-            "ไม่พบรายการเติมเงิน",
+            "ไม่พบรายการเติมเงิน หรือรายการหมดอายุแล้ว",
             "error"
         );
 
@@ -2298,7 +2656,10 @@ async function verifySlip(){
         currentPaymentId
     );
 
-    setLoading(button,true);
+    setLoading(
+        button,
+        true
+    );
 
     try{
 
@@ -2316,29 +2677,49 @@ async function verifySlip(){
 
         if(!response.ok){
 
+            if(
+                response.status === 410
+            ){
+                setPaymentExpiredUI();
+            }
+
             toast(
                 data.error ||
                 "ตรวจสอบสลิปไม่สำเร็จ",
                 "error"
             );
 
-            setLoading(button,false);
+            setLoading(
+                button,
+                false
+            );
+
+            await loadTransactions();
+
             return;
         }
+
+        setPaymentSuccessUI();
 
         toast(
             "เติมเงินสำเร็จ! ยอดเงินอัปเดตแล้ว",
             "success"
         );
 
-        setLoading(button,false);
+        setLoading(
+            button,
+            false
+        );
 
         await loadBalance();
         await loadTransactions();
 
     }catch{
 
-        setLoading(button,false);
+        setLoading(
+            button,
+            false
+        );
 
         toast(
             "ไม่สามารถเชื่อมต่อ Server ได้",
@@ -2423,6 +2804,15 @@ async function loadTransactions(){
                         "status-failed";
                 }
 
+                if(
+                    String(item.status)
+                    .toUpperCase()
+                    === "EXPIRED"
+                ){
+                    statusClass =
+                        "status-expired";
+                }
+
                 return `
 
                     <div class="transaction">
@@ -2437,9 +2827,9 @@ async function loadTransactions(){
 
                             <div class="transaction-date">
                                 ${
-                                    item.created_at
+                                    item.createdAt
                                     ? new Date(
-                                        item.created_at
+                                        item.createdAt
                                     ).toLocaleString(
                                         "th-TH"
                                     )
@@ -2487,7 +2877,11 @@ async function logout(){
 
     }catch{}
 
+    stopPaymentCountdown();
+
     currentPaymentId = null;
+    currentPaymentExpiresAt = null;
+    paymentServerOffsetMs = 0;
 
     toast(
         "ออกจากระบบแล้ว",
