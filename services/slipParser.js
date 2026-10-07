@@ -99,7 +99,7 @@ function findPeople(text) {
     };
 }
 
-async function parseSlip(filePath) {
+async function parseSlip(imageInput) {
     console.log("");
     console.log("========== OCR START ==========");
 
@@ -118,7 +118,10 @@ async function parseSlip(filePath) {
     );
 
     try {
-        const result = await worker.recognize(filePath);
+        const result =
+            await worker.recognize(
+                imageInput
+            );
 
         const raw_text =
             result?.data?.text || "";
@@ -141,12 +144,22 @@ async function parseSlip(filePath) {
             findTransactionId(raw_text);
 
         const parsed = {
-            sender: people.sender,
-            receiver: people.receiver,
+            sender:
+                people.sender,
+
+            receiver:
+                people.receiver,
+
             amount,
+
             transaction_id,
-            date: dateTime.date,
-            time: dateTime.time,
+
+            date:
+                dateTime.date,
+
+            time:
+                dateTime.time,
+
             raw_text
         };
 
