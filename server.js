@@ -122,6 +122,14 @@ async function initDatabase() {
                 DEFAULT CURRENT_TIMESTAMP
         );
 
+        ALTER TABLE payments
+        ADD COLUMN IF NOT EXISTS
+            qr_started_at TIMESTAMPTZ;
+
+        ALTER TABLE payments
+        ADD COLUMN IF NOT EXISTS
+            expires_at TIMESTAMPTZ;
+
         CREATE INDEX IF NOT EXISTS
         idx_sessions_token
         ON sessions(token_hash);
@@ -970,22 +978,28 @@ app.post(
                     INSERT INTO payments (
                         user_id,
                         amount,
-                        status
+                        status,
+                        qr_started_at,
+                        expires_at
                     )
-            
+
                     VALUES (
                         $1,
                         $2,
-                        'PENDING'
+                        'PENDING',
+                        NOW(),
+                        NOW() + INTERVAL '5 minutes'
                     )
-            
+
                     RETURNING
                         id,
                         amount,
                         status,
                         created_at,
-                        created_at + INTERVAL '5 minutes'
-                            AS expires_at
+                        qr_started_at,
+                        expires_at,
+                        clock_timestamp()
+                            AS server_now
                     `,
                     [
                         req.user.id,
@@ -1032,21 +1046,32 @@ app.post(
 
             if (!req.file) {
                 return res.status(400).json({
-                    error: "กรุณาเลือกสลิป"
+                    error:
+                        "กรุณาเลือกสลิป"
                 });
             }
 
             const paymentId =
-                Number(req.body.paymentId);
+                Number(
+                    req.body.paymentId
+                );
 
             if (
-                !Number.isInteger(paymentId) ||
+                !Number.isInteger(
+                    paymentId
+                ) ||
                 paymentId <= 0
             ) {
                 return res.status(400).json({
-                    error: "Payment ID ไม่ถูกต้อง"
+                    error:
+                        "Payment ID ไม่ถูกต้อง"
                 });
             }
+
+            /*
+             * ใช้เวลาจาก PostgreSQL Server
+             * ไม่ใช้เวลาจากเครื่องผู้ใช้
+             */
 
             const paymentResult =
                 await pool.query(
@@ -1057,8 +1082,14 @@ app.post(
                         amount,
                         transaction_id,
                         status,
-                        created_at
+                        created_at,
+                        qr_started_at,
+                        expires_at,
+                        clock_timestamp()
+                            AS server_now
+
                     FROM payments
+
                     WHERE id = $1
                     AND user_id = $2
                     `,
@@ -1068,25 +1099,78 @@ app.post(
                     ]
                 );
 
-            if (!paymentResult.rows.length) {
+            if (
+                !paymentResult.rows.length
+            ) {
                 return res.status(404).json({
-                    error: "ไม่พบรายการเติมเงิน"
+                    error:
+                        "ไม่พบรายการเติมเงิน"
                 });
             }
 
             const payment =
                 paymentResult.rows[0];
-           
+
+            if (
+                payment.status !==
+                "PENDING"
+            ) {
+                return res.status(409).json({
+                    error:
+                        "รายการนี้ถูกตรวจสอบไปแล้ว"
+                });
+            }
+
+            /*
+             * รายการเก่าที่สร้างก่อนระบบ 5 นาที
+             * จะไม่มี qr_started_at/expires_at
+             */
+
+            if (
+                !payment.qr_started_at ||
+                !payment.expires_at
+            ) {
+                return res.status(410).json({
+                    error:
+                        "รายการนี้ไม่มีเวลา QR กรุณาสร้างรายการใหม่"
+                });
+            }
+
+            const qrStartedAt =
+                new Date(
+                    payment.qr_started_at
+                );
+
             const expiresAt =
                 new Date(
                     payment.expires_at
                 );
-            
+
             const serverNow =
                 new Date(
                     payment.server_now
                 );
-            
+
+            if (
+                Number.isNaN(
+                    qrStartedAt.getTime()
+                ) ||
+                Number.isNaN(
+                    expiresAt.getTime()
+                ) ||
+                Number.isNaN(
+                    serverNow.getTime()
+                )
+            ) {
+                throw new Error(
+                    "เวลา QR ในระบบไม่ถูกต้อง"
+                );
+            }
+
+            /*
+             * ต้องส่งเข้าระบบภายใน 5 นาทีจริง
+             */
+
             if (
                 serverNow.getTime() >
                 expiresAt.getTime()
@@ -1094,9 +1178,9 @@ app.post(
                 await pool.query(
                     `
                     UPDATE payments
-            
+
                     SET status = 'EXPIRED'
-            
+
                     WHERE id = $1
                     AND user_id = $2
                     AND status = 'PENDING'
@@ -1106,27 +1190,43 @@ app.post(
                         req.user.id
                     ]
                 );
-            
+
                 return res.status(410).json({
                     error:
-                        "QR หมดอายุแล้ว กรุณาสร้างรายการใหม่"
-                });
-            }
-            if (payment.status !== "PENDING") {
-                return res.status(409).json({
-                    error: "รายการนี้ถูกตรวจสอบไปแล้ว"
+                        "QR หมดอายุ 5 นาทีแล้ว กรุณาสร้างรายการใหม่"
                 });
             }
 
             console.log("");
-            console.log("========================");
-            console.log("กำลัง OCR สลิป");
-            console.log("Payment ID:", paymentId);
+            console.log(
+                "========================"
+            );
+            console.log(
+                "กำลัง OCR สลิป"
+            );
+            console.log(
+                "Payment ID:",
+                paymentId
+            );
             console.log(
                 "File:",
                 req.file.originalname
             );
-            console.log("========================");
+            console.log(
+                "QR Start:",
+                qrStartedAt.toISOString()
+            );
+            console.log(
+                "QR Expire:",
+                expiresAt.toISOString()
+            );
+            console.log(
+                "Server Now:",
+                serverNow.toISOString()
+            );
+            console.log(
+                "========================"
+            );
 
             const slip =
                 await parseSlip(
@@ -1138,9 +1238,113 @@ app.post(
                 slip
             );
 
+            /*
+             * SLIP DATE / TIME
+             *
+             * slipParser.js ของระบบคืน:
+             * date เช่น "7 ต.ค. 69"
+             * time เช่น "10:23"
+             */
+
+            if (
+                !slip.date ||
+                !slip.time
+            ) {
+                return res.status(400).json({
+                    error:
+                        "ไม่สามารถอ่านวันที่หรือเวลาจากสลิปได้"
+                });
+            }
+
+            const slipDateTime =
+                parseSlipDateTime(
+                    slip.date,
+                    slip.time
+                );
+
+            if (!slipDateTime) {
+                return res.status(400).json({
+                    error:
+                        "วันที่หรือเวลาในสลิปไม่ถูกต้อง"
+                });
+            }
+
+            /*
+             * สลิป OCR มีเวลาแค่ HH:MM
+             * จึงเทียบในระดับนาที
+             */
+
+            const qrStartMinute =
+                Math.floor(
+                    qrStartedAt.getTime() /
+                    60000
+                );
+
+            const qrExpireMinute =
+                Math.floor(
+                    expiresAt.getTime() /
+                    60000
+                );
+
+            const serverNowMinute =
+                Math.floor(
+                    serverNow.getTime() /
+                    60000
+                );
+
+            const slipMinute =
+                Math.floor(
+                    slipDateTime.getTime() /
+                    60000
+                );
+
+            /*
+             * สลิปต้องเกิดหลังเปิด QR
+             */
+
+            if (
+                slipMinute <
+                qrStartMinute
+            ) {
+                return res.status(400).json({
+                    error:
+                        "สลิปนี้เก่ากว่าเวลาที่เปิด QR"
+                });
+            }
+
+            /*
+             * เวลาสลิปต้องไม่เกินช่วง 5 นาที
+             */
+
+            if (
+                slipMinute >
+                qrExpireMinute
+            ) {
+                return res.status(400).json({
+                    error:
+                        "เวลาสลิปเกินช่วง 5 นาทีของ QR"
+                });
+            }
+
+            /*
+             * เวลาบนสลิปต้องไม่อยู่ในอนาคต
+             * เมื่อเทียบกับเวลาจริงของ Server
+             */
+
+            if (
+                slipMinute >
+                serverNowMinute
+            ) {
+                return res.status(400).json({
+                    error:
+                        "เวลาบนสลิปไม่ตรงกับเวลาปัจจุบันของระบบ"
+                });
+            }
+
             const transactionId =
                 String(
-                    slip.transaction_id || ""
+                    slip.transaction_id ||
+                    ""
                 )
                     .trim()
                     .toUpperCase();
@@ -1178,6 +1382,16 @@ app.post(
                 );
 
             if (
+                !Number.isFinite(
+                    paymentAmount
+                )
+            ) {
+                throw new Error(
+                    "จำนวนเงินของ Payment ในฐานข้อมูลไม่ถูกต้อง"
+                );
+            }
+
+            if (
                 Math.abs(
                     slipAmount -
                     paymentAmount
@@ -1189,6 +1403,11 @@ app.post(
                 });
             }
 
+            /*
+             * ทำรายการจริงใน PostgreSQL Transaction
+             * และ lock Payment กันเติมซ้ำพร้อมกัน
+             */
+
             const client =
                 await pool.connect();
 
@@ -1198,70 +1417,34 @@ app.post(
                     "BEGIN"
                 );
 
-            const lockedPayment =
-                await client.query(
-                    `
-                    SELECT
-                        id,
-                        amount,
-                        status,
-                        created_at,
-            
-                        created_at + INTERVAL '5 minutes'
-                            AS expires_at,
-            
-                        NOW()
-                            AS server_now
-            
-                    FROM payments
-            
-                    WHERE id = $1
-                    AND user_id = $2
-            
-                    FOR UPDATE
-                    `,
-                    [
-                        paymentId,
-                        req.user.id
-                    ]
-                );
-               const lockedRow =
-                   lockedPayment.rows[0];
-               
-               if (
-                   new Date(
-                       lockedRow.server_now
-                   ).getTime() >
-                   new Date(
-                       lockedRow.expires_at
-                   ).getTime()
-               ) {
-                   await client.query(
-                       `
-                       UPDATE payments
-               
-                       SET status = 'EXPIRED'
-               
-                       WHERE id = $1
-                       AND user_id = $2
-                       AND status = 'PENDING'
-                       `,
-                       [
-                           paymentId,
-                           req.user.id
-                       ]
-                   );
-               
-                   await client.query(
-                       "COMMIT"
-                   );
-               
-                   return res.status(410).json({
-                       error:
-                           "รายการหมดเวลา 5 นาทีแล้ว กรุณาสร้างรายการใหม่"
-                   });
-               }
-                if (!lockedPayment.rows.length) {
+                const lockedPayment =
+                    await client.query(
+                        `
+                        SELECT
+                            id,
+                            amount,
+                            status,
+                            qr_started_at,
+                            expires_at,
+                            clock_timestamp()
+                                AS server_now
+
+                        FROM payments
+
+                        WHERE id = $1
+                        AND user_id = $2
+
+                        FOR UPDATE
+                        `,
+                        [
+                            paymentId,
+                            req.user.id
+                        ]
+                    );
+
+                if (
+                    !lockedPayment.rows.length
+                ) {
                     await client.query(
                         "ROLLBACK"
                     );
@@ -1272,10 +1455,11 @@ app.post(
                     });
                 }
 
+                const locked =
+                    lockedPayment.rows[0];
+
                 if (
-                    lockedPayment
-                        .rows[0]
-                        .status !==
+                    locked.status !==
                     "PENDING"
                 ) {
                     await client.query(
@@ -1287,6 +1471,143 @@ app.post(
                             "รายการนี้ถูกดำเนินการไปแล้ว"
                     });
                 }
+
+                if (
+                    !locked.qr_started_at ||
+                    !locked.expires_at
+                ) {
+                    await client.query(
+                        "ROLLBACK"
+                    );
+
+                    return res.status(410).json({
+                        error:
+                            "รายการนี้ไม่มีเวลา QR กรุณาสร้างรายการใหม่"
+                    });
+                }
+
+                const lockedStart =
+                    new Date(
+                        locked.qr_started_at
+                    );
+
+                const lockedExpire =
+                    new Date(
+                        locked.expires_at
+                    );
+
+                const lockedNow =
+                    new Date(
+                        locked.server_now
+                    );
+
+                /*
+                 * เช็กเวลาจริงอีกรอบหลัง OCR
+                 * ถ้า OCR ใช้เวลาจนเกิน 5 นาที
+                 * จะไม่เติมยอด
+                 */
+
+                if (
+                    lockedNow.getTime() >
+                    lockedExpire.getTime()
+                ) {
+                    await client.query(
+                        `
+                        UPDATE payments
+
+                        SET status = 'EXPIRED'
+
+                        WHERE id = $1
+                        AND user_id = $2
+                        AND status = 'PENDING'
+                        `,
+                        [
+                            paymentId,
+                            req.user.id
+                        ]
+                    );
+
+                    await client.query(
+                        "COMMIT"
+                    );
+
+                    return res.status(410).json({
+                        error:
+                            "หมดเวลา 5 นาทีแล้ว กรุณาสร้าง QR ใหม่"
+                    });
+                }
+
+                /*
+                 * เช็กเวลาในสลิปอีกรอบด้วยเวลาที่ lock แล้ว
+                 */
+
+                const lockedStartMinute =
+                    Math.floor(
+                        lockedStart.getTime() /
+                        60000
+                    );
+
+                const lockedExpireMinute =
+                    Math.floor(
+                        lockedExpire.getTime() /
+                        60000
+                    );
+
+                const lockedNowMinute =
+                    Math.floor(
+                        lockedNow.getTime() /
+                        60000
+                    );
+
+                if (
+                    slipMinute <
+                        lockedStartMinute ||
+                    slipMinute >
+                        lockedExpireMinute ||
+                    slipMinute >
+                        lockedNowMinute
+                ) {
+                    await client.query(
+                        "ROLLBACK"
+                    );
+
+                    return res.status(400).json({
+                        error:
+                            "เวลาในสลิปไม่ตรงกับช่วงเวลา 5 นาทีของ QR"
+                    });
+                }
+
+                /*
+                 * เช็กยอดจาก row ที่ lock
+                 */
+
+                const lockedAmount =
+                    Number(
+                        locked.amount
+                    );
+
+                if (
+                    !Number.isFinite(
+                        lockedAmount
+                    ) ||
+                    Math.abs(
+                        slipAmount -
+                        lockedAmount
+                    ) > 0.001
+                ) {
+                    await client.query(
+                        "ROLLBACK"
+                    );
+
+                    return res.status(400).json({
+                        error:
+                            "จำนวนเงินในสลิปไม่ตรงกับรายการเติมเงิน"
+                    });
+                }
+
+                /*
+                 * สลิปเดิมห้ามใช้ซ้ำ
+                 */
 
                 const duplicate =
                     await client.query(
@@ -1301,7 +1622,9 @@ app.post(
                         ]
                     );
 
-                if (duplicate.rows.length) {
+                if (
+                    duplicate.rows.length
+                ) {
                     await client.query(
                         "ROLLBACK"
                     );
@@ -1316,12 +1639,15 @@ app.post(
                     await client.query(
                         `
                         UPDATE payments
+
                         SET
                             status = 'SUCCESS',
                             transaction_id = $1
+
                         WHERE id = $2
                         AND user_id = $3
                         AND status = 'PENDING'
+
                         RETURNING amount
                         `,
                         [
@@ -1355,9 +1681,12 @@ app.post(
                     await client.query(
                         `
                         UPDATE users
+
                         SET balance =
                             balance + $1
+
                         WHERE id = $2
+
                         RETURNING balance
                         `,
                         [
@@ -1365,6 +1694,14 @@ app.post(
                             req.user.id
                         ]
                     );
+
+                if (
+                    !userResult.rows.length
+                ) {
+                    throw new Error(
+                        "ไม่พบผู้ใช้งาน"
+                    );
+                }
 
                 await client.query(
                     "COMMIT"
@@ -1387,6 +1724,17 @@ app.post(
 
                     transactionId,
 
+                    payment: {
+                        id:
+                            paymentId,
+
+                        qrStartedAt:
+                            locked.qr_started_at,
+
+                        expiresAt:
+                            locked.expires_at
+                    },
+
                     slip: {
                         sender:
                             slip.sender || "",
@@ -1404,9 +1752,11 @@ app.post(
 
             } catch (error) {
 
-                await client.query(
-                    "ROLLBACK"
-                );
+                try {
+                    await client.query(
+                        "ROLLBACK"
+                    );
+                } catch {}
 
                 throw error;
 
@@ -1422,8 +1772,14 @@ app.post(
                 error
             );
 
+            /*
+             * transaction_id UNIQUE
+             * เป็นด่านสุดท้ายกันสลิปซ้ำ
+             */
+
             if (
-                error.code === "23505"
+                error.code ===
+                "23505"
             ) {
                 return res.status(409).json({
                     error:
@@ -1439,6 +1795,7 @@ app.post(
         }
     }
 );
+
 /* =========================
    TRANSACTION HISTORY
 ========================= */
