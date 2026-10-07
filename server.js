@@ -19,35 +19,14 @@ const SESSION_DAYS = 30;
    UPLOAD
 ========================= */
 
-const uploadDir =
-    path.join(
-        __dirname,
-        "uploads"
-    );
-
-// สร้าง uploads ให้อัตโนมัติ
-// ไม่ต้องหวังว่า Railway จะมี folder อยู่ก่อน
-fs.mkdirSync(
-    uploadDir,
-    {
-        recursive: true
-    }
-);
-
 const upload = multer({
-    dest: uploadDir,
+    storage: multer.memoryStorage(),
 
     limits: {
-        fileSize:
-            4 * 1024 * 1024
+        fileSize: 4 * 1024 * 1024
     },
 
-    fileFilter: (
-        req,
-        file,
-        cb
-    ) => {
-
+    fileFilter: (req, file, cb) => {
         const allowed = [
             "image/jpeg",
             "image/png",
@@ -55,11 +34,7 @@ const upload = multer({
             "image/gif"
         ];
 
-        if (
-            !allowed.includes(
-                file.mimetype
-            )
-        ) {
+        if (!allowed.includes(file.mimetype)) {
             return cb(
                 new Error(
                     "รองรับเฉพาะ JPG, PNG, WEBP, GIF"
@@ -67,10 +42,7 @@ const upload = multer({
             );
         }
 
-        cb(
-            null,
-            true
-        );
+        cb(null, true);
     }
 });
 
@@ -253,25 +225,6 @@ function clearSessionCookie(res) {
         "Set-Cookie",
         "session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax"
     );
-}
-
-async function removeUploadedFile(
-    filePath
-) {
-    if (!filePath) {
-        return;
-    }
-
-    try {
-        await fs.promises.unlink(
-            filePath
-        );
-    } catch (error) {
-        console.error(
-            "DELETE UPLOAD ERROR:",
-            error.message
-        );
-    }
 }
 
 /* =========================
@@ -1385,7 +1338,7 @@ app.use(
                 .status(400)
                 .json({
                     error:
-                        "ไฟล์สลิปต้องไม่เกิน 10MB"
+                        "ไฟล์สลิปต้องไม่เกิน 4MB"
                 });
         }
 
