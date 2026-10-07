@@ -319,46 +319,30 @@ function hasRequiredReceiverNumber(
             )
             .filter(Boolean);
 
-    const receiverLineIndex =
-        lines.findIndex(
-            line =>
-                isRequiredReceiverName(
-                    line
-                )
-        );
-
-    if (receiverLineIndex < 0) {
-        return false;
-    }
-
     /*
-     * ตรวจเลขเฉพาะบริเวณข้อมูลผู้รับ
-     * 1 บรรทัดก่อนชื่อ ถึง 4 บรรทัดหลังชื่อ
-     * รองรับเลขที่มีขีด/เว้นวรรค เช่น
-     * 220-2-58759-6
+     * ตรวจเลขทุกบรรทัดของ OCR
+     * เพราะบางสลิปมีชื่อธนาคาร/ข้อความคั่นหลายบรรทัด
+     * ระหว่างชื่อผู้รับกับเลขบัญชี
+     *
+     * ตัดขีด เว้นวรรค และอักขระอื่นออกก่อนเทียบ
+     * ดังนั้น 220-2-58759-6 จะกลายเป็น 2202587596
      */
 
-    const start =
-        Math.max(
-            0,
-            receiverLineIndex - 1
-        );
-
-    const end =
-        Math.min(
-            lines.length,
-            receiverLineIndex + 5
-        );
-
-    for (
-        let i = start;
-        i < end;
-        i++
-    ) {
+    for (const line of lines) {
         const digits =
-            lines[i]
-                .replace(/\D/g, "");
+            line.replace(/[^0-9]/g, "");
 
+        if (
+            digits ===
+            REQUIRED_RECEIVER_NUMBER
+        ) {
+            return true;
+        }
+
+        /*
+         * รองรับกรณี OCR ใส่ข้อความติดกับเลขในบรรทัดเดียวกัน
+         * แต่ยังต้องมีเลข 10 หลักที่ตรงกันครบทุกตัว
+         */
         if (
             digits.includes(
                 REQUIRED_RECEIVER_NUMBER
@@ -1351,7 +1335,7 @@ app.post(
             ) {
                 return res.status(400).json({
                     error:
-                        "เลขผู้รับไม่ถูกต้อง ต้องเป็น 2202587596"
+                        "เลขผู้รับไม่ถูกต้อง ต้องเป็น 220-2-58759-6"
                 });
             }
 
