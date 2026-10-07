@@ -298,7 +298,7 @@ input::placeholder{color:#646464;opacity:1}
 @media(max-width:520px){.site-header{padding:12px 14px 0}.header-inner{padding:0 12px;gap:10px;height:64px;border-radius:14px}.brand{gap:8px}.brand-mark{width:34px;height:34px;border-radius:10px;font-size:16px}.brand-name{font-size:10px;letter-spacing:1.5px}.brand-name small{font-size:7px;letter-spacing:2.6px}.public-label{display:none}.header-actions{gap:7px}.icon-button{width:34px;height:34px}.account-trigger{min-height:36px;padding:4px 6px 4px 4px;gap:5px;border-radius:10px}.avatar{width:26px;height:26px}.account-trigger strong{display:none}.account-trigger>svg{width:12px}.main-nav{padding:3px;margin-left:auto}.nav-item{padding:7px 9px;font-size:10px}.header-inner:has(#memberNav:not(.hidden)) #motionButton{display:none}main{padding:20px 14px 0}.auth-shell{border-radius:19px}.auth-story{padding:23px 23px 22px;min-height:226px}.story-title{font-size:39px;margin:17px 0 12px}.story-description{max-width:71%;line-height:1.8;font-size:10.5px}.auth-story .orb-scene{right:-52px;top:32px;opacity:.42}.story-top .eyebrow{font-size:8px;letter-spacing:1.7px}.auth-form{padding:27px 23px 30px}.auth-form h1{font-size:26px}.auth-form .subtitle{font-size:11px}.form-note{margin-top:21px;padding-top:19px}.site-footer{padding:22px 16px;gap:10px;align-items:flex-start}.footer-right{max-width:135px;text-align:right;line-height:1.8;justify-content:flex-end}.footer-right .status-dot{display:none}.page-heading{margin-bottom:22px;gap:12px}.page-heading h1{font-size:26px}.page-heading p{font-size:11px}.eyebrow{font-size:9px;letter-spacing:1.7px}.home-hero{padding:26px 24px;min-height:326px;border-radius:20px}.home-hero h2{font-size:31px;letter-spacing:-1px}.home-hero .orb-scene{right:-67px;top:80px;opacity:.3}.home-hero p{font-size:11px}.hero-content{max-width:92%}.home-layout{gap:16px}.home-layout>.wallet{min-height:208px;border-radius:20px;padding:23px}.home-layout>.wallet .secondary-btn{right:23px;bottom:23px;padding:10px 15px;min-height:43px;font-size:11px}.wallet-amount{font-size:34px}.quick-grid{grid-template-columns:1fr;gap:12px}.quick-card{padding:20px 21px;display:grid;grid-template-columns:45px 1fr auto;column-gap:15px;align-items:center;border-radius:16px}.quick-top{display:contents}.quick-number{display:none}.quick-card h3{font-size:14px;grid-column:2;margin:0 0 4px;grid-row:1}.quick-card p{grid-column:2;margin:0;font-size:11px;grid-row:2}.quick-card .tile-icon{grid-column:1;grid-row:1/3}.quick-bottom{grid-column:3;grid-row:1/3;font-size:0}.quick-bottom svg{width:18px;height:18px}.section-title{margin-top:27px}.section-title span{font-size:8px}.method-card{padding:22px 19px;gap:17px}.method-icon{width:52px;height:62px;border-radius:13px}.method-icon svg{width:27px;height:27px}.method-copy strong{font-size:22px}.method-copy small{font-size:10px}.method-tag{font-size:8px}.method-card>.arrow-circle{width:27px;height:27px}.inline-note{font-size:10px;align-items:flex-start;gap:8px}.inline-note svg{margin-top:2px}.card{padding:23px 21px;border-radius:18px}.card-heading h2{font-size:16px}.card-heading p{font-size:10px}.amount-presets{gap:7px}.payment-timer{padding:11px 12px;gap:10px}.payment-timer-note{font-size:9px}.payment-timer-value{font-size:24px}.toast-container{bottom:15px;right:16px}.toast{font-size:11px;padding:13px 14px}.boot-status{top:83px}.account-menu{right:0;width:240px}.transaction{gap:9px}.status{font-size:8px;padding:4px 6px}}
 @media(max-width:365px){.header-inner{gap:7px}.brand-name small{display:none}.brand-name{font-size:9px}.nav-item{padding:7px;font-size:9px}.main-nav{padding:2px}.account-trigger{gap:3px}.card{padding:20px 17px}.auth-form{padding:26px 20px}.auth-story{padding:23px 20px}.site-footer{letter-spacing:1px}.method-card{gap:12px}.method-card>.arrow-circle{display:none}}
 @media(hover:none){.quick-card:hover,.primary-btn:hover:not(:disabled),.method-card:hover{transform:none}}
-html.motion-paused *,html.motion-paused *::before,html.motion-paused *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+html.motion-paused .orb-core,html.motion-paused .floating-chip,html.motion-paused .banner-emblem{animation-play-state:paused!important}
 
 
 /* Monochrome interactive storefront */
@@ -418,52 +418,34 @@ html.motion-paused .glow-surface:hover{transform:none}
 
 body{min-width:0}.home-toolbar{flex-wrap:wrap}
 
-
-/* ===== SMOOTH PERFORMANCE PATCH =====
-   Keeps the same visual language while reducing expensive repaint/compositing work. */
-.header-inner{
- backdrop-filter:blur(10px);
- -webkit-backdrop-filter:blur(10px);
-}
-.glass{
- backdrop-filter:blur(10px);
- -webkit-backdrop-filter:blur(10px);
-}
-.account-menu{
- backdrop-filter:blur(12px);
- -webkit-backdrop-filter:blur(12px);
-}
-.floating-chip,.toast{
- backdrop-filter:blur(8px);
- -webkit-backdrop-filter:blur(8px);
-}
-.product-dialog::backdrop{
- backdrop-filter:blur(2px);
- -webkit-backdrop-filter:blur(2px);
-}
-.banner-slide{
- transition:opacity .24s ease,transform .26s var(--ease),visibility .24s;
- will-change:transform,opacity;
- backface-visibility:hidden;
- transform:translate3d(24px,0,0) scale(.988);
-}
-.banner-slide.is-active{transform:translate3d(0,0,0) scale(1)}
-.auth-pane,[data-store-page],.account-menu{
- backface-visibility:hidden;
- transform:translateZ(0);
-}
-.glow-surface{
- transition:transform .2s var(--ease),border-color .2s;
-}
-.glow-surface::before,
-.stat-card::after,.product-card::after,.category-card::after,.card::after,.method-card::after{
- transition:opacity .18s linear;
-}
-@media(hover:hover) and (pointer:fine){
- .glow-surface:hover{
-  box-shadow:0 8px 24px #0004,0 0 14px #ffffff03;
- }
-}
+/* Unified motion: one entry transition, cheap surfaces, local interaction only. */
+:root{--ui-ease:cubic-bezier(.22,1,.36,1)}
+.glass,.orb-core,.floating-chip{backdrop-filter:none;-webkit-backdrop-filter:none}
+.header-inner,.account-menu{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#authView,#dashboardPage,[data-store-page],.auth-pane{transform-origin:50% 0}
+#mainContent:focus,#catalog:focus,#historyCard:focus{outline:none}
+.glow-surface>*{position:revert;z-index:revert}
+.stat-icon{position:absolute;z-index:0}
+.product-art{position:relative}.product-art img{position:absolute;inset:0;z-index:1}
+.product-index{position:absolute;z-index:2}
+.glow-surface{transition:transform .28s var(--ui-ease),border-color .25s ease,box-shadow .28s ease,background-color .25s ease;backface-visibility:hidden}
+.glow-surface::before,.glow-surface::after{contain:paint}
+.card:hover,.steps-card:hover,.wallet:hover{transform:none}
+@media(hover:hover) and (pointer:fine){.glow-surface.card:hover,.glow-surface.steps-card:hover,.glow-surface.wallet:hover{transform:none}.stat-card:hover,.product-card:hover,.category-card:hover{transform:translateY(-2px) scale(1.025)}}
+button{transition:transform .28s var(--ui-ease),scale .28s var(--ui-ease),background-color .25s,border-color .25s,box-shadow .28s}
+.tabs::before{transition:transform .3s var(--ui-ease)}
+.account-menu{transition:transform .28s var(--ui-ease),opacity .22s,visibility .22s}
+.banner{touch-action:pan-y}
+.banner-slide{transition:opacity .3s ease,transform .32s var(--ui-ease),visibility .32s}
+.banner-slide:not(.is-active) .banner-emblem{animation-play-state:paused}
+.primary-btn::after{transition:transform .4s var(--ui-ease)}
+.transaction{border-radius:8px}
+.payment{scroll-margin-top:24px}
+.connection-note{padding:10px 14px;margin:0 0 18px;border:1px solid #ffffff18;border-radius:10px;color:#aaa;font-size:11px;line-height:1.8;background:#111}
+html.motion-paused .orb-core,html.motion-paused .floating-chip,html.motion-paused .banner-emblem{animation-play-state:paused!important}
+html.reduce-ui-motion *,html.reduce-ui-motion *::before,html.reduce-ui-motion *::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+@media(hover:none){.glow-surface::before,.glow-surface::after{display:none}.glow-surface:active{border-color:#ffffff38}}
+@media(max-width:600px){.header-inner,.account-menu{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.toast{backdrop-filter:none}}
 
 </style>
 </head>
@@ -604,7 +586,7 @@ body{min-width:0}.home-toolbar{flex-wrap:wrap}
   </section>
  </section>
 </main>
-<dialog id="productDialog" class="product-dialog"><div class="dialog-head"><h2 id="productDialogTitle"></h2><button class="icon-button" onclick="document.getElementById('productDialog').close()" aria-label="ปิดรายละเอียดสินค้า"><svg aria-hidden="true"><use href="#i-close"></use></svg></button></div><strong class="product-price" id="productDialogPrice"></strong><p id="productDialogDescription"></p><p id="productDialogStock"></p><button class="primary-btn" onclick="document.getElementById('productDialog').close();storeNavigate('topup')">เติมเงินเข้ากระเป๋า <svg aria-hidden="true"><use href="#i-arrow"></use></svg></button></dialog><footer class="site-footer"><span>GAME STORE © 2026 · YOUR NEXT LEVEL</span><span class="footer-right"><button id="footerMotionButton" class="icon-button footer-motion" onclick="toggleMotion()" title="หยุดภาพเคลื่อนไหว" aria-label="หยุดภาพเคลื่อนไหว" aria-pressed="false"><svg aria-hidden="true"><use href="#i-pause"></use></svg></button><i class="status-dot"></i>พื้นที่ของคุณ ทุกการเล่น</span></footer>
+<dialog id="productDialog" class="product-dialog"><div class="dialog-head"><h2 id="productDialogTitle"></h2><button class="icon-button" onclick="closeProductDialog()" aria-label="ปิดรายละเอียดสินค้า"><svg aria-hidden="true"><use href="#i-close"></use></svg></button></div><strong class="product-price" id="productDialogPrice"></strong><p id="productDialogDescription"></p><p id="productDialogStock"></p><button class="primary-btn" onclick="closeProductDialog();storeNavigate('topup')">เติมเงินเข้ากระเป๋า <svg aria-hidden="true"><use href="#i-arrow"></use></svg></button></dialog><footer class="site-footer"><span>GAME STORE © 2026 · YOUR NEXT LEVEL</span><span class="footer-right"><button id="footerMotionButton" class="icon-button footer-motion" onclick="toggleMotion()" title="หยุดภาพเคลื่อนไหว" aria-label="หยุดภาพเคลื่อนไหว" aria-pressed="false"><svg aria-hidden="true"><use href="#i-pause"></use></svg></button><i class="status-dot"></i>พื้นที่ของคุณ ทุกการเล่น</span></footer>
 
 <script>
 
@@ -612,132 +594,96 @@ body{min-width:0}.home-toolbar{flex-wrap:wrap}
 // Existing server contract is preserved. Serve this file from the same origin as /api/*.
 const $ = id => document.getElementById(id);
 const icon = name => '<svg aria-hidden="true"><use href="#i-' + name + '"></use></svg>';
-const motionQuery =
-    matchMedia('(prefers-reduced-motion: reduce)');
-
-let motionPaused = false;
-let motionOverride = true;
-
-try {
-    motionPaused =
-        localStorage.getItem(
-            'gx-motion-paused'
-        ) === 'true';
-} catch {}
-
-const motionEnabled = () =>
-    !motionPaused;
+const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
+let motionPaused = false, motionOverride = false;
+try { motionPaused = localStorage.getItem('gx-motion-paused') === 'true'; motionOverride = localStorage.getItem('gx-motion-override') === 'true'; } catch {}
+const motionEnabled = () => !motionPaused && (!motionQuery.matches || motionOverride);
 let authenticated = false, sessionEpoch = 0;
 let currentPaymentId = null, currentPaymentExpiresAt = null;
 let paymentServerOffsetMs = 0, paymentCountdownTimer = null, paymentRevision = 0;
 let balanceValue = 0, balanceFrame = 0, historyRequest = 0, slipObjectURL = null;
 let currentRoute='home',pendingRoute='home',routeVersion=0;
 const storePages = ['home', 'topup', 'check-slip'];
-const transitionVersions = new Map();
-const transitions = new Map();
+
 const money = value => Number(value).toLocaleString('th-TH', {minimumFractionDigits:2,maximumFractionDigits:2});
 
-function animateElement(el, frames, options) {
- if (!motionEnabled() || !el.animate) return Promise.resolve();
- const animation = el.animate(frames, options);
- return animation.finished.catch(() => {});
-}
-async function transitionGroup(group, elements, target, {instant=false, direction=1}={}) {
- const version = (transitionVersions.get(group) || 0) + 1;
- transitionVersions.set(group, version);
- elements.forEach(el => el.getAnimations().forEach(a => a.cancel()));
- const previous = elements.find(el => !el.classList.contains('hidden'));
- if (previous === target) {
-  elements.forEach(el => { el.classList.toggle('hidden', el !== target); el.inert = el !== target; });
-  return;
- }
- if (previous && !instant && motionEnabled()) {
-  previous.inert = true;
-  await animateElement(previous, [
-   {opacity:1,transform:'translate3d(0,0,0) scale(1)'},
-   {opacity:0,transform:'translate3d(' + (-8*direction) + 'px,-5px,0) scale(.988)'}
-  ], {duration:120,easing:'ease-out'});
- }
- if (transitionVersions.get(group) !== version) return;
- elements.forEach(el => { el.classList.toggle('hidden', el !== target); el.inert = el !== target; });
- if (!instant) {
-  await animateElement(target, [
-   {opacity:0,transform:'translate3d(' + (12*direction) + 'px,13px,0) scale(.982)'},
-   {opacity:1,transform:'translate3d(0,0,0) scale(1)'}
-  ], {duration:220,easing:'cubic-bezier(.22,1,.36,1)'});
- }
-}
-function revealCards(container) {
- if (!motionEnabled()) return;
- container.querySelectorAll('.reveal').forEach((el,i) => {
-  el.getAnimations().forEach(a => a.cancel());
-  animateElement(el,[{opacity:0,transform:'translateY(18px) scale(.985)'},{opacity:1,transform:'translateY(0) scale(1)'}],
-   {duration:220,delay:Math.min(i,5)*25,easing:'cubic-bezier(.22,1,.36,1)'});
- });
-}
 
-function updateHeader() {
+const runningAnimations=new Map();
+let navigationJob=Promise.resolve(),authBusy=false,initialNavigation=0;
+function uiMotionEnabled(){return !motionQuery.matches||motionOverride;}
+function animateElement(el,frames,options){
+ if(!el)return Promise.resolve();
+ runningAnimations.get(el)?.cancel();
+ if(!uiMotionEnabled()||!el.animate)return Promise.resolve();
+ const animation=el.animate(frames,{...options,fill:'none'});
+ runningAnimations.set(el,animation);
+ return animation.finished.catch(()=>{}).finally(()=>{if(runningAnimations.get(el)===animation)runningAnimations.delete(el);});
+}
+function showOnly(elements,target){
+ elements.forEach(el=>{const hidden=el!==target;el.classList.toggle('hidden',hidden);el.inert=hidden;});
+}
+function transitionGroup(group,elements,target,{instant=false,direction=1}={}){
+ const changed=target.classList.contains('hidden');
+ elements.forEach(el=>{runningAnimations.get(el)?.cancel();runningAnimations.delete(el);});
+ showOnly(elements,target);
+ return changed&&!instant?animateElement(target,[{opacity:0,transform:'translate3d('+direction*8+'px,6px,0)'},{opacity:1,transform:'none'}],{duration:280,easing:'cubic-bezier(.22,1,.36,1)'}):Promise.resolve();
+}
+function revealCards(){ /* Route entry owns the animation; avoid nested transform animations. */ }
+function updateHeader(){
  $('memberNav').classList.remove('hidden');
  $('accountWrap').classList.toggle('hidden',!authenticated);
  $('guestActions').classList.toggle('hidden',authenticated);
  $('publicLabel').classList.add('hidden');
  document.querySelectorAll('[data-member-only]').forEach(el=>el.classList.toggle('hidden',!authenticated));
 }
-async function switchAuth(mode, focus=false) {
- const loginMode = mode === 'login';
- const target = $(loginMode ? 'loginPage' : 'registerPage');
- $('authTabs').classList.toggle('register-active', !loginMode);
- ['login','register'].forEach(name => {
-  const selected = name === mode;
-  $(name+'Tab').classList.toggle('active', selected);
-  $(name+'Tab').setAttribute('aria-selected', String(selected));
-  $(name+'Tab').tabIndex = selected ? 0 : -1;
+function setAuthTab(mode){
+ const isLogin=mode==='login';
+ $('authTabs').classList.toggle('register-active',!isLogin);
+ ['login','register'].forEach(name=>{
+  const active=name===mode;$(name+'Tab').classList.toggle('active',active);
+  $(name+'Tab').setAttribute('aria-selected',String(active));$(name+'Tab').tabIndex=active?0:-1;
  });
- await transitionGroup('auth',[$('loginPage'),$('registerPage')],target,{direction:loginMode?-1:1});
- if (focus && !target.classList.contains('hidden')) $(mode+'Username').focus({preventScroll:true});
+ showOnly([$('loginPage'),$('registerPage')],$(mode+'Page'));
 }
-
-async function showLogin(updateHash=true) {
- if(authenticated)return storeNavigate('home');
- routeVersion++;currentRoute='login';updateHeader();storeCloseMenu();
- if(updateHash&&location.hash!=='#login')history.pushState(null,'','#login');
- await transitionGroup('main',[$('authView'),$('dashboardPage')],$('authView'));
- await switchAuth('login');document.title='เข้าสู่ระบบ · GAME STORE';
+function switchAuth(mode,focus=false){
+ return storeNavigate(mode).then(()=>{if(focus&&currentRoute===mode)$(mode+'Username').focus({preventScroll:true});});
 }
-async function showRegister(updateHash=true) {
- if(authenticated)return storeNavigate('home');
- routeVersion++;currentRoute='register';updateHeader();storeCloseMenu();
- if(updateHash&&location.hash!=='#register')history.pushState(null,'','#register');
- await transitionGroup('main',[$('authView'),$('dashboardPage')],$('authView'));
- await switchAuth('register');document.title='สมัครสมาชิก · GAME STORE';
-}
-async function showDashboard(user) {
+function showLogin(updateHash=true){return storeNavigate('login',updateHash);}
+function showRegister(updateHash=true){return storeNavigate('register',updateHash);}
+async function showDashboard(user){
  authenticated=true;updateHeader();if(user)renderUser(user);
- const hash=location.hash.slice(1);
- const route=pendingRoute!=='home'?pendingRoute:storePages.includes(hash)?hash:'home';
+ const hash=location.hash.slice(1),route=pendingRoute!=='home'?pendingRoute:storePages.includes(hash)?hash:'home';
  pendingRoute='home';
- await storeNavigate(route,true,true);
  if(!user)loadUser();loadBalance();loadTransactions();
+ await storeNavigate(route);
 }
-function brandHome(event){event.preventDefault();storeNavigate('home');}
-async function storeNavigate(page,updateHash=true,instant=false){
- if(page==='login')return showLogin(updateHash);
- if(page==='register')return showRegister(updateHash);
- if(!storePages.includes(page))page='home';
- if(page!=='home'&&!authenticated){pendingRoute=page;return showLogin(updateHash);}
- const version=++routeVersion;storeCloseMenu();const oldIndex=storePages.indexOf(currentRoute);currentRoute=page;
- document.querySelectorAll('[data-nav]').forEach(el=>{
-  const active=el.dataset.nav===(page==='home'?'home':'topup');el.classList.toggle('active',active);
-  if(active)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');
- });
+function brandHome(event){event.preventDefault();return storeNavigate('home');}
+function storeNavigate(page,updateHash=true,instant=false){
+ if(![...storePages,'login','register'].includes(page))page='home';
+ if(authenticated&&(page==='login'||page==='register'))page='home';
+ if(!authenticated&&(page==='topup'||page==='check-slip')){pendingRoute=page;page='login';}
+ const version=++routeVersion,previous=currentRoute,isAuth=page==='login'||page==='register';
+ currentRoute=page;
+ const previousVisible=isAuth?!$('authView').classList.contains('hidden'):!$('dashboardPage').classList.contains('hidden');
+ const repeated=previous===page&&previousVisible;
+ // Cancel only our entry animations. Visibility and focus are committed synchronously.
+ for(const [el,animation] of runningAnimations){animation.cancel();runningAnimations.delete(el);}
+ storeCloseMenu();updateHeader();
  if(updateHash&&location.hash!=='#'+page)history.pushState(null,'','#'+page);
- const target=document.querySelector('[data-store-page="'+page+'"]');
- await transitionGroup('route',[...document.querySelectorAll('[data-store-page]')],target,{instant,direction:storePages.indexOf(page)>=oldIndex?1:-1});
- if(version!==routeVersion)return;
- await transitionGroup('main',[$('authView'),$('dashboardPage')],$('dashboardPage'),{instant});
- if(version!==routeVersion)return;
- document.title=({home:'หน้าหลัก',topup:'เติมเงิน','check-slip':'Check Slip'})[page]+' · GAME STORE';
- if(!instant){window.scrollTo({top:0,behavior:'instant'});target.querySelector('h1')?.focus({preventScroll:true});revealCards(target);}
+ if(isAuth)setAuthTab(page);
+ else showOnly([...document.querySelectorAll('[data-store-page]')],document.querySelector('[data-store-page="'+page+'"]'));
+ showOnly([$('authView'),$('dashboardPage')],isAuth?$('authView'):$('dashboardPage'));
+ document.querySelectorAll('[data-nav]').forEach(el=>{
+  const active=!isAuth&&el.dataset.nav===(page==='home'?'home':'topup');
+  el.classList.toggle('active',active);if(active)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');
+ });
+ document.title=({home:'หน้าหลัก',topup:'เติมเงิน','check-slip':'Check Slip',login:'เข้าสู่ระบบ',register:'สมัครสมาชิก'})[page]+' · GAME STORE';
+ if(!repeated){window.scrollTo({top:0,behavior:'instant'});$('mainContent').focus({preventScroll:true});}
+ if(typeof restartBanner==='function'&&window.storefrontReady)restartBanner();
+ if(typeof invalidateGlow==='function'&&window.storefrontReady)invalidateGlow();
+ const target=isAuth?(previous==='login'||previous==='register'?$(page+'Page'):$('authView')):document.querySelector('[data-store-page="'+page+'"]');
+ navigationJob=instant||repeated?Promise.resolve():animateElement(target,[{opacity:0,transform:'translate3d(0,8px,0)'},{opacity:1,transform:'none'}],{duration:300,easing:'cubic-bezier(.22,1,.36,1)'});
+ return navigationJob.then(()=>{if(window.storefrontReady)invalidateGlow();return version===routeVersion;});
 }
 async function openHistory() {
  await storeNavigate('check-slip');
@@ -770,8 +716,8 @@ $('authTabs').addEventListener('keydown',e => {
  $(mode+'Tab').focus();
  mode==='login'?showLogin():showRegister();
 });
-window.addEventListener('hashchange',() => {storeNavigate(location.hash.slice(1),false);});
-window.addEventListener('popstate',() => {storeNavigate(location.hash.slice(1),false);});
+let historyFrame=0;function handleHistory(){cancelAnimationFrame(historyFrame);historyFrame=requestAnimationFrame(()=>storeNavigate(location.hash.slice(1),false));}
+window.addEventListener('hashchange',handleHistory);window.addEventListener('popstate',handleHistory);
 
 function toast(message,type='success') {
  const el = document.createElement('div');
@@ -817,11 +763,12 @@ function setLoading(button,loading,label='กำลังดำเนินก�
  if (button.id==='verifyButton' && !currentPaymentId) button.disabled=true;
 }
 async function request(path, options={}) {
- if (location.protocol==='file:') throw new Error('กรุณาเปิดหน้าเว็บผ่านเซิร์ฟเวอร์ของร้านเพื่อใช้งานบัญชีและการชำระเงิน');
+ const apiBase=window.GAME_STORE_CONFIG?.apiBase||'';
+ if (location.protocol==='file:'&&!apiBase) throw new Error('กรุณาเปิดหน้าเว็บผ่านเซิร์ฟเวอร์ของร้านเพื่อใช้งานบัญชีและการชำระเงิน');
  const controller=new AbortController();
  const timer=setTimeout(()=>controller.abort(),path==='/api/verify-slip'?45000:20000);
  try {
-  const response=await fetch(path,{credentials:'same-origin',...options,signal:controller.signal});
+  const response=await fetch(apiBase?new URL(path,apiBase).href:path,{credentials:apiBase?'include':'same-origin',...options,signal:controller.signal});
   let data={};
   const raw=await response.text();
   if (raw) {try{data=JSON.parse(raw);}catch{throw new Error('เซิร์ฟเวอร์ส่งข้อมูลไม่ถูกต้อง กรุณาลองอีกครั้ง');}}
@@ -835,10 +782,10 @@ async function request(path, options={}) {
 const jsonPost = body => ({method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
 async function register() {
  const button=$('registerButton');
- if (button.disabled) return;
+ if (button.disabled||authBusy) return;
  const username=$('registerUsername').value.trim(), password=$('registerPassword').value;
  if(!username||!password){toast('กรุณากรอกข้อมูลให้ครบ','error');return;}
- const epoch=++sessionEpoch;
+ const epoch=++sessionEpoch;authBusy=true;
  setLoading(button,true,'กำลังสร้างบัญชี');
  try {
   const {response,data}=await request('/api/auth/register',jsonPost({username,password}));
@@ -850,14 +797,14 @@ async function register() {
   await showLogin();
   $('loginPassword').focus({preventScroll:true});
  } catch(error){if(epoch===sessionEpoch)toast(error.message,'error');}
- finally{setLoading(button,false);}
+ finally{authBusy=false;setLoading(button,false);}
 }
 async function login() {
  const button=$('loginButton');
- if(button.disabled)return;
+ if(button.disabled||authBusy)return;
  const username=$('loginUsername').value.trim(),password=$('loginPassword').value;
  if(!username||!password){toast('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน','error');return;}
- const epoch=++sessionEpoch;
+ const epoch=++sessionEpoch;authBusy=true;
  setLoading(button,true,'กำลังเข้าสู่ระบบ');
  try {
   const {response,data}=await request('/api/auth/login',jsonPost({username,password}));
@@ -867,7 +814,7 @@ async function login() {
   toast('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับกลับมา');
   await showDashboard();
  } catch(error){if(epoch===sessionEpoch)toast(error.message,'error');}
- finally{setLoading(button,false);}
+ finally{authBusy=false;setLoading(button,false);}
 }
 function renderUser(user) {
  const name=String(user?.username||'สมาชิก');
@@ -1121,13 +1068,13 @@ async function logout(){
 }
 
 async function checkSession(){
- const epoch=sessionEpoch;
+ const epoch=sessionEpoch,navAtStart=routeVersion;
  try{
   const {response,data}=await request('/api/auth/me');
   if(epoch!==sessionEpoch)return;
   if(response.ok){authenticated=true;renderUser(data.user);updateHeader();loadBalance();loadTransactions();}
-  await storeNavigate(location.hash.slice(1)||'home',false,true);
- }catch{if(epoch===sessionEpoch){updateHeader();await storeNavigate(location.hash.slice(1)||'home',false,true);}}
+  if(routeVersion===navAtStart)await storeNavigate(location.hash.slice(1)||'home',false,true);
+ }catch{if(epoch===sessionEpoch&&routeVersion===navAtStart){updateHeader();await storeNavigate(location.hash.slice(1)||'home',false,true);}}
  finally{$('bootStatus').classList.add('hidden');}
 }
 document.querySelectorAll('[data-amount]').forEach(button=>button.addEventListener('click',()=>{
@@ -1158,14 +1105,18 @@ document.addEventListener('visibilitychange',()=>{
 const canvas=$('particles'),ctx=canvas.getContext('2d');
 let particles=[],width=0,height=0,particleFrame=0,lastFrame=0;
 const pointer={x:-1000,y:-1000};
+
 function resizeParticles(){
+ const oldWidth=width||innerWidth,oldHeight=height||innerHeight;
  width=innerWidth;height=innerHeight;
- const dpr=Math.min(devicePixelRatio||1,1.25);
+ const lowPower=width<600||(navigator.hardwareConcurrency||4)<=4;
+ const dpr=Math.min(devicePixelRatio||1,lowPower?1:1.5);
  canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
  if(!ctx)return;
  ctx.setTransform(dpr,0,0,dpr,0,0);
- const lowPower=width<600||(navigator.hardwareConcurrency||4)<=4;const count=Math.max(12,Math.min(lowPower?18:32,Math.round(width*height/36000)));
- particles=Array.from({length:count},()=>({x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.15+.45,vx:(Math.random()-.5)*.16,vy:-(Math.random()*.16+.06),alpha:Math.random()*.35+.12,phase:Math.random()*Math.PI*2}));
+ const count=Math.max(18,Math.min(lowPower?26:52,Math.round(width*height/25000)));
+ particles=particles.slice(0,count).map(p=>({...p,x:p.x/oldWidth*width,y:p.y/oldHeight*height}));
+ while(particles.length<count)particles.push({x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.15+.45,vx:(Math.random()-.5)*.16,vy:-(Math.random()*.16+.06),alpha:Math.random()*.35+.12,phase:Math.random()*Math.PI*2});
  drawParticles(0);syncParticleLoop();
 }
 function drawParticles(delta){
@@ -1203,7 +1154,8 @@ function updateMotion(){
  $('footerMotionButton').innerHTML=$('motionButton').innerHTML;
  $('footerMotionButton').setAttribute('aria-label',label);$('footerMotionButton').title=label;
  $('footerMotionButton').setAttribute('aria-pressed',String(!motionEnabled()));
- if(!motionEnabled())document.getAnimations().forEach(a=>a.cancel());
+ document.documentElement.classList.toggle('reduce-ui-motion',!uiMotionEnabled());
+ if(!uiMotionEnabled())for(const animation of runningAnimations.values())animation.finish();
  syncParticleLoop();
 }
 function toggleMotion(){
@@ -1220,7 +1172,7 @@ window.addEventListener('pointerout',event=>{if(!event.relatedTarget){pointer.x=
 window.addEventListener('pagehide',event=>{stopPaymentCountdown();cancelAnimationFrame(particleFrame);if(!event.persisted&&slipObjectURL)URL.revokeObjectURL(slipObjectURL);});
 window.addEventListener('pageshow',event=>{if(event.persisted){syncParticleLoop();if(currentPaymentId&&currentPaymentExpiresAt)startPaymentCountdown(currentPaymentExpiresAt,paymentNow());}});
 resizeParticles();updateMotion();updatePresets();
-animateElement($('dashboardPage'),[{opacity:0,transform:'translateY(12px) scale(.99)'},{opacity:1,transform:'none'}],{duration:400,easing:'cubic-bezier(.22,1,.36,1)'});
+initialNavigation=routeVersion;
 checkSession();
 
 </script>
@@ -1249,7 +1201,7 @@ function animateStat(key,value){
  const raw=Number(value);
  if(value==null||value===''||!Number.isFinite(raw)||raw<0){el.textContent='—';delete el.dataset.value;return;}
  const target=key==='topup'?raw:Math.floor(raw),start=Number(el.dataset.value)||0;
- const version=String(performance.now());el.dataset.version=version;el.dataset.value=target;
+ if(Number(el.dataset.value)===target&&el.dataset.value!==undefined)return;const version=String(performance.now());el.dataset.version=version;el.dataset.value=target;
  const format=n=>n.toLocaleString('en-US',{minimumFractionDigits:key==='topup'?2:0,maximumFractionDigits:key==='topup'?2:0});
  if(!motionEnabled()){el.textContent=format(target);return;}
  const begin=performance.now();
@@ -1264,7 +1216,7 @@ function renderStats(payload){
  animateStat('sales',stats.sales??stats.totalSales);
 }
 function renderRecent(payload){
- const list=Array.isArray(payload)?payload:payload?.recentSales||payload?.sales||[];
+ const incoming=Array.isArray(payload)?payload:payload?.recentSales||payload?.sales;const list=Array.isArray(incoming)?incoming:[];
  const box=$('recentSales');box.replaceChildren();
  if(!list.length){
   const empty=document.createElement('div');empty.className='recent-empty';empty.innerHTML=icon('history');
@@ -1333,85 +1285,101 @@ function showProductDetails(product){
  $('productDialog').showModal();
  animateElement($('productDialog'),[{opacity:0,transform:'translateY(10px) scale(.96)'},{opacity:1,transform:'none'}],{duration:300,easing:'cubic-bezier(.22,1,.36,1)'});
 }
-$('productDialog').addEventListener('click',event=>{const rect=$('productDialog').getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)$('productDialog').close();});
+$('productDialog').addEventListener('click',event=>{const rect=$('productDialog').getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)closeProductDialog();});
+async function closeProductDialog(){const d=$('productDialog');if(!d.open)return;await animateElement(d,[{opacity:1,transform:'none'},{opacity:0,transform:'translateY(6px) scale(.98)'}],{duration:180,easing:'ease-out'});d.close();}
+$('productDialog').addEventListener('cancel',e=>{e.preventDefault();closeProductDialog();});
+let searchDebounce;
+$('storeSearch').addEventListener('input',()=>{clearTimeout(searchDebounce);searchDebounce=setTimeout(()=>{catalogQuery=$('storeSearch').value.trim();if(currentRoute==='home')renderCatalog();},120);});
+let storefrontBusy=false,productsSignature='',recentSignature='';
 async function loadStorefront(){
- const token=++storeLoadToken;
- if(window.GAME_STORE_DATA){
-  const data=window.GAME_STORE_DATA;renderStats(data.stats);storeProducts=Array.isArray(data.products)?data.products:[];renderRecent(data.recentSales);renderCatalog();return;
+ if(storefrontBusy)return;storefrontBusy=true;const token=++storeLoadToken;
+ function apply(kind,data){
+  if(!data||token!==storeLoadToken)return;
+  if(kind==='stats'){renderStats(data);return;}
+  if(kind==='products'){const products=Array.isArray(data)?data:Array.isArray(data.products)?data.products:[];const signature=JSON.stringify(products);if(signature!==productsSignature){productsSignature=signature;storeProducts=products;renderCatalog();}}
+  if(kind==='recent'){const signature=JSON.stringify(data);if(signature!==recentSignature){recentSignature=signature;renderRecent(data);}}
  }
- if(location.protocol==='file:'){renderCatalog();return;}
- async function get(url){
-  if(!url)return null;
-  try{const {response,data}=await request(url);return response.ok?data:null;}catch{return null;}
- }
- const data=await Promise.allSettled([get(storeConfig.statsUrl),get(storeConfig.productsUrl),get(storeConfig.recentUrl)]);
- if(token!==storeLoadToken)return;
- if(data[0].status==='fulfilled'&&data[0].value)renderStats(data[0].value);
- if(data[1].status==='fulfilled'&&data[1].value){const p=data[1].value;storeProducts=Array.isArray(p)?p:Array.isArray(p.products)?p.products:[];}
- if(data[2].status==='fulfilled'&&data[2].value)renderRecent(data[2].value);
- renderCatalog();
+ try{
+  if(window.GAME_STORE_DATA){const d=window.GAME_STORE_DATA;apply('stats',d.stats);apply('products',d.products||[]);apply('recent',d.recentSales||[]);return;}
+  if(location.protocol==='file:'&&!window.GAME_STORE_CONFIG?.apiBase)return;
+  await Promise.allSettled([['stats',storeConfig.statsUrl],['products',storeConfig.productsUrl],['recent',storeConfig.recentUrl]].map(async([kind,url])=>{if(!url)return;const {response,data}=await request(url);if(response.ok)apply(kind,data);}));
+ }finally{storefrontBusy=false;}
 }
 let bannerIndex=0,bannerTimer=null,bannerHovered=false,bannerFocused=false;
+const bannerSlides=[...document.querySelectorAll('[data-slide]')];
 function setBannerSlide(index,manual=false){
- const slides=[...document.querySelectorAll('[data-slide]')];
- bannerIndex=(index+slides.length)%slides.length;
- slides.forEach((el,i)=>{el.classList.toggle('is-active',i===bannerIndex);el.inert=i!==bannerIndex;el.setAttribute('aria-hidden',String(i!==bannerIndex));});
+ bannerIndex=(index+bannerSlides.length)%bannerSlides.length;
+ bannerSlides.forEach((el,i)=>{el.classList.toggle('is-active',i===bannerIndex);el.inert=i!==bannerIndex;el.setAttribute('aria-hidden',String(i!==bannerIndex));});
  document.querySelectorAll('[data-slide-dot]').forEach((el,i)=>{el.classList.toggle('active',i===bannerIndex);el.setAttribute('aria-pressed',String(i===bannerIndex));});
- $('bannerCounter').textContent=String(bannerIndex+1).padStart(2,'0')+' / 03';
+ $('bannerCounter').textContent=String(bannerIndex+1).padStart(2,'0')+' / '+String(bannerSlides.length).padStart(2,'0');
  if(manual)restartBanner();
 }
 function stepBanner(direction){setBannerSlide(bannerIndex+direction,true);}
 function restartBanner(){
- clearInterval(bannerTimer);bannerTimer=null;
- if(motionEnabled()&&!document.hidden&&!bannerHovered&&!bannerFocused)bannerTimer=setInterval(()=>{if(currentRoute==='home')setBannerSlide(bannerIndex+1);},6500);
+ clearTimeout(bannerTimer);bannerTimer=null;
+ bannerFocused=$('storeBanner').contains(document.activeElement)&&!!document.activeElement?.closest('button,a,input');
+ if(currentRoute==='home'&&motionEnabled()&&!document.hidden&&!bannerHovered&&!bannerFocused)
+  bannerTimer=setTimeout(()=>{setBannerSlide(bannerIndex+1);restartBanner();},6500);
 }
-$('storeBanner').addEventListener('mouseenter',()=>{bannerHovered=true;restartBanner();});
-$('storeBanner').addEventListener('mouseleave',()=>{bannerHovered=false;restartBanner();});
-$('storeBanner').addEventListener('focusin',()=>{bannerFocused=true;restartBanner();});
-$('storeBanner').addEventListener('focusout',event=>{if(!$('storeBanner').contains(event.relatedTarget)){bannerFocused=false;restartBanner();}});
+$('storeBanner').addEventListener('pointerenter',e=>{if(e.pointerType!=='touch'){bannerHovered=true;restartBanner();}});
+$('storeBanner').addEventListener('pointerleave',()=>{bannerHovered=false;restartBanner();});
+$('storeBanner').addEventListener('focusin',restartBanner);
+$('storeBanner').addEventListener('focusout',()=>queueMicrotask(restartBanner));
 $('storeBanner').addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key==='ArrowLeft'){event.preventDefault();stepBanner(event.key==='ArrowRight'?1:-1);}});
+let swipeStart=null,suppressBannerClick=false;
+$('storeBanner').addEventListener('pointerdown',e=>{if(e.pointerType==='touch')swipeStart={x:e.clientX,y:e.clientY};},{passive:true});
+$('storeBanner').addEventListener('pointerup',e=>{if(!swipeStart)return;const dx=e.clientX-swipeStart.x,dy=e.clientY-swipeStart.y;swipeStart=null;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.4){suppressBannerClick=true;stepBanner(dx<0?1:-1);setTimeout(()=>suppressBannerClick=false,350);}},{passive:true});
+$('storeBanner').addEventListener('pointercancel',()=>swipeStart=null);
+$('storeBanner').addEventListener('click',e=>{if(suppressBannerClick){e.preventDefault();e.stopImmediatePropagation();suppressBannerClick=false;}},true);
 document.addEventListener('visibilitychange',restartBanner);
 motionQuery.addEventListener('change',restartBanner);
-new MutationObserver(()=>{restartBanner();if(!motionEnabled())clearGlow();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
-
-// Lightweight pointer glow: only the surface under the mouse is measured each frame.
+new MutationObserver(()=>{restartBanner();if(!motionEnabled())clearGlow();else invalidateGlow();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 const finePointer=matchMedia('(hover:hover) and (pointer:fine)');
-let glowFrame=0,activeGlow=null,glowTarget=null,glowX=-9999,glowY=-9999;
+let glowTargets=[],glowRects=[],glowFrame=0,glowDirty=true,lastGlowTime=0;
+let mousePoint={x:-9999,y:-9999},litSurfaces=new Set();
 function refreshGlowTargets(){
- document.querySelectorAll('.stat-card,.product-card,.category-card,.card,.method-card,.primary-btn,.secondary-btn,.steps-card')
-  .forEach(el=>el.classList.add('glow-surface'));
+ glowTargets=[...document.querySelectorAll('.stat-card,.product-card,.category-card,.card,.method-card,.primary-btn,.secondary-btn,.steps-card,.wallet,.icon-button,.nav-item,.account-trigger,.amount-presets button,.category-row button,.transaction')];
+ glowTargets.forEach(el=>el.classList.add('glow-surface'));invalidateGlow();
 }
+function invalidateGlow(){glowDirty=true;if(finePointer.matches&&motionEnabled()&&!glowFrame)glowFrame=requestAnimationFrame(updateGlow);}
 function clearGlow(){
- if(glowFrame){cancelAnimationFrame(glowFrame);glowFrame=0;}
- if(activeGlow)activeGlow.style.setProperty('--glow-level','0');
- activeGlow=null;glowTarget=null;
+ cancelAnimationFrame(glowFrame);glowFrame=0;
+ litSurfaces.forEach(el=>el.style.setProperty('--glow-level','0'));litSurfaces.clear();
 }
-function updateGlow(){
+function updateGlow(now){
  glowFrame=0;
  if(!finePointer.matches||!motionEnabled()||document.hidden){clearGlow();return;}
- const el=glowTarget;
- if(activeGlow&&activeGlow!==el)activeGlow.style.setProperty('--glow-level','0');
- activeGlow=el;
- if(!el)return;
- const rect=el.getBoundingClientRect();
- if(!rect.width||!rect.height){el.style.setProperty('--glow-level','0');return;}
- el.style.setProperty('--glow-level','0.65');
- el.style.setProperty('--glow-x',(glowX-rect.left)+'px');
- el.style.setProperty('--glow-y',(glowY-rect.top)+'px');
+ if(now-lastGlowTime<24){glowFrame=requestAnimationFrame(updateGlow);return;}
+ lastGlowTime=now;
+ // Read all geometry before any styles are written. Pointer motion reuses this cache.
+ if(glowDirty){
+  glowRects=glowTargets.map(el=>({el,rect:el.getBoundingClientRect()})).filter(({rect})=>rect.width&&rect.height&&rect.bottom>=0&&rect.top<=innerHeight);
+  glowDirty=false;
+ }
+ const next=new Set();
+ const updates=glowRects.map(({el,rect})=>{
+  const dx=Math.max(rect.left-mousePoint.x,0,mousePoint.x-rect.right),dy=Math.max(rect.top-mousePoint.y,0,mousePoint.y-rect.bottom);
+  const level=Math.max(0,1-Math.hypot(dx,dy)/70)*.8;
+  return {el,x:mousePoint.x-rect.left,y:mousePoint.y-rect.top,level};
+ });
+ updates.forEach(({el,x,y,level})=>{if(level>0){next.add(el);el.style.setProperty('--glow-x',Math.round(x)+'px');el.style.setProperty('--glow-y',Math.round(y)+'px');el.style.setProperty('--glow-level',level.toFixed(2));}});
+ litSurfaces.forEach(el=>{if(!next.has(el))el.style.setProperty('--glow-level','0');});litSurfaces=next;
 }
 document.addEventListener('pointermove',event=>{
- if(event.pointerType==='touch')return;
- glowX=event.clientX;glowY=event.clientY;
- glowTarget=event.target.closest('.glow-surface');
+ if(event.pointerType==='touch'||!finePointer.matches||!motionEnabled())return;
+ mousePoint.x=event.clientX;mousePoint.y=event.clientY;
  if(!glowFrame)glowFrame=requestAnimationFrame(updateGlow);
 },{passive:true});
-document.addEventListener('pointerout',event=>{if(!event.relatedTarget)clearGlow();});
-window.addEventListener('scroll',()=>{if(activeGlow&&!glowFrame)glowFrame=requestAnimationFrame(updateGlow);},{passive:true});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)clearGlow();});
+document.addEventListener('pointerout',event=>{if(!event.relatedTarget){mousePoint.x=-9999;mousePoint.y=-9999;clearGlow();}});
+window.addEventListener('scroll',invalidateGlow,{passive:true});
+window.addEventListener('resize',invalidateGlow,{passive:true});
+document.addEventListener('visibilitychange',()=>document.hidden?clearGlow():invalidateGlow());
+finePointer.addEventListener('change',()=>{clearGlow();invalidateGlow();});
+if(window.ResizeObserver)new ResizeObserver(invalidateGlow).observe($('mainContent'));
 let storefrontRefresh=setInterval(()=>{if(!document.hidden&&currentRoute==='home')loadStorefront();},60000);
 window.addEventListener('pagehide',()=>{clearInterval(bannerTimer);clearInterval(storefrontRefresh);clearGlow();});
 window.addEventListener('pageshow',event=>{if(event.persisted){restartBanner();clearInterval(storefrontRefresh);storefrontRefresh=setInterval(()=>{if(!document.hidden&&currentRoute==='home')loadStorefront();},60000);}});
-refreshGlowTargets();renderCatalog();loadStorefront();restartBanner();
+window.storefrontReady=true;refreshGlowTargets();renderCatalog();loadStorefront();restartBanner();
 
 </script>
 </body>
