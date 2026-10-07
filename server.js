@@ -20,29 +20,58 @@ const SESSION_DAYS = 30;
    UPLOAD
 ========================= */
 
+const uploadDir =
+    path.join(
+        __dirname,
+        "uploads"
+    );
+
+// สร้าง uploads ให้อัตโนมัติ
+// ไม่ต้องหวังว่า Railway จะมี folder อยู่ก่อน
+fs.mkdirSync(
+    uploadDir,
+    {
+        recursive: true
+    }
+);
+
 const upload = multer({
-    dest: path.join(__dirname, "uploads"),
+    dest: uploadDir,
 
     limits: {
-        fileSize: 10 * 1024 * 1024
+        fileSize:
+            4 * 1024 * 1024
     },
 
-    fileFilter: (req, file, cb) => {
+    fileFilter: (
+        req,
+        file,
+        cb
+    ) => {
+
         const allowed = [
             "image/jpeg",
             "image/png",
-            "image/webp"
+            "image/webp",
+            "image/gif"
         ];
 
-        if (!allowed.includes(file.mimetype)) {
+        if (
+            !allowed.includes(
+                file.mimetype
+            )
+        ) {
             return cb(
                 new Error(
-                    "รองรับเฉพาะ JPG, PNG, WEBP"
+                    "รองรับเฉพาะ JPG, PNG, WEBP, GIF"
                 )
             );
         }
 
-        cb(null, true);
+        cb(
+            null,
+            true
+        );
     }
 });
 
