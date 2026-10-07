@@ -24,6 +24,18 @@ const REQUIRED_RECEIVER_NUMBER =
 const REQUIRED_RECEIVER_VISIBLE_DIGITS =
     "8759";
 
+const TOPUP_RATE_WINDOW_MS =
+    60 * 1000;
+
+const TOPUP_RATE_MAX =
+    6;
+
+const VERIFY_RATE_WINDOW_MS =
+    60 * 1000;
+
+const VERIFY_RATE_MAX =
+    10;
+
 /* =========================
    UPLOAD
 ========================= */
@@ -367,6 +379,106 @@ function hasRequiredReceiverNumber(
 
     return false;
 }
+
+
+const rateBuckets =
+    new Map();
+
+function createRateLimiter({
+    prefix,
+    windowMs,
+    max
+}) {
+    return (
+        req,
+        res,
+        next
+    ) => {
+        const identity =
+            req.user?.id
+                ? `user:${req.user.id}`
+                : `ip:${req.ip}`;
+
+        const key =
+            `${prefix}:${identity}`;
+
+        const now =
+            Date.now();
+
+        let bucket =
+            rateBuckets.get(key);
+
+        if (
+            !bucket ||
+            now >= bucket.resetAt
+        ) {
+            bucket = {
+                count: 0,
+                resetAt:
+                    now + windowMs
+            };
+
+            rateBuckets.set(
+                key,
+                bucket
+            );
+        }
+
+        bucket.count += 1;
+
+        if (
+            bucket.count > max
+        ) {
+            const retryAfterSeconds =
+                Math.max(
+                    1,
+                    Math.ceil(
+                        (
+                            bucket.resetAt -
+                            now
+                        ) / 1000
+                    )
+                );
+
+            res.setHeader(
+                "Retry-After",
+                String(
+                    retryAfterSeconds
+                )
+            );
+
+            return res
+                .status(429)
+                .json({
+                    error:
+                        `ทำรายการถี่เกินไป กรุณารอ ${retryAfterSeconds} วินาที`,
+                    retryAfterSeconds
+                });
+        }
+
+        next();
+    };
+}
+
+const topupRateLimit =
+    createRateLimiter({
+        prefix:
+            "topup",
+        windowMs:
+            TOPUP_RATE_WINDOW_MS,
+        max:
+            TOPUP_RATE_MAX
+    });
+
+const verifyRateLimit =
+    createRateLimiter({
+        prefix:
+            "verify",
+        windowMs:
+            VERIFY_RATE_WINDOW_MS,
+        max:
+            VERIFY_RATE_MAX
+    });
 
 function hashToken(token) {
     return crypto
@@ -1023,41 +1135,152 @@ app.post(
     "/api/topup",
 
     auth,
+    topupRateLimit,
 
     async (req, res) => {
+        const amount =
+            Number(
+                req.body.amount
+            );
+
+        if (
+            !Number.isFinite(
+                amount
+            ) ||
+            amount <= 0
+        ) {
+            return res
+                .status(400)
+                .json({
+                    error:
+                        "จำนวนเงินไม่ถูกต้อง"
+                });
+        }
+
+        if (
+            amount > 1000000
+        ) {
+            return res
+                .status(400)
+                .json({
+                    error:
+                        "จำนวนเงินเกินกำหนด"
+                });
+        }
+
+        const client =
+            await pool.connect();
+
         try {
-            const amount =
-                Number(
-                    req.body.amount
+            await client.query(
+                "BEGIN"
+            );
+
+            /*
+             * ล็อกตาม user
+             * กันกดสร้าง QR พร้อมกันหลาย request
+             */
+            await client.query(
+                `
+                SELECT
+                    pg_advisory_xact_lock(
+                        $1::bigint
+                    )
+                `,
+                [
+                    req.user.id
+                ]
+            );
+
+            /*
+             * PENDING เก่าที่หมดเวลา
+             * เปลี่ยนเป็น EXPIRED ก่อน
+             */
+            await client.query(
+                `
+                UPDATE payments
+
+                SET status = 'EXPIRED'
+
+                WHERE user_id = $1
+                AND status = 'PENDING'
+                AND (
+                    expires_at IS NULL
+                    OR expires_at <=
+                        clock_timestamp()
+                )
+                `,
+                [
+                    req.user.id
+                ]
+            );
+
+            /*
+             * อนุญาต PENDING ที่ยังไม่หมดเวลา
+             * ได้แค่ 1 รายการต่อ user
+             */
+            const activeResult =
+                await client.query(
+                    `
+                    SELECT
+                        id,
+                        amount,
+                        status,
+                        created_at,
+                        qr_started_at,
+                        expires_at,
+                        clock_timestamp()
+                            AS server_now
+
+                    FROM payments
+
+                    WHERE user_id = $1
+                    AND status = 'PENDING'
+                    AND expires_at >
+                        clock_timestamp()
+
+                    ORDER BY id DESC
+
+                    LIMIT 1
+
+                    FOR UPDATE
+                    `,
+                    [
+                        req.user.id
+                    ]
                 );
 
             if (
-                !Number.isFinite(
-                    amount
-                ) ||
-                amount <= 0
+                activeResult.rows.length
             ) {
-                return res
-                    .status(400)
-                    .json({
-                        error:
-                            "จำนวนเงินไม่ถูกต้อง"
-                    });
-            }
+                await client.query(
+                    "COMMIT"
+                );
 
-            if (
-                amount > 1000000
-            ) {
                 return res
-                    .status(400)
+                    .status(409)
                     .json({
+                        success:
+                            false,
+
+                        code:
+                            "ACTIVE_PAYMENT_EXISTS",
+
                         error:
-                            "จำนวนเงินเกินกำหนด"
+                            "มีรายการเติมเงินที่ยังไม่หมดเวลา กรุณาใช้ QR เดิม",
+
+                        payment:
+                            activeResult
+                                .rows[0],
+
+                        qrUrl:
+                            process.env
+                                .RECEIVER_QR_URL
                     });
             }
 
             const result =
-                await pool.query(
+                await client.query(
                     `
                     INSERT INTO payments (
                         user_id,
@@ -1071,8 +1294,9 @@ app.post(
                         $1,
                         $2,
                         'PENDING',
-                        NOW(),
-                        NOW() + INTERVAL '5 minutes'
+                        clock_timestamp(),
+                        clock_timestamp()
+                            + INTERVAL '5 minutes'
                     )
 
                     RETURNING
@@ -1091,7 +1315,11 @@ app.post(
                     ]
                 );
 
-            res.json({
+            await client.query(
+                "COMMIT"
+            );
+
+            return res.json({
                 success: true,
 
                 payment:
@@ -1103,15 +1331,26 @@ app.post(
             });
 
         } catch (error) {
+            try {
+                await client.query(
+                    "ROLLBACK"
+                );
+            } catch {}
+
             console.error(
                 "TOPUP ERROR:",
                 error
             );
 
-            res.status(500).json({
-                error:
-                    "สร้างรายการเติมเงินไม่สำเร็จ"
-            });
+            return res
+                .status(500)
+                .json({
+                    error:
+                        "สร้างรายการเติมเงินไม่สำเร็จ"
+                });
+
+        } finally {
+            client.release();
         }
     }
 );
@@ -1123,6 +1362,7 @@ app.post(
 app.post(
     "/api/verify-slip",
     auth,
+    verifyRateLimit,
     upload.single("slip"),
 
     async (req, res) => {
@@ -1927,6 +2167,30 @@ app.get(
 
     async (req, res) => {
         try {
+            /*
+             * อัปเดตสถานะก่อนแสดงประวัติ
+             * เพื่อไม่ให้ PENDING ที่หมดเวลา
+             * ค้างอยู่บนหน้าเว็บ
+             */
+            await pool.query(
+                `
+                UPDATE payments
+
+                SET status = 'EXPIRED'
+
+                WHERE user_id = $1
+                AND status = 'PENDING'
+                AND (
+                    expires_at IS NULL
+                    OR expires_at <=
+                        clock_timestamp()
+                )
+                `,
+                [
+                    req.user.id
+                ]
+            );
+
             const result =
                 await pool.query(
                     `
@@ -1935,7 +2199,9 @@ app.get(
                         amount,
                         transaction_id,
                         status,
-                        created_at
+                        created_at,
+                        qr_started_at,
+                        expires_at
 
                     FROM payments
 
@@ -1951,7 +2217,7 @@ app.get(
                     ]
                 );
 
-            res.json({
+            return res.json({
                 success: true,
 
                 transactions:
@@ -1972,7 +2238,13 @@ app.get(
                                 item.status,
 
                             createdAt:
-                                item.created_at
+                                item.created_at,
+
+                            qrStartedAt:
+                                item.qr_started_at,
+
+                            expiresAt:
+                                item.expires_at
                         })
                     )
             });
@@ -1983,7 +2255,7 @@ app.get(
                 error
             );
 
-            res.status(500).json({
+            return res.status(500).json({
                 error:
                     "โหลดประวัติไม่สำเร็จ"
             });
@@ -1992,7 +2264,7 @@ app.get(
 );
 
 /* =========================
-   CLEAN EXPIRED SESSIONS
+   CLEANUP
 ========================= */
 
 async function cleanSessions() {
@@ -2009,6 +2281,59 @@ async function cleanSessions() {
             "SESSION CLEAN ERROR:",
             error
         );
+    }
+}
+
+async function expirePayments() {
+    try {
+        const result =
+            await pool.query(
+                `
+                UPDATE payments
+
+                SET status = 'EXPIRED'
+
+                WHERE status = 'PENDING'
+                AND (
+                    expires_at IS NULL
+                    OR expires_at <=
+                        clock_timestamp()
+                )
+                `
+            );
+
+        if (
+            result.rowCount > 0
+        ) {
+            console.log(
+                `Expired ${result.rowCount} payment(s)`
+            );
+        }
+
+    } catch (error) {
+        console.error(
+            "PAYMENT EXPIRE ERROR:",
+            error
+        );
+    }
+}
+
+function cleanRateBuckets() {
+    const now =
+        Date.now();
+
+    for (
+        const [key, bucket]
+        of rateBuckets.entries()
+    ) {
+        if (
+            now >=
+            bucket.resetAt
+        ) {
+            rateBuckets.delete(
+                key
+            );
+        }
     }
 }
 
@@ -2051,10 +2376,29 @@ async function start() {
     try {
         await initDatabase();
 
-        setInterval(
-            cleanSessions,
-            60 * 60 * 1000
-        );
+        await expirePayments();
+
+        const sessionTimer =
+            setInterval(
+                cleanSessions,
+                60 * 60 * 1000
+            );
+
+        const paymentTimer =
+            setInterval(
+                expirePayments,
+                30 * 1000
+            );
+
+        const rateTimer =
+            setInterval(
+                cleanRateBuckets,
+                60 * 1000
+            );
+
+        sessionTimer.unref?.();
+        paymentTimer.unref?.();
+        rateTimer.unref?.();
 
         app.listen(
             PORT,
